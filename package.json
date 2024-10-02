@@ -13,7 +13,8 @@
   },
   "dependencies": {
     "element-plus": "^2.8.4",
-    "vue": "^3.4.29"
+    "vue": "^3.4.29",
+    "vue-router": "^4.4.5"
   },
   "devDependencies": {
     "@rushstack/eslint-patch": "^1.8.0",
