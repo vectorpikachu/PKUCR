@@ -5,14 +5,14 @@ import SideBar from './SideBar.vue'
 
 <template>
   <div id="main_container">
-    <el-container style="width: 100vw; height: 100vh">
-      <el-header style="width: 100vw; height: 8vh">
+    <el-container style="width: 84vw; height: 100vh">
+      <el-header style="width: 84vw; height: 8vh">
         Header
         <!-- <el-container style="width: 100vw; height: 10vh;">
                     <PageHeader />
                 </el-container> -->
       </el-header>
-      <el-container style="width: 100vw; height: 92vh">
+      <el-container style="width: 84vw; height: 92vh">
         <SideBar />
         <el-main><router-view></router-view></el-main>
       </el-container>
