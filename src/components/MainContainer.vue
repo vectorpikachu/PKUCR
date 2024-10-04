@@ -2,7 +2,7 @@
 import SideBar from './SideBar.vue'
 import PageHeader from './PageHeader.vue';
 
-let header_height_vh = 12;
+let header_height_vh = 10;
 let menu_width_vw = 20;
 let menu_height_vh = 100 - header_height_vh
 let main_width_vw = 100 - menu_width_vw
@@ -11,15 +11,15 @@ let main_width_vw = 100 - menu_width_vw
 <template>
   <div id="main_container">
     <el-container :style="{ width: `100vw`, height: `${header_height_vh}vh` }">
-      <el-header style="width: 100%; height: 100%; position: relative;">
+      <el-header style="width: 100%; height: 100%;" class="background">
         <PageHeader />
       </el-header>
     </el-container>
     <el-container :style="{ width: `100vw`, height: `${menu_height_vh}vh` }">
-      <el-aside :style="{ width: `${menu_width_vw}vw`, height: `100%`, position: `relative` }">
+      <el-aside :style="{ width: `${menu_width_vw}vw`, height: `100%` }" class="background">
         <SideBar />
       </el-aside>
-      <el-main :style="{ width: `${main_width_vw}vw`, height: `100%`, position: `relative` }">
+      <el-main :style="{ width: `${main_width_vw}vw`, height: `100%` }" class="background">
         <router-view></router-view>
       </el-main>
     </el-container>
@@ -35,5 +35,11 @@ let main_width_vw = 100 - menu_width_vw
   position: absolute;
   left: 0;
   top: 0;
+}
+
+.background {
+  background-color: white;
+  position: relative;
+  border: 0.5px solid black;
 }
 </style>
