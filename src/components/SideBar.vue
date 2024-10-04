@@ -1,5 +1,4 @@
 <template>
-  <el-aside width="175px" style="height: 100%; position: fixed; left: 0">
     <el-menu default-active="2" class="el-menu-vertical">
       <router-link to="/">
         <el-menu-item index="1">
@@ -34,7 +33,6 @@
         </el-menu-item>
       </router-link>
     </el-menu>
-  </el-aside>
 </template>
 
 <script lang="ts" setup>
@@ -44,6 +42,6 @@ import { Document, Menu as IconMenu, Location, Setting } from '@element-plus/ico
 <style>
 .el-menu-vertical {
   width: 100%;
-  min-height: 400px;
+  height: 100%;
 }
 </style>

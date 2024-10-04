@@ -1,3 +1,3 @@
 <template>
-<!-- Deprecated -->
+    header
 </template>

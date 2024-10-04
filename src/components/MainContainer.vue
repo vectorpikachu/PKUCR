@@ -1,21 +1,27 @@
 <script setup>
 import SideBar from './SideBar.vue'
-// import PageHeader from './PageHeader.vue';
+import PageHeader from './PageHeader.vue';
+
+let header_height_vh = 12;
+let menu_width_vw = 20;
+let menu_height_vh = 100 - header_height_vh
+let main_width_vw = 100 - menu_width_vw
 </script>
 
 <template>
   <div id="main_container">
-    <el-container style="width: 100vw; height: 100vh">
-      <el-header style="width: 100vw; height: 8vh">
-        Header
-        <!-- <el-container style="width: 100vw; height: 10vh;">
-                    <PageHeader />
-                </el-container> -->
+    <el-container :style="{ width: `100vw`, height: `${header_height_vh}vh` }">
+      <el-header style="width: 100%; height: 100%; position: relative;">
+        <PageHeader />
       </el-header>
-      <el-container style="width: 100vw; height: 92vh">
+    </el-container>
+    <el-container :style="{ width: `100vw`, height: `${menu_height_vh}vh` }">
+      <el-aside :style="{ width: `${menu_width_vw}vw`, height: `100%`, position: `relative` }">
         <SideBar />
-        <el-main><router-view></router-view></el-main>
-      </el-container>
+      </el-aside>
+      <el-main :style="{ width: `${main_width_vw}vw`, height: `100%`, position: `relative` }">
+        <router-view></router-view>
+      </el-main>
     </el-container>
   </div>
 </template>
@@ -26,5 +32,8 @@ import SideBar from './SideBar.vue'
   font-size: 14px;
   color: #2c3e50;
   text-align: center;
+  position: absolute;
+  left: 0;
+  top: 0;
 }
 </style>
