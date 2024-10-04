@@ -25,13 +25,14 @@ PKUCR，又称为 PKU(Calendar|Resources)*，这是一个正则表达式，最�
         - ~~TheWelcome.vue~~
         - ~~WelcomeItem.vue~~
         - SideBar.vue（左侧导航栏，用来切换不同的view，完成view后需要更新）
-        - PageHeader（顶部栏，待完成）
+        - PageHeader（顶部栏）
         - MainContainer（使用SiderBar, PageHeader和一系列view创建页面）
-        - icons（好像是运行时下载icon自动保存的）
+        - icons（下载icon自动保存）
         - views（页面的主体部分）
             - index.js（记录路由转跳信息，完成view后需要更新）
             - home.vue（默认页面/初始页面，待完成）
             - setting.vue（设置页面，待完成）
+            - taskTable.vue（任务表）
     
 
 ## Project Setup
