@@ -1,16 +1,25 @@
 <template>
     <div class="header-container">
-        <div class="logo"><el-icon></el-icon></div>
+        <!-- <div class="logo"><img :src="logoUrl" alt="Logo" /></div> -->
         <div class="blank"></div>
         <div class="input">
             <el-autocomplete v-model="state" :fetch-suggestions="querySearchAsync" placeholder="Search for resources"
                 @select="handleSelect" style="width: 30vw;"/>
+        </div>
+        <div class="button-group">
+            <el-button type="primary" @click="goToLogin">登录</el-button>
+            <el-button type="success" @click="goToRegister">注册</el-button>
         </div>
     </div>
 </template>
 
 <script lang="ts" setup>
 import { onMounted, ref } from 'vue'
+import { useRouter } from 'vue-router'
+//import {logo} from '../assets/PKUCR-logo2.svg'
+
+//const logoUrl = logo
+const router = useRouter()
 
 const state = ref('')
 
@@ -59,6 +68,14 @@ const handleSelect = (item: Record<string, any>) => {
 onMounted(() => {
     links.value = loadAll()
 })
+
+const goToLogin = () => {
+    router.push('/login') // 导航到登录页面
+}
+
+const goToRegister = () => {
+    router.push('/register') // 导航到注册页面
+}
 </script>
 
 <style scoped>
@@ -68,5 +85,15 @@ onMounted(() => {
     align-items: center;
     width: 100%;
     height: 100%;
+}
+
+.button-group {
+    display: flex;
+    gap: 10px;
+}
+
+.logo img {
+  height: 63px;
+  width: auto;
 }
 </style>
