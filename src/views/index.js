@@ -2,6 +2,14 @@ import { createRouter, createWebHashHistory } from 'vue-router'
 
 const routes = [
   {
+    path: '/login',
+    component: () => import('./login.vue'),  // 登录页面不需要导航
+  },
+  {
+    path: '/register',
+    component: () => import('./register.vue'),  // 登录页面不需要导航
+  },
+  {
     path: '/home',
     component: () => import('./home.vue')
   },
