@@ -28,11 +28,7 @@
           <el-table-column prop="memo" label="Memo" />
           <el-table-column>
             <template #header>
-              <el-button
-                type="primary"
-                :loading="createTaskFormVisible"
-                @click="createTaskFormVisible = true"
-              >
+              <el-button type="primary" :loading="taskFormVisible" @click="taskFormVisible = true">
                 <template #loading>
                   <div class="custom-loading">
                     <svg class="circular" viewBox="-10, -10, 50, 50">
@@ -68,7 +64,7 @@
     </el-col>
   </el-row>
 
-  <el-dialog v-model="createTaskFormVisible" title="Add New Task" width="500">
+  <el-dialog v-model="taskFormVisible" title="Add New Task" width="500">
     <el-form :model="form" label-width="auto" style="max-width: 600px">
       <el-form-item label="Task name">
         <el-input v-model="form.task" />
@@ -76,7 +72,7 @@
       <el-form-item label="Task date">
         <el-col :span="11">
           <el-date-picker
-            v-model="form.date1"
+            v-model="form.date"
             type="date"
             placeholder="Pick a date"
             style="width: 100%"
@@ -88,18 +84,21 @@
         </el-col>
         <el-col :span="11">
           <el-time-picker
-            v-model="form.date2"
+            v-model="form.time"
             placeholder="Pick a time"
             style="width: 100%"
             value-format="HH:mm:ss"
           />
         </el-col>
       </el-form-item>
+      <el-form-item label="Task Priority">
+        <el-slider v-model="form.priority" :step="10" :format-tooltip="formatTooltip" show-stops />
+      </el-form-item>
       <el-form-item label="Task memo">
         <el-input v-model="form.memo" type="textarea" />
       </el-form-item>
       <el-form-item>
-        <el-button @click="createTaskFormVisible = false">Cancel</el-button>
+        <el-button @click="taskFormVisible = false">Cancel</el-button>
         <el-button type="primary" @click="onSubmit"> Confirm </el-button>
       </el-form-item>
     </el-form>
@@ -110,12 +109,17 @@
 import { ref, reactive } from 'vue'
 import { Timer } from '@element-plus/icons-vue'
 
-let taskId = ref(0)
-let createTaskFormVisible = ref(false)
+let taskFormVisible = ref(false)
+let isCreate = ref(false)
+let recentTask = ref(0)
 
-function new_task(date, task, time, memo) {
+const formatTooltip = (val: number) => {
+  return val / 10
+}
+
+function new_task(priority, date, task, time, memo) {
   return {
-    id: taskId.value++,
+    priority: priority,
     date: date,
     task: task,
     time: time,
@@ -123,39 +127,73 @@ function new_task(date, task, time, memo) {
   }
 }
 
+function comp_task(lhs, rhs) {
+  if (rhs.priority != lhs.priority) {
+    return rhs.priority - lhs.priority
+  } else if (rhs.date != lhs.date) {
+    if (lhs.date > rhs.date) return 1
+    else if (lhs.date == rhs.date) return 0
+    else return -1
+  } else {
+    if (lhs.time > rhs.time) return 1
+    else if (lhs.time == rhs.time) return 0
+    else return -1
+  }
+}
+
+interface Task {
+  priority: number
+  task: string
+  date: string
+  time: string
+  memo: string
+}
+
 let form = reactive({
+  priority: 0,
   task: '',
-  date1: '',
-  date2: '',
+  date: '',
+  time: '',
   memo: ''
 })
 
 function onSubmit() {
-  createTaskFormVisible.value = false
-  tableData.value.push(new_task(form.date1, form.task, form.date2, form.memo))
+  taskFormVisible.value = false
+  if (isCreate.value) {
+    tableData.value[recentTask.value] = form
+  } else {
+    tableData.value.push(new_task(form.priority, form.date, form.task, form.time, form.memo))
+  }
+  tableData.value.sort(comp_task)
   form = reactive({
+    priority: 0,
     task: '',
-    date1: '',
-    date2: '',
+    date: '',
+    time: '',
     memo: ''
   })
 }
 
-function handleEdit(index, row) {}
+function handleEdit(index, row) {
+  isCreate.value = true
+  recentTask.value = index
+  form = tableData.value.at(index)
+  taskFormVisible.value = true
+}
 
 function handleDelete(index, row) {
   tableData.value.splice(index, 1)
 }
 
 let default_task = new_task(
+  0,
   '2024-10-10',
   'Software Engineering Class',
   '13:00:00',
   '1st Presentation'
 )
-let task_table = ref(Array.from({ length: 1 }))
-task_table.value[0] = default_task
-let tableData = task_table
+let task_table: Task[] = [default_task]
+let tableData = ref(task_table)
 </script>
 
 <style scoped>
