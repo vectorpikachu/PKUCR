@@ -2,8 +2,8 @@ import { createRouter, createWebHashHistory } from 'vue-router'
 
 const routes = [
   {
-    path: '/home',
-    component: () => import('./home.vue')
+    path: '/schedule',
+    component: () => import('./schedule.vue')
   },
   {
     path: '/setting',
@@ -13,10 +13,13 @@ const routes = [
     path: '/taskTable',
     component: () => import('./taskTable.vue')
   },
-  // Add other routes here
+  {
+    path: '/calendar',
+    component: () => import('./calendar.vue')
+  },
   {
     path: '/',
-    redirect: '/home'
+    redirect: '/schedule'
   }
 ]
 
