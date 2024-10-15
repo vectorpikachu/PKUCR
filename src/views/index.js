@@ -14,6 +14,14 @@ const routes = [
     component: () => import('./home.vue')
   },
   {
+    path: '/login',
+    component: () => import('./login.vue')
+  },
+  {
+    path: '/register',
+    component: () => import('./register.vue')
+  },
+  {
     path: '/setting',
     component: () => import('./setting.vue')
   },
