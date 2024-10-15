@@ -1,29 +1,34 @@
 <template>
     <el-menu default-active="2" class="el-menu-vertical">
-      <router-link to="/">
+
+      <router-link to="/schedule">
         <el-menu-item index="1">
           <el-icon><icon-menu /></el-icon>
-          Navigator One
+          Schedule
         </el-menu-item>
       </router-link>
+
       <router-link to="/taskTable">
         <el-menu-item index="2">
           <el-icon><icon-menu /></el-icon>
           Task
         </el-menu-item>
       </router-link>
-      <router-link to="/">
+
+      <router-link to="/calendar">
         <el-menu-item index="3">
           <el-icon><icon-menu /></el-icon>
-          Navigator Three
+          Calendar
         </el-menu-item>
       </router-link>
+
       <router-link to="/">
         <el-menu-item index="4">
           <el-icon><icon-menu /></el-icon>
-          Navigator Four
+          Resources
         </el-menu-item>
       </router-link>
+
       <router-link to="/setting">
         <el-menu-item index="5">
           <el-icon>
@@ -32,6 +37,7 @@
           Setting
         </el-menu-item>
       </router-link>
+
     </el-menu>
 </template>
 
