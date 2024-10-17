@@ -4,10 +4,14 @@ import { createApp } from 'vue'
 import ElementPlus from 'element-plus'
 import router from '@/views';
 import 'element-plus/dist/index.css'
-import MainContainer from './components/MainContainer.vue'
-// import App from './App.vue'
+// import MainContainer from './components/MainContainer.vue'
+import App from './App.vue'
 
 // const app = createApp(App)
-const app = createApp(MainContainer).use(ElementPlus).use(router)
+// const app = createApp(MainContainer).use(ElementPlus).use(router)
 
-app.mount('#app')
+// app.mount('#app')
+
+const app = createApp(App);
+app.use(ElementPlus).use(router);
+app.mount('#app');
