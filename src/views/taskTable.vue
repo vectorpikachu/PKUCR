@@ -161,6 +161,7 @@ function onSubmit() {
   taskFormVisible.value = false
   if (isCreate.value) {
     tableData.value[recentTask.value] = form
+    isCreate.value = false
   } else {
     tableData.value.push(new_task(form.priority, form.date, form.task, form.time, form.memo))
   }
