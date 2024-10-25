@@ -99,7 +99,7 @@ mysql>
 ```
 
 接着我们使用 `Navicat Premium` 来创建连接。
-![](.assets/Navicat创建连接.bmp)
+![](./.assets/Navicat创建连接.bmp)
 
 接下来我们继续在 `application.properties` 中配置数据库连接。
 ```properties
@@ -130,5 +130,5 @@ dependencies {
 
 在`http://localhost:38083/swagger-ui.html`中可以看到API文档。并且可以进行简单的测试。
 
-![](.assets/swagger.png)
+![](./.assets/swagger.png)
 
