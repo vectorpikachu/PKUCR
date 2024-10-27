@@ -22,7 +22,7 @@
         </el-menu-item>
       </router-link>
 
-      <router-link to="/">
+      <router-link to="/resource">
         <el-menu-item index="4">
           <el-icon><icon-menu /></el-icon>
           Resources
