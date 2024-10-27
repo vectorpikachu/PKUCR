@@ -1,6 +1,6 @@
 <template>
     <div class="header-container">
-        <!-- <div class="logo"><img :src="logoUrl" alt="Logo" /></div> -->
+        <div class="logo"><img src="@/assets/PKUCR-logo.svg" alt="Logo" /></div>
         <div class="blank"></div>
         <div class="input">
             <el-autocomplete v-model="state" :fetch-suggestions="querySearchAsync" placeholder="Search for resources"
@@ -93,7 +93,7 @@ const goToRegister = () => {
 }
 
 .logo img {
-  height: 63px;
+  height: 80px;
   width: auto;
 }
 </style>

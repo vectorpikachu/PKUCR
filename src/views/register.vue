@@ -1,5 +1,6 @@
 <template>
   <div class="register-page">
+    <div class="logo"><img src="@/assets/PKUCR-logo.svg" alt="Logo" /></div>
     <h1>Register</h1>
     <el-form :model="form" ref="formRef" label-width="80px">
       <el-form-item label="Email" prop="email" :rules="emailRules">
@@ -88,6 +89,17 @@ const handleSubmit = () => {
   height: 85vh;
   width: 85vw;
   /* background-color: #f5f5f5; */
+}
+
+.logo {
+  display: flex;
+  justify-content: center; /* 居中显示 */
+  margin-bottom: 20px; /* logo 和标题之间的间距 */
+}
+
+.logo img {
+  height: 200px; /* 根据需要调整高度 */
+  width: auto; /* 自适应宽度 */
 }
 
 h1 {
