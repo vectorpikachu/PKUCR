@@ -11,6 +11,10 @@ const routes = [
     component: () => import('./register.vue')
   },
   {
+    path: '/resource',
+    component: () => import('./resource.vue')
+  },
+  {
     path: '/',
     component: MainContainer, // MainContainer 是父组件
     children: [
