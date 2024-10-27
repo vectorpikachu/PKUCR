@@ -1,5 +1,5 @@
 <template>
-    <el-menu default-active="2" class="el-menu-vertical">
+    <el-menu default-active="1" class="el-menu-vertical">
 
       <router-link to="/schedule">
         <el-menu-item index="1">

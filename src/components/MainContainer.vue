@@ -3,7 +3,7 @@ import SideBar from './SideBar.vue'
 import PageHeader from './PageHeader.vue';
 
 let header_height_vh = 10;
-let menu_width_vw = 10;
+let menu_width_vw = 15;
 let menu_height_vh = 100 - header_height_vh
 let main_width_vw = 100 - menu_width_vw
 </script>
@@ -40,6 +40,7 @@ let main_width_vw = 100 - menu_width_vw
 .background {
   background-color: white;
   position: relative;
-  border: 0.5px solid black;
+  /* border: 0.5px solid black; */
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
 }
 </style>
