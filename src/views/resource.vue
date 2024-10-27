@@ -32,6 +32,34 @@
                 <el-button @click="dialogVisible = false">关闭</el-button>
             </span>
         </el-dialog>
+
+        <!-- 编辑对话框 -->
+        <el-dialog v-model="editDialogVisible" title="编辑课程" width="500">
+            <el-form :model="editableObject">
+                <el-form-item label="课程号" prop="course_id">
+                    <el-input v-model="editableObject.course_id" />
+                </el-form-item>
+                <el-form-item label="课程名" prop="name">
+                    <el-input v-model="editableObject.name" />
+                </el-form-item>
+                <el-form-item label="类别" prop="category">
+                    <el-input v-model="editableObject.category" />
+                </el-form-item>
+                <el-form-item label="评价" prop="rating">
+                    <el-input v-model="editableObject.rating" />
+                </el-form-item>
+                <el-form-item label="试题" prop="test">
+                    <el-input v-model="editableObject.test" />
+                </el-form-item>
+                <el-form-item label="资料" prop="resource">
+                    <el-input v-model="editableObject.resource" />
+                </el-form-item>
+            </el-form>
+            <span slot="footer" class="dialog-footer">
+                <el-button @click="editDialogVisible = false">取消</el-button>
+                <el-button type="primary" @click="saveEdit">保存</el-button>
+            </span>
+        </el-dialog>
     </div>
 </template>
 
@@ -46,28 +74,39 @@ const objects = ref([
 ])
 
 const dialogVisible = ref(false)
+const editDialogVisible = ref(false)
 const selectedObject = ref(null)
+const editableObject = ref(null)
+
 
 // 查看详情的处理函数
 const viewDetails = (row) => {
-  selectedObject.value = row
-  dialogVisible.value = true
+    selectedObject.value = row
+    dialogVisible.value = true
 }
 
 // 重置对话框状态
 const resetDialog = () => {
-  selectedObject.value = null
+    selectedObject.value = null
 }
 
-// 编辑项的处理函数
+// 编辑按钮的处理函数
 const editItem = (row) => {
-    console.log('Edit item:', row)
-    // 处理编辑逻辑
+  editableObject.value = { ...row } // 创建一个可编辑的副本
+  editDialogVisible.value = true
 }
 
-// 当页面加载时可以在这里调用获取数据的API
+const saveEdit = () => {
+  // 在这里可以实现保存逻辑，比如更新数据
+  const index = objects.value.findIndex(obj => obj.course_id === editableObject.value.id)
+  if (index !== -1) {
+    objects.value[index] = editableObject.value // 更新原始数据
+  }
+  editDialogVisible.value = false
+}
+
+// 页面初始化数据
 onMounted(() => {
-    // 调用 API 获取数据后将结果赋值给 objects
 })
 </script>
 
