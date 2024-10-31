@@ -15,11 +15,11 @@
             <template #default="scope">
               <el-popover effect="light" trigger="hover" placement="top" width="auto">
                 <template #default>
-                  <div>task: {{ scope.row.task }}</div>
+                  <div>task: {{ scope.row.name }}</div>
                   <div>memo: {{ scope.row.memo }}</div>
                 </template>
                 <template #reference>
-                  <el-tag>{{ scope.row.task }}</el-tag>
+                  <el-tag>{{ scope.row.name }}</el-tag>
                 </template>
               </el-popover>
             </template>
@@ -28,7 +28,11 @@
           <el-table-column prop="memo" label="Memo" />
           <el-table-column>
             <template #header>
-              <el-button type="primary" :loading="taskFormVisible" @click="taskFormVisible = true">
+              <el-button
+                type="primary"
+                :loading="config.taskFormVisible.value"
+                @click="config.taskFormVisible.value = true"
+              >
                 <template #loading>
                   <div class="custom-loading">
                     <svg class="circular" viewBox="-10, -10, 50, 50">
@@ -64,15 +68,15 @@
     </el-col>
   </el-row>
 
-  <el-dialog v-model="taskFormVisible" title="Add New Task" width="500">
-    <el-form :model="form" label-width="auto" style="max-width: 600px">
+  <el-dialog v-model="config.taskFormVisible.value" title="Add New Task" width="500">
+    <el-form :model="config.taskForm" label-width="auto" style="max-width: 600px">
       <el-form-item label="Task name">
-        <el-input v-model="form.task" />
+        <el-input v-model="config.taskForm.name" />
       </el-form-item>
       <el-form-item label="Task date">
         <el-col :span="11">
           <el-date-picker
-            v-model="form.date"
+            v-model="config.taskForm.date"
             type="date"
             placeholder="Pick a date"
             style="width: 100%"
@@ -84,7 +88,7 @@
         </el-col>
         <el-col :span="11">
           <el-time-picker
-            v-model="form.time"
+            v-model="config.taskForm.time"
             placeholder="Pick a time"
             style="width: 100%"
             value-format="HH:mm:ss"
@@ -92,14 +96,19 @@
         </el-col>
       </el-form-item>
       <el-form-item label="Task Priority">
-        <el-slider v-model="form.priority" :step="10" :format-tooltip="formatTooltip" show-stops />
+        <el-slider
+          v-model="config.taskForm.priority"
+          :step="10"
+          :format-tooltip="formatTooltip"
+          show-stops
+        />
       </el-form-item>
       <el-form-item label="Task memo">
-        <el-input v-model="form.memo" type="textarea" />
+        <el-input v-model="config.taskForm.memo" type="textarea" />
       </el-form-item>
       <el-form-item>
-        <el-button @click="taskFormVisible = false">Cancel</el-button>
-        <el-button type="primary" @click="onSubmit"> Confirm </el-button>
+        <el-button @click="config.taskFormVisible.value = false">Cancel</el-button>
+        <el-button type="primary" @click="taskFormSubmit"> Confirm </el-button>
       </el-form-item>
     </el-form>
   </el-dialog>
@@ -109,65 +118,98 @@
 import { ref, reactive } from 'vue'
 import { Timer } from '@element-plus/icons-vue'
 
-let taskFormVisible = ref(false)
-let isCreate = ref(false)
-let recentTask = ref(0)
+const comp_task_priority = (lhs, rhs) => {
+  return rhs.priority - lhs.priority
+}
+
+const comp_task_date = (lhs, rhs) => {
+  if (lhs.date > rhs.date) return 1
+  else if (lhs.date < rhs.date) return -1
+  else return 0
+}
+
+const comp_task_time = (lhs, rhs) => {
+  if (lhs.time > rhs.time) return 1
+  else if (lhs.time < rhs.time) return -1
+  else return 0
+}
+
+const comp_task_name = (lhs, rhs) => {
+  if (lhs.name > rhs.name) return 1
+  else if (lhs.name < rhs.name) return -1
+  else return 0
+}
+
+const comp_task_none = (lhs, rhs) => {
+  return 0
+}
+
+let config = {
+  taskFormVisible: ref(false),
+  isEdit: ref(false),
+  recentTask: ref(0),
+  taskForm: reactive({
+    priority: 0,
+    name: '',
+    date: '',
+    time: '',
+    memo: ''
+  }),
+  compTask: [comp_task_priority, comp_task_date, comp_task_time]
+}
 
 const formatTooltip = (val: number) => {
   return val / 10
 }
 
-function new_task(priority, date, task, time, memo) {
+function new_task(priority, date, name, time, memo) {
   return {
     priority: priority,
     date: date,
-    task: task,
+    name: name,
     time: time,
     memo: memo
   }
 }
 
-function comp_task(lhs, rhs) {
-  if (rhs.priority != lhs.priority) {
-    return rhs.priority - lhs.priority
-  } else if (rhs.date != lhs.date) {
-    if (lhs.date > rhs.date) return 1
-    else if (lhs.date == rhs.date) return 0
-    else return -1
-  } else {
-    if (lhs.time > rhs.time) return 1
-    else if (lhs.time == rhs.time) return 0
-    else return -1
+function task_from(form) {
+  return {
+    priority: form.priority,
+    date: form.date,
+    name: form.name,
+    time: form.time,
+    memo: form.memo
   }
+}
+
+function comp_task(lhs, rhs) {
+  for (const comp of config.compTask) {
+    let res = comp(lhs, rhs)
+    if (res != 0) return res
+  }
+  return 0
 }
 
 interface Task {
   priority: number
-  task: string
+  name: string
   date: string
   time: string
   memo: string
 }
 
-let form = reactive({
-  priority: 0,
-  task: '',
-  date: '',
-  time: '',
-  memo: ''
-})
-
-function onSubmit() {
-  taskFormVisible.value = false
-  if (isCreate.value) {
-    tableData.value[recentTask.value] = form
+function taskFormSubmit() {
+  config.taskFormVisible.value = false
+  if (config.isEdit.value) {
+    config.isEdit.value = false
+    tableData.value[config.recentTask.value] = config.taskForm
   } else {
-    tableData.value.push(new_task(form.priority, form.date, form.task, form.time, form.memo))
+    tableData.value.push(task_from(config.taskForm))
   }
   tableData.value.sort(comp_task)
-  form = reactive({
+  config.taskForm = reactive({
     priority: 0,
-    task: '',
+    name: '',
     date: '',
     time: '',
     memo: ''
@@ -175,10 +217,10 @@ function onSubmit() {
 }
 
 function handleEdit(index, row) {
-  isCreate.value = true
-  recentTask.value = index
-  form = tableData.value.at(index)
-  taskFormVisible.value = true
+  config.isEdit.value = true
+  config.recentTask.value = index
+  config.taskForm = tableData.value.at(index)
+  config.taskFormVisible.value = true
 }
 
 function handleDelete(index, row) {
