@@ -3,7 +3,19 @@
     <el-col>
       <el-scrollbar>
         <el-table :data="tableData" height="600">
-          <el-table-column label="Date" width="180">
+          <el-table-column>
+            <template #header>
+              <el-button type="info" text @click="handleSort.date">
+                Date
+                <el-icon v-if="config.sortStatus.date.value == SORT_STATUS.NONE">
+                  <Sort />
+                </el-icon>
+                <el-icon v-else-if="config.sortStatus.date.value == SORT_STATUS.SEQ">
+                  <SortDown />
+                </el-icon>
+                <el-icon v-else> <SortUp /> </el-icon>
+              </el-button>
+            </template>
             <template #default="scope">
               <div style="display: flex; align-items: center">
                 <el-icon><timer /></el-icon>
@@ -11,7 +23,19 @@
               </div>
             </template>
           </el-table-column>
-          <el-table-column label="Task" width="180">
+          <el-table-column>
+            <template #header>
+              <el-button type="info" text @click="handleSort.name">
+                Task
+                <el-icon v-if="config.sortStatus.name.value == SORT_STATUS.NONE">
+                  <Sort />
+                </el-icon>
+                <el-icon v-else-if="config.sortStatus.name.value == SORT_STATUS.SEQ">
+                  <SortDown />
+                </el-icon>
+                <el-icon v-else> <SortUp /> </el-icon>
+              </el-button>
+            </template>
             <template #default="scope">
               <el-popover effect="light" trigger="hover" placement="top" width="auto">
                 <template #default>
@@ -24,8 +48,26 @@
               </el-popover>
             </template>
           </el-table-column>
-          <el-table-column prop="time" label="Time" width="140" />
-          <el-table-column prop="memo" label="Memo" />
+          <el-table-column>
+            <template #header>
+              <el-button type="info" text @click="handleSort.time">
+                Time
+                <el-icon v-if="config.sortStatus.time.value == SORT_STATUS.NONE">
+                  <Sort />
+                </el-icon>
+                <el-icon v-else-if="config.sortStatus.time.value == SORT_STATUS.SEQ">
+                  <SortDown />
+                </el-icon>
+                <el-icon v-else> <SortUp /> </el-icon>
+              </el-button>
+            </template>
+            <template #default="scope">
+              <el-text>
+                {{ scope.row.time }}
+              </el-text>
+            </template>
+          </el-table-column>
+          <el-table-column label="Memo" prop="memo" />
           <el-table-column>
             <template #header>
               <el-button
@@ -107,7 +149,7 @@
         <el-input v-model="config.taskForm.memo" type="textarea" />
       </el-form-item>
       <el-form-item>
-        <el-button @click="config.taskFormVisible.value = false">Cancel</el-button>
+        <el-button @click="taskFormCancel">Cancel</el-button>
         <el-button type="primary" @click="taskFormSubmit"> Confirm </el-button>
       </el-form-item>
     </el-form>
@@ -116,32 +158,56 @@
 
 <script lang="ts" setup>
 import { ref, reactive } from 'vue'
-import { Timer } from '@element-plus/icons-vue'
+import { Sort, Loading, Timer, SortDown, SortUp } from '@element-plus/icons-vue'
 
-const comp_task_priority = (lhs, rhs) => {
-  return rhs.priority - lhs.priority
+const COMP_ID = {
+  PRIORITY: (lhs, rhs) => {
+    return 0
+  },
+  DATE: (lhs, rhs) => {
+    return 1
+  },
+  TIME: (lhs, rhs) => {
+    return 2
+  },
+  NAME: (lhs, rhs) => {
+    return 3
+  },
+  NEG: (ID) => {
+    return (lhs, rhs) => {
+      return -ID(lhs, rhs)
+    }
+  }
 }
 
-const comp_task_date = (lhs, rhs) => {
-  if (lhs.date > rhs.date) return 1
-  else if (lhs.date < rhs.date) return -1
-  else return 0
+const COMP_TASK = {
+  PRIORITY: (lhs, rhs) => {
+    return rhs.priority - lhs.priority
+  },
+  DATE: (lhs, rhs) => {
+    if (lhs.date > rhs.date) return 1
+    else if (lhs.date < rhs.date) return -1
+    else return 0
+  },
+  TIME: (lhs, rhs) => {
+    if (lhs.time > rhs.time) return 1
+    else if (lhs.time < rhs.time) return -1
+    else return 0
+  },
+  NAME: (lhs, rhs) => {
+    if (lhs.name > rhs.name) return 1
+    else if (lhs.name < rhs.name) return -1
+    else return 0
+  },
+  NONE: (lhs, rhs) => {
+    return 0
+  }
 }
 
-const comp_task_time = (lhs, rhs) => {
-  if (lhs.time > rhs.time) return 1
-  else if (lhs.time < rhs.time) return -1
-  else return 0
-}
-
-const comp_task_name = (lhs, rhs) => {
-  if (lhs.name > rhs.name) return 1
-  else if (lhs.name < rhs.name) return -1
-  else return 0
-}
-
-const comp_task_none = (lhs, rhs) => {
-  return 0
+const SORT_STATUS = {
+  NONE: 0,
+  SEQ: 1,
+  REV: 2
 }
 
 let config = {
@@ -155,7 +221,13 @@ let config = {
     time: '',
     memo: ''
   }),
-  compTask: [comp_task_priority, comp_task_date, comp_task_time]
+  compTask: ref([[COMP_ID.PRIORITY, COMP_TASK.PRIORITY]]),
+  sortStatus: {
+    name: ref(SORT_STATUS.NONE),
+    date: ref(SORT_STATUS.NONE),
+    time: ref(SORT_STATUS.NONE),
+    memo: ref(SORT_STATUS.NONE)
+  }
 }
 
 const formatTooltip = (val: number) => {
@@ -183,9 +255,11 @@ function task_from(form) {
 }
 
 function comp_task(lhs, rhs) {
-  for (const comp of config.compTask) {
-    let res = comp(lhs, rhs)
-    if (res != 0) return res
+  for (const comp of config.compTask.value) {
+    let res = comp[1](lhs, rhs)
+    if (res != 0)
+      if (comp[0](lhs, rhs) >= 0) return res
+      else return -res
   }
   return 0
 }
@@ -196,6 +270,111 @@ interface Task {
   date: string
   time: string
   memo: string
+}
+
+const handleSort = {
+  name: () => {
+    config.sortStatus.name.value = (config.sortStatus.name.value + 1) % 3
+    let val = config.sortStatus.name.value
+    let index = -1
+    switch (val) {
+      case SORT_STATUS.NONE:
+        for (let i = 0; ; ++i) {
+          if (config.compTask.value[i][0](0, 0) == -COMP_ID.NAME(0, 0)) {
+            index = i
+            break
+          }
+        }
+        if (index != -1) {
+          config.compTask.value.splice(index, 1)
+        }
+        break
+      case SORT_STATUS.SEQ:
+        let len = config.compTask.value.length
+        config.compTask.value.splice(len - 1, 0, [COMP_ID.NAME, COMP_TASK.NAME])
+        break
+      case SORT_STATUS.REV:
+        for (let i = 0; ; ++i) {
+          if (config.compTask.value[i][0](0, 0) == COMP_ID.NAME(0, 0)) {
+            index = i
+            break
+          }
+        }
+        if (index != -1) {
+          config.compTask.value.splice(index, 1, [COMP_ID.NEG(COMP_ID.NAME), COMP_TASK.NAME])
+        }
+        break
+    }
+    tableData.value.sort(comp_task)
+  },
+  date: () => {
+    config.sortStatus.date.value = (config.sortStatus.date.value + 1) % 3
+    let val = config.sortStatus.date.value
+    let index = -1
+    switch (val) {
+      case SORT_STATUS.NONE:
+        for (let i = 0; ; ++i) {
+          if (config.compTask.value[i][0](0, 0) == -COMP_ID.DATE(0, 0)) {
+            index = i
+            break
+          }
+        }
+        if (index != -1) {
+          config.compTask.value.splice(index, 1)
+        }
+        break
+      case SORT_STATUS.SEQ:
+        let len = config.compTask.value.length
+        config.compTask.value.splice(len - 1, 0, [COMP_ID.DATE, COMP_TASK.DATE])
+        break
+      case SORT_STATUS.REV:
+        for (let i = 0; ; ++i) {
+          if (config.compTask.value[i][0](0, 0) == COMP_ID.DATE(0, 0)) {
+            index = i
+            break
+          }
+        }
+        if (index != -1) {
+          config.compTask.value.splice(index, 1, [COMP_ID.NEG(COMP_ID.DATE), COMP_TASK.DATE])
+        }
+        break
+    }
+    tableData.value.sort(comp_task)
+  },
+  time: () => {
+    config.sortStatus.time.value = (config.sortStatus.time.value + 1) % 3
+    let val = config.sortStatus.time.value
+    let index = -1
+    switch (val) {
+      case SORT_STATUS.NONE:
+        for (let i = 0; ; ++i) {
+          if (config.compTask.value[i][0](0, 0) == -COMP_ID.TIME(0, 0)) {
+            index = i
+            break
+          }
+        }
+        if (index != -1) {
+          config.compTask.value.splice(index, 1)
+        }
+        break
+      case SORT_STATUS.SEQ:
+        let len = config.compTask.value.length
+        config.compTask.value.splice(len - 1, 0, [COMP_ID.TIME, COMP_TASK.TIME])
+        break
+      case SORT_STATUS.REV:
+        for (let i = 0; ; ++i) {
+          if (config.compTask.value[i][0](0, 0) == COMP_ID.TIME(0, 0)) {
+            index = i
+            break
+          }
+        }
+        if (index != -1) {
+          config.compTask.value.splice(index, 1, [COMP_ID.NEG(COMP_ID.TIME), COMP_TASK.TIME])
+        }
+        break
+    }
+    tableData.value.sort(comp_task)
+  }
 }
 
 function taskFormSubmit() {
@@ -214,6 +393,20 @@ function taskFormSubmit() {
     time: '',
     memo: ''
   })
+}
+
+function taskFormCancel() {
+  config.taskFormVisible.value = false
+  if (config.isEdit.value) {
+    config.isEdit.value = false
+    config.taskForm = reactive({
+      priority: 0,
+      name: '',
+      date: '',
+      time: '',
+      memo: ''
+    })
+  }
 }
 
 function handleEdit(index, row) {
