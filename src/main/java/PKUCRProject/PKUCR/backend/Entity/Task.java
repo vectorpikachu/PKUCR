@@ -5,19 +5,19 @@ import io.swagger.v3.oas.annotations.media.Schema;
 @Schema(name = "Task")
 public class Task {
 
-    @Schema(name = "id", required = true, example = "1")
+    @Schema(name = "id", required = false, example = "1")
     private int id;
 
     @Schema(name = "name", required = true, example = "Task1")
     private String name;
 
-    @Schema(name = "date", required = true, example = "2021-01-01 10:00:00")
+    @Schema(name = "date", required = false, example = "2021-01-01 10:00:00")
     private String date;
 
-    @Schema(name = "priority", required = true, example = "1")
+    @Schema(name = "priority", required = false, example = "1")
     private int priority;
 
-    @Schema(name = "description", required = true, example = "This is a task")
+    @Schema(name = "description", required = false, example = "This is a task")
     private String description;
 
     public Task(int id, String name, String date, int priority, String description) {
@@ -52,7 +52,7 @@ public class Task {
         return priority;
     }
     public String getDescription() {
-        return this.description;
+        return description;
     }
     public void setId(int id) {
         this.id = id;

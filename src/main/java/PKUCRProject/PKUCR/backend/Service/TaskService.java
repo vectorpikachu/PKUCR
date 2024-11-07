@@ -14,24 +14,24 @@ public class TaskService {
     @Autowired
     private TaskMapper taskMapper;
 
-    public String insert(int id, String name, String date, int priority, String description) {
-        taskMapper.insert(id, name, date, priority, description);
-        return "insert success";
+    public String insert(Task task) {
+        taskMapper.insert(task);
+        return "insert success with id = " + task.getId();
     }
 
-    public String selectById(int id) {
-        return taskMapper.selectById(id).toString();
+    public Task selectById(int id) {
+        return taskMapper.selectById(id);
         // return "selectById" + id;
     }
 
-    public String update(int id, String name, String date, int priority, String description) {
-        taskMapper.update(new Task(id, name, date, priority, description));
+    public String update(Task task) {
+        taskMapper.update(task);
         return "update success";
     }
 
     public String delete(int id) {
         taskMapper.delete(id);
-        return "delete success";
+        return "delete task success by id = " + id;
     }
 
 }

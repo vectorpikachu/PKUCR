@@ -1,6 +1,7 @@
 package PKUCRProject.PKUCR.backend.Controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -23,29 +24,29 @@ public class TaskController {
     @Autowired
     private TaskService taskService;
 
-    @Operation(summary = "Insert a task")
+    @Operation(summary = "Insert a task, return a task id")
     @PostMapping("/insert")
     public String insert(@RequestBody Task task) {
-        return taskService.insert(
-            task.getId(), task.getName(), task.getDate(), 
-            task.getPriority(), task.getDescription()
-        );
+        return taskService.insert(task);
     }
 
     /* 使用的是PathVariable */
     @Operation(summary = "Select a task by id")
     @GetMapping("/selectById/{id}")
-    public String selectById(@PathVariable int id) {
-        return taskService.selectById(id);
+    public ResponseEntity<Task> selectById(@PathVariable int id) {
+        Task task = taskService.selectById(id);
+        if (task == null) {
+            return ResponseEntity.notFound().build();
+        }
+        else {
+            return ResponseEntity.ok(task);
+        }
     }
 
     @Operation(summary = "Update a task")
     @PutMapping("/update")
     public String update(@RequestBody Task task) {
-        return taskService.update(
-            task.getId(), task.getName(), task.getDate(), 
-            task.getPriority(), task.getDescription()
-        );
+        return taskService.update(task);
     }
 
     @Operation(summary = "Delete a task by id")
