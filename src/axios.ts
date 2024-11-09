@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 const instance = axios.create({
-  baseURL: 'https://localhost:3000/api', // 服务端基地址, 用https协议
+  baseURL: 'http://localhost:3000/api', // 服务端基地址, 用https协议
 });
 
 instance.interceptors.request.use(config => {
