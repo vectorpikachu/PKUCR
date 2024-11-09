@@ -7,8 +7,9 @@
                 @select="handleSelect" style="width: 30vw;"/>
         </div>
         <div class="button-group">
-            <el-button type="primary" @click="goToLogin">登录</el-button>
-            <el-button type="success" @click="goToRegister">注册</el-button>
+            <el-button v-if="!authStore.isAuthenticated" type="primary" @click="goToLogin">登录</el-button>
+            <el-button v-if="!authStore.isAuthenticated" type="success" @click="goToRegister">注册</el-button>
+            <el-button v-if="authStore.isAuthenticated" type="danger" @click="goToLogout">登出</el-button>
         </div>
     </div>
 </template>
@@ -16,10 +17,12 @@
 <script lang="ts" setup>
 import { onMounted, ref } from 'vue'
 import { useRouter } from 'vue-router'
+import { useAuthStore } from '@/store/auth'
 //import {logo} from '../assets/PKUCR-logo2.svg'
 
 //const logoUrl = logo
 const router = useRouter()
+const authStore = useAuthStore()
 
 const state = ref('')
 
@@ -76,6 +79,12 @@ const goToLogin = () => {
 const goToRegister = () => {
     router.push('/register') // 导航到注册页面
 }
+
+const goToLogout = () => {
+    authStore.logout()
+    router.push('/taskTable')
+}
+
 </script>
 
 <style scoped>
