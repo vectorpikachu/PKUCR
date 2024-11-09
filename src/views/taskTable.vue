@@ -3,7 +3,19 @@
     <el-col>
       <el-scrollbar>
         <el-table :data="tableData" height="600">
-          <el-table-column label="Date" width="180">
+          <el-table-column>
+            <template #header>
+              <el-button type="info" text @click="handleSort.date">
+                Date
+                <el-icon v-if="config.sortStatus.date.value == SORT_STATUS.NONE">
+                  <Sort />
+                </el-icon>
+                <el-icon v-else-if="config.sortStatus.date.value == SORT_STATUS.SEQ">
+                  <SortDown />
+                </el-icon>
+                <el-icon v-else> <SortUp /> </el-icon>
+              </el-button>
+            </template>
             <template #default="scope">
               <div style="display: flex; align-items: center">
                 <el-icon><timer /></el-icon>
@@ -11,24 +23,58 @@
               </div>
             </template>
           </el-table-column>
-          <el-table-column label="Task" width="180">
+          <el-table-column>
+            <template #header>
+              <el-button type="info" text @click="handleSort.name">
+                Task
+                <el-icon v-if="config.sortStatus.name.value == SORT_STATUS.NONE">
+                  <Sort />
+                </el-icon>
+                <el-icon v-else-if="config.sortStatus.name.value == SORT_STATUS.SEQ">
+                  <SortDown />
+                </el-icon>
+                <el-icon v-else> <SortUp /> </el-icon>
+              </el-button>
+            </template>
             <template #default="scope">
               <el-popover effect="light" trigger="hover" placement="top" width="auto">
                 <template #default>
-                  <div>task: {{ scope.row.task }}</div>
+                  <div>task: {{ scope.row.name }}</div>
                   <div>memo: {{ scope.row.memo }}</div>
                 </template>
                 <template #reference>
-                  <el-tag>{{ scope.row.task }}</el-tag>
+                  <el-tag>{{ scope.row.name }}</el-tag>
                 </template>
               </el-popover>
             </template>
           </el-table-column>
-          <el-table-column prop="time" label="Time" width="140" />
-          <el-table-column prop="memo" label="Memo" />
           <el-table-column>
             <template #header>
-              <el-button type="primary" :loading="taskFormVisible" @click="taskFormVisible = true">
+              <el-button type="info" text @click="handleSort.time">
+                Time
+                <el-icon v-if="config.sortStatus.time.value == SORT_STATUS.NONE">
+                  <Sort />
+                </el-icon>
+                <el-icon v-else-if="config.sortStatus.time.value == SORT_STATUS.SEQ">
+                  <SortDown />
+                </el-icon>
+                <el-icon v-else> <SortUp /> </el-icon>
+              </el-button>
+            </template>
+            <template #default="scope">
+              <el-text>
+                {{ scope.row.time }}
+              </el-text>
+            </template>
+          </el-table-column>
+          <el-table-column label="Memo" prop="memo" />
+          <el-table-column>
+            <template #header>
+              <el-button
+                type="primary"
+                :loading="config.taskFormVisible.value"
+                @click="config.taskFormVisible.value = true"
+              >
                 <template #loading>
                   <div class="custom-loading">
                     <svg class="circular" viewBox="-10, -10, 50, 50">
@@ -64,15 +110,15 @@
     </el-col>
   </el-row>
 
-  <el-dialog v-model="taskFormVisible" title="Add New Task" width="500">
-    <el-form :model="form" label-width="auto" style="max-width: 600px">
+  <el-dialog v-model="config.taskFormVisible.value" title="Add New Task" width="500">
+    <el-form :model="config.taskForm" label-width="auto" style="max-width: 600px">
       <el-form-item label="Task name">
-        <el-input v-model="form.task" />
+        <el-input v-model="config.taskForm.name" />
       </el-form-item>
       <el-form-item label="Task date">
         <el-col :span="11">
           <el-date-picker
-            v-model="form.date"
+            v-model="config.taskForm.date"
             type="date"
             placeholder="Pick a date"
             style="width: 100%"
@@ -84,7 +130,7 @@
         </el-col>
         <el-col :span="11">
           <el-time-picker
-            v-model="form.time"
+            v-model="config.taskForm.time"
             placeholder="Pick a time"
             style="width: 100%"
             value-format="HH:mm:ss"
@@ -92,14 +138,19 @@
         </el-col>
       </el-form-item>
       <el-form-item label="Task Priority">
-        <el-slider v-model="form.priority" :step="10" :format-tooltip="formatTooltip" show-stops />
+        <el-slider
+          v-model="config.taskForm.priority"
+          :step="10"
+          :format-tooltip="formatTooltip"
+          show-stops
+        />
       </el-form-item>
       <el-form-item label="Task memo">
-        <el-input v-model="form.memo" type="textarea" />
+        <el-input v-model="config.taskForm.memo" type="textarea" />
       </el-form-item>
       <el-form-item>
-        <el-button @click="taskFormVisible = false">Cancel</el-button>
-        <el-button type="primary" @click="onSubmit"> Confirm </el-button>
+        <el-button @click="taskFormCancel">Cancel</el-button>
+        <el-button type="primary" @click="taskFormSubmit"> Confirm </el-button>
       </el-form-item>
     </el-form>
   </el-dialog>
@@ -107,78 +158,262 @@
 
 <script lang="ts" setup>
 import { ref, reactive } from 'vue'
-import { Timer } from '@element-plus/icons-vue'
+import { Sort, Loading, Timer, SortDown, SortUp } from '@element-plus/icons-vue'
 
-let taskFormVisible = ref(false)
-let isCreate = ref(false)
-let recentTask = ref(0)
+const COMP_ID = {
+  PRIORITY: (lhs, rhs) => {
+    return 0
+  },
+  DATE: (lhs, rhs) => {
+    return 1
+  },
+  TIME: (lhs, rhs) => {
+    return 2
+  },
+  NAME: (lhs, rhs) => {
+    return 3
+  },
+  NEG: (ID) => {
+    return (lhs, rhs) => {
+      return -ID(lhs, rhs)
+    }
+  }
+}
+
+const COMP_TASK = {
+  PRIORITY: (lhs, rhs) => {
+    return rhs.priority - lhs.priority
+  },
+  DATE: (lhs, rhs) => {
+    if (lhs.date > rhs.date) return 1
+    else if (lhs.date < rhs.date) return -1
+    else return 0
+  },
+  TIME: (lhs, rhs) => {
+    if (lhs.time > rhs.time) return 1
+    else if (lhs.time < rhs.time) return -1
+    else return 0
+  },
+  NAME: (lhs, rhs) => {
+    if (lhs.name > rhs.name) return 1
+    else if (lhs.name < rhs.name) return -1
+    else return 0
+  },
+  NONE: (lhs, rhs) => {
+    return 0
+  }
+}
+
+const SORT_STATUS = {
+  NONE: 0,
+  SEQ: 1,
+  REV: 2
+}
+
+let config = {
+  taskFormVisible: ref(false),
+  isEdit: ref(false),
+  recentTask: ref(0),
+  taskForm: reactive({
+    priority: 0,
+    name: '',
+    date: '',
+    time: '',
+    memo: ''
+  }),
+  compTask: ref([[COMP_ID.PRIORITY, COMP_TASK.PRIORITY]]),
+  sortStatus: {
+    name: ref(SORT_STATUS.NONE),
+    date: ref(SORT_STATUS.NONE),
+    time: ref(SORT_STATUS.NONE),
+    memo: ref(SORT_STATUS.NONE)
+  }
+}
 
 const formatTooltip = (val: number) => {
   return val / 10
 }
 
-function new_task(priority, date, task, time, memo) {
+function new_task(priority, date, name, time, memo) {
   return {
     priority: priority,
     date: date,
-    task: task,
+    name: name,
     time: time,
     memo: memo
   }
 }
 
-function comp_task(lhs, rhs) {
-  if (rhs.priority != lhs.priority) {
-    return rhs.priority - lhs.priority
-  } else if (rhs.date != lhs.date) {
-    if (lhs.date > rhs.date) return 1
-    else if (lhs.date == rhs.date) return 0
-    else return -1
-  } else {
-    if (lhs.time > rhs.time) return 1
-    else if (lhs.time == rhs.time) return 0
-    else return -1
+function task_from(form) {
+  return {
+    priority: form.priority,
+    date: form.date,
+    name: form.name,
+    time: form.time,
+    memo: form.memo
   }
+}
+
+function comp_task(lhs, rhs) {
+  for (const comp of config.compTask.value) {
+    let res = comp[1](lhs, rhs)
+    if (res != 0)
+      if (comp[0](lhs, rhs) >= 0) return res
+      else return -res
+  }
+  return 0
 }
 
 interface Task {
   priority: number
-  task: string
+  name: string
   date: string
   time: string
   memo: string
 }
 
-let form = reactive({
-  priority: 0,
-  task: '',
-  date: '',
-  time: '',
-  memo: ''
-})
+const handleSort = {
+  name: () => {
+    config.sortStatus.name.value = (config.sortStatus.name.value + 1) % 3
+    let val = config.sortStatus.name.value
+    let index = -1
+    switch (val) {
+      case SORT_STATUS.NONE:
+        for (let i = 0; ; ++i) {
+          if (config.compTask.value[i][0](0, 0) == -COMP_ID.NAME(0, 0)) {
+            index = i
+            break
+          }
+        }
+        if (index != -1) {
+          config.compTask.value.splice(index, 1)
+        }
+        break
+      case SORT_STATUS.SEQ:
+        let len = config.compTask.value.length
+        config.compTask.value.splice(len - 1, 0, [COMP_ID.NAME, COMP_TASK.NAME])
+        break
+      case SORT_STATUS.REV:
+        for (let i = 0; ; ++i) {
+          if (config.compTask.value[i][0](0, 0) == COMP_ID.NAME(0, 0)) {
+            index = i
+            break
+          }
+        }
+        if (index != -1) {
+          config.compTask.value.splice(index, 1, [COMP_ID.NEG(COMP_ID.NAME), COMP_TASK.NAME])
+        }
+        break
+    }
+    tableData.value.sort(comp_task)
+  },
+  date: () => {
+    config.sortStatus.date.value = (config.sortStatus.date.value + 1) % 3
+    let val = config.sortStatus.date.value
+    let index = -1
+    switch (val) {
+      case SORT_STATUS.NONE:
+        for (let i = 0; ; ++i) {
+          if (config.compTask.value[i][0](0, 0) == -COMP_ID.DATE(0, 0)) {
+            index = i
+            break
+          }
+        }
+        if (index != -1) {
+          config.compTask.value.splice(index, 1)
+        }
+        break
+      case SORT_STATUS.SEQ:
+        let len = config.compTask.value.length
+        config.compTask.value.splice(len - 1, 0, [COMP_ID.DATE, COMP_TASK.DATE])
+        break
+      case SORT_STATUS.REV:
+        for (let i = 0; ; ++i) {
+          if (config.compTask.value[i][0](0, 0) == COMP_ID.DATE(0, 0)) {
+            index = i
+            break
+          }
+        }
+        if (index != -1) {
+          config.compTask.value.splice(index, 1, [COMP_ID.NEG(COMP_ID.DATE), COMP_TASK.DATE])
+        }
+        break
+    }
+    tableData.value.sort(comp_task)
+  },
+  time: () => {
+    config.sortStatus.time.value = (config.sortStatus.time.value + 1) % 3
+    let val = config.sortStatus.time.value
+    let index = -1
+    switch (val) {
+      case SORT_STATUS.NONE:
+        for (let i = 0; ; ++i) {
+          if (config.compTask.value[i][0](0, 0) == -COMP_ID.TIME(0, 0)) {
+            index = i
+            break
+          }
+        }
+        if (index != -1) {
+          config.compTask.value.splice(index, 1)
+        }
+        break
+      case SORT_STATUS.SEQ:
+        let len = config.compTask.value.length
+        config.compTask.value.splice(len - 1, 0, [COMP_ID.TIME, COMP_TASK.TIME])
+        break
+      case SORT_STATUS.REV:
+        for (let i = 0; ; ++i) {
+          if (config.compTask.value[i][0](0, 0) == COMP_ID.TIME(0, 0)) {
+            index = i
+            break
+          }
+        }
+        if (index != -1) {
+          config.compTask.value.splice(index, 1, [COMP_ID.NEG(COMP_ID.TIME), COMP_TASK.TIME])
+        }
+        break
+    }
+    tableData.value.sort(comp_task)
+  }
+}
 
-function onSubmit() {
-  taskFormVisible.value = false
-  if (isCreate.value) {
-    tableData.value[recentTask.value] = form
+function taskFormSubmit() {
+  config.taskFormVisible.value = false
+  if (config.isEdit.value) {
+    config.isEdit.value = false
+    tableData.value[config.recentTask.value] = config.taskForm
   } else {
-    tableData.value.push(new_task(form.priority, form.date, form.task, form.time, form.memo))
+    tableData.value.push(task_from(config.taskForm))
   }
   tableData.value.sort(comp_task)
-  form = reactive({
+  config.taskForm = reactive({
     priority: 0,
-    task: '',
+    name: '',
     date: '',
     time: '',
     memo: ''
   })
 }
 
+function taskFormCancel() {
+  config.taskFormVisible.value = false
+  if (config.isEdit.value) {
+    config.isEdit.value = false
+    config.taskForm = reactive({
+      priority: 0,
+      name: '',
+      date: '',
+      time: '',
+      memo: ''
+    })
+  }
+}
+
 function handleEdit(index, row) {
-  isCreate.value = true
-  recentTask.value = index
-  form = tableData.value.at(index)
-  taskFormVisible.value = true
+  config.isEdit.value = true
+  config.recentTask.value = index
+  config.taskForm = tableData.value.at(index)
+  config.taskFormVisible.value = true
 }
 
 function handleDelete(index, row) {
