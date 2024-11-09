@@ -18,12 +18,15 @@
 
 <script lang="ts" setup>
 import { ref } from 'vue'
-import { ElForm } from 'element-plus'
-import axios from 'axios'
+import { ElForm, ElMessage } from 'element-plus'
+// import axios from 'axios'
 
 import { useRouter } from 'vue-router';
+import { useAuthStore } from '../store/auth';
 
 const router = useRouter(); // 获取路由实例
+const authStore = useAuthStore();
+const formRef = ref<InstanceType<typeof ElForm>>(null)
 
 const form = ref({
   email: '',
@@ -52,26 +55,23 @@ const passwordRules = [
 ]
 
 const handleSubmit = () => {
-  const formRef = ref<InstanceType<typeof ElForm>>(null)
-
   formRef.value?.validate(async (valid) => {
     if (valid) {
       console.log('Form submitted:', form.value)
       try {
         // POST, 提交到后端
         // TODO: 后续用户鉴权和身份校验
-        const response = await axios.post('/api/login', {
-          email: form.value.email,
-          password: form.value.password
-        });
+        // const response = await axios.post('/api/login', {
+        //   email: form.value.email,
+        //   password: form.value.password
+        // });
 
-        console.log('Login successful:', response.data);
+        await authStore.login(form.value.email, form.value.password);
+        // console.log('Login successful:', response.data);
         // 跳转到首页
-        router.push('/home');
-      } catch (error) {
-        // 请求错误
-        console.error('Login failed:', error.response ? error.response.data : error.message);
-        alert('Login failed, please check your email or password.');
+        router.push('/taskTable');
+      } catch {
+        ElMessage.error('Login failed, please check your email or password.');
       }
     } else {
       console.error('Error in form submission')
