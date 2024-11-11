@@ -25,14 +25,14 @@ public class TaskController {
     private TaskService taskService;
 
     @Operation(summary = "Insert a task, return a task id")
-    @PostMapping("/taskInsert")
+    @PostMapping("/task/insert")
     public String insert(@RequestBody Task task) {
         return taskService.insert(task);
     }
 
     /* 使用的是PathVariable */
     @Operation(summary = "Select a task by id")
-    @GetMapping("/taskSelectById/{id}")
+    @GetMapping("/task/selectById/{id}")
     public ResponseEntity<Task> selectById(@PathVariable int id) {
         Task task = taskService.selectById(id);
         if (task == null) {
@@ -44,13 +44,13 @@ public class TaskController {
     }
 
     @Operation(summary = "Update a task")
-    @PutMapping("/taskUpdate")
+    @PutMapping("/task/update")
     public String update(@RequestBody Task task) {
         return taskService.update(task);
     }
 
     @Operation(summary = "Delete a task by id")
-    @DeleteMapping("/taskDelete/{id}")
+    @DeleteMapping("/task/delete/{id}")
     public String delete(@PathVariable int id) {
         return taskService.delete(id);
     }

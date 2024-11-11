@@ -3,6 +3,7 @@ package PKUCRProject.PKUCR.backend.Service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+
 import PKUCRProject.PKUCR.backend.Dao.UserMapper;
 import PKUCRProject.PKUCR.backend.Entity.User;
 
@@ -12,9 +13,17 @@ public class UserService {
     @Autowired
     private UserMapper userMapper;
 
+    public User login(User user) {
+        User userInDB = userMapper.selectByEmail(user.getEmail());
+        if (userInDB == null || !userInDB.getPassword().equals(user.getPassword())) {
+            throw new RuntimeException("Login failed");
+        }
+        return userInDB;
+    }
+
     public String insert(User user) {
         userMapper.insert(user);
-        return "insert success with id = " + user.getId();
+        return "register success";
     }
 
     public User selectById(int id) {
