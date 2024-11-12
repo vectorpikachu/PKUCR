@@ -16,7 +16,7 @@ public interface UserMapper {
     @Options(useGeneratedKeys = true, keyProperty = "id", keyColumn = "id")
     int insert(User user);
 
-    @Select("select * from users where email = #{emial}")
+    @Select("select * from users where email = #{email}")
     User selectByEmail(String email);
 
     @Select("select * from users where email = #{email} and password = #{password}")
@@ -25,8 +25,11 @@ public interface UserMapper {
     @Select("select * from users where id = #{id}")
     User selectById(int id);
 
-    @Update("update users set emial = #{email}, password = #{password}, permission = #{permission} where id = #{id}")
+    @Update("update users set email = #{email}, password = #{password}, permission = #{permission} where id = #{id}")
     void update(User user);
+
+    @Update("update users set token = #{token} where id = #{id}")
+    void updateToken(User user);
 
     @Delete("delete from users where id = #{id}")
     void delete(int id);

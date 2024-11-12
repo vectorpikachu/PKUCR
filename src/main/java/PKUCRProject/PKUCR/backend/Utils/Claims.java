@@ -2,9 +2,6 @@ package PKUCRProject.PKUCR.backend.Utils;
 
 
 public class Claims {
-    // "主题"
-    private String sub;
-
     // "签发时间"
     private String iat;
 
@@ -21,7 +18,6 @@ public class Claims {
     //private List<String> authorities;
     
     public Claims() {
-        this.sub = "text";
         this.iat = "2024-11-23 11:11:11";
         this.exp =  "2024-11-23 11:11:11";
         this.jti = "4";
@@ -29,42 +25,35 @@ public class Claims {
     }
 
     public Claims(String sub, String iat, String exp, String jti, String email) {
-        this.sub = sub;
         this.iat = iat;
         this.exp = exp;
         this.jti = jti;
         this.email = email;
     }    
 
-    String getSub() {
-        return sub;
-    }
-    String getIat() {
+    public String getIat() {
         return iat;
     }
-    String getExp() {
+    public String getExp() {
         return exp;
     }
-    String getJti() {
+    public String getJti() {
         return jti;
     }
-    String getEmail() {
+    public String getEmail() {
         return email;
     }
 
-    void setSub(String sub) {
-        this.sub = sub;
-    }
-    void setIat(String iat) {
+    public void setIat(String iat) {
         this.iat = iat;
     }
-    void setExp(String exp) {
+    public void setExp(String exp) {
         this.exp = exp;
     }
-    void setJti(String jti) {
+    public void setJti(String jti) {
         this.jti = jti;
     }
-    void setEmail(String email) {
+    public void setEmail(String email) {
         this.email = email;
     }
 

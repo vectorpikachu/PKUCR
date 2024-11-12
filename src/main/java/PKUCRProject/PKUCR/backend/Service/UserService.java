@@ -21,6 +21,10 @@ public class UserService {
         return userInDB;
     }
 
+    public void updateToken(User user) {
+        userMapper.updateToken(user);
+    }
+
     public String insert(User user) {
         userMapper.insert(user);
         return "register success";

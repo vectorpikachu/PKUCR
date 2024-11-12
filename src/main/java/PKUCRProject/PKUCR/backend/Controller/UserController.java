@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -29,7 +29,8 @@ public class UserController {
 
     @Operation(summary = "A user loging in, return the user's token")
     @PostMapping("/auth/login")
-    public String login(@RequestBody User user) {
+    @ResponseBody
+    public User login(@RequestBody User user) {
         // 向数据库查询用户是否存在
         // 不存在或者密码错误则返回错误信息
         // 否则返回token
@@ -38,7 +39,9 @@ public class UserController {
         Claims claims = new Claims();
         JwtUtils jwtUtils = new JwtUtils(claims);
         String token = jwtUtils.getToken();
-        return token;
+        user.setToken(token);
+        userService.updateToken(user); // 在数据库里更新token
+        return user;
     }
 
     @Operation(summary = "A user register, return the user's token")
