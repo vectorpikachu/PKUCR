@@ -156,5 +156,4 @@ APP登录的时候发送加密的用户名和密码到服务器，服务器验�
 我们使用`nimbus-jose-jwt`来实现token.
 
 TODO: 为了安全，我们应该使用`https`来传输token。
-TODO: 解决用户所有的查询都要加上一个token
-TODO: 解决用户都要建表的问题
+TODO: 解决用户所有的查询都要加上一个token的问题。

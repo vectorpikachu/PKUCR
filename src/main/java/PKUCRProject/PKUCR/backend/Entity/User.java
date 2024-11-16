@@ -14,7 +14,7 @@ public class User {
     private String password;
 
     @Schema(name = "permission", required = false, example = "1")
-    private int permission;
+    private Integer permission;
 
     @Schema(name = "token", required = false, example = "eyJhbGciOiJIUzI1NiJ9.SGVsbG8sIHdvcmxkIQ.onO9Ihudz3WkiauDO2Uhyuz0Y18UASXlSc1eS0NkWyA")
     private String token;
@@ -46,7 +46,7 @@ public class User {
     public String getEmail() {
         return email;
     }
-    public int getPermission() {
+    public Integer getPermission() {
         return permission;
     }
     public String getToken() {
@@ -62,7 +62,7 @@ public class User {
     public void setEmail(String email) {
         this.email = email;
     }
-    public void setPermission(int permission) {
+    public void setPermission(Integer permission) {
         this.permission = permission;
     }
     public void setToken(String token) {

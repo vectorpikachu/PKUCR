@@ -1,5 +1,8 @@
 package PKUCRProject.PKUCR.backend.Utils;
 
+import java.util.Date;
+import java.util.UUID;
+
 
 public class Claims {
     // "签发时间"
@@ -17,20 +20,19 @@ public class Claims {
     // "用户拥有的权限"
     //private List<String> authorities;
     
-    public Claims() {
-        this.iat = "2024-11-23 11:11:11";
-        this.exp =  "2024-11-23 11:11:11";
-        this.jti = "4";
-        this.email = "pikachu@126.com";
-    }
+    public Claims(String email) {
+        long nowMillis = System.currentTimeMillis();
+        Date now = new Date(nowMillis);
+        this.iat = now.toString();
+        
+        long expMillis = nowMillis + 3600000;
+        Date expDate = new Date(expMillis);
+        this.exp = expDate.toString();
 
-    public Claims(String sub, String iat, String exp, String jti, String email) {
-        this.iat = iat;
-        this.exp = exp;
-        this.jti = jti;
+        this.jti = UUID.randomUUID().toString();
         this.email = email;
-    }    
-
+    }
+   
     public String getIat() {
         return iat;
     }

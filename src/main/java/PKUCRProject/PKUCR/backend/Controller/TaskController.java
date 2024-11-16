@@ -28,7 +28,8 @@ public class TaskController {
     @Operation(summary = "Insert a task, return a task id")
     @PostMapping("/task/insert")
     @ResponseBody
-    public Task insert(@RequestBody Task task) {
+    public Task insert(@RequestBody Task task, @RequestBody String userToken) {
+        /* 用户发出传输请求的时候应该带上token */
         return taskService.insert(task);
     }
 

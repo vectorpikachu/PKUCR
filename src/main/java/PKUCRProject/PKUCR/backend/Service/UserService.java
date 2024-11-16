@@ -3,6 +3,7 @@ package PKUCRProject.PKUCR.backend.Service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import PKUCRProject.PKUCR.backend.Dao.CourseMapper;
 import PKUCRProject.PKUCR.backend.Dao.TaskMapper;
 import PKUCRProject.PKUCR.backend.Dao.UserMapper;
 import PKUCRProject.PKUCR.backend.Entity.User;
@@ -15,6 +16,9 @@ public class UserService {
 
     @Autowired
     private TaskMapper taskMapper;
+
+    @Autowired
+    private CourseMapper courseMapper;
 
     public User login(User user) {
         User userInDB = userMapper.selectByEmail(user.getEmail());
@@ -32,7 +36,15 @@ public class UserService {
         taskMapper.createTable(tableName);
     }
 
+    public void createCourseTable(String tableName) {
+        courseMapper.createTable(tableName);
+    }
+
     public String insert(User user) {
+        /* 注册之前不要同名 */
+        if (userMapper.selectByEmail(user.getEmail()) != null) {
+            throw new RuntimeException("User already exists");
+        }
         userMapper.insert(user);
         return "register success";
     }

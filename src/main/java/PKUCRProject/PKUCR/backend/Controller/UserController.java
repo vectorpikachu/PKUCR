@@ -1,12 +1,12 @@
 package PKUCRProject.PKUCR.backend.Controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RestController;
 
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -23,44 +23,78 @@ import PKUCRProject.PKUCR.backend.Utils.JwtUtils;
 @RestController
 @CrossOrigin(origins = "*", maxAge = 3600)
 public class UserController {
-    
+
     @Autowired
     private UserService userService;
 
     @Operation(summary = "A user loging in, return the user's token")
     @PostMapping("/auth/login")
-    @ResponseBody
-    public User login(@RequestBody User user) {
+    public ResponseEntity<?> login(@RequestBody User user) {
         // 向数据库查询用户是否存在
         // 不存在或者密码错误则返回错误信息
         // 否则返回token
-        user.setPermission(0); // 默认非管理员权限
-        user = userService.login(user);
-        Claims claims = new Claims();
+        if (user.getEmail() == null || user.getPassword() == null) {
+            return ResponseEntity.status(500).body("User email or password is empty");
+        }
+        if (user.getPermission() == null) {
+            user.setPermission(0); // 默认非管理员权限
+        }
+        try {
+            user = userService.login(user);
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body("Login failed");
+        }
+
+        Claims claims = new Claims(user.getEmail());
         JwtUtils jwtUtils = new JwtUtils(claims);
         String token = jwtUtils.getToken();
+
         user.setToken(token);
         userService.updateToken(user); // 在数据库里更新token
-        return user;
+
+        return ResponseEntity.ok(user);
     }
 
     @Operation(summary = "A user register, return the user's token")
     @PostMapping("/auth/register")
-    @ResponseBody
-    public User register(@RequestBody User user) {
+    public ResponseEntity<?> register(@RequestBody User user) {
         user.setPermission(0); // 默认非管理员权限
-        userService.insert(user);
+
+        try {
+            userService.insert(user);
+        } catch (Exception e) {
+            /* 返回一个错误, 报告已经注册过 */
+            return ResponseEntity.status(500).body("User already exists");
+        }
 
         /* 为这个用户新建tasks数据表 */
-        // userService.createTaskTable("tasks" + user.getId());
+        try {
+            userService.createTaskTable("tasks" + user.getId());
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body("Create task table failed");
+        }
 
-        user = userService.login(user);
-        Claims claims = new Claims();
+        /* 为这个用户建立courses数据表 */
+        try {
+            userService.createCourseTable("courses" + user.getId());
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body("Create course table failed");
+        }
+
+        try {
+            user = userService.login(user);
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body("Login failed");
+        }
+
+        Claims claims = new Claims(user.getEmail());
         JwtUtils jwtUtils = new JwtUtils(claims);
         String token = jwtUtils.getToken();
+
         user.setToken(token);
         userService.updateToken(user); // 在数据库里更新token
-        return user;
+
+        return ResponseEntity.ok(user);
     }
 
     @Operation(summary = "Select a user by id")

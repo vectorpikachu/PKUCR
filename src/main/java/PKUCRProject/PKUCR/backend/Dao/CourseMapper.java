@@ -15,7 +15,12 @@ import PKUCRProject.PKUCR.backend.Entity.Course;
 @Mapper
 public interface CourseMapper {
 
-    //TODO: 初始建表的方法
+    /* 当courses不存在的时候创建tasks */    
+    @Update({"<script>",
+        "create table if not exists ${tableName} (id int primary key auto_increment, userID int unsigned not null, name varchar(255), date date, priority int, description text, foreign key (userID) references users(id))",
+        "</script>"
+    })
+    void createTable(@Param("tableName") String tableName);
 
     @Insert("insert into courses (courseID, courseName, teacher, time, location, credit) values (#{courseID}, #{courseName}, #{teacher}, #{time}, #{location}, #{credit})")
     @Options(useGeneratedKeys = true, keyProperty = "id", keyColumn = "id")
