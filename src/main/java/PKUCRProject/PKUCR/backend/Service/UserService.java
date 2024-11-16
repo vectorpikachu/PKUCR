@@ -3,7 +3,7 @@ package PKUCRProject.PKUCR.backend.Service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-
+import PKUCRProject.PKUCR.backend.Dao.TaskMapper;
 import PKUCRProject.PKUCR.backend.Dao.UserMapper;
 import PKUCRProject.PKUCR.backend.Entity.User;
 
@@ -12,6 +12,9 @@ public class UserService {
  
     @Autowired
     private UserMapper userMapper;
+
+    @Autowired
+    private TaskMapper taskMapper;
 
     public User login(User user) {
         User userInDB = userMapper.selectByEmail(user.getEmail());
@@ -23,6 +26,10 @@ public class UserService {
 
     public void updateToken(User user) {
         userMapper.updateToken(user);
+    }
+
+    public void createTaskTable(String tableName) {
+        taskMapper.createTable(tableName);
     }
 
     public String insert(User user) {

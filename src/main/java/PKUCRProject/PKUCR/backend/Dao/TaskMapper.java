@@ -15,6 +15,10 @@ import PKUCRProject.PKUCR.backend.Entity.Task;
 @Mapper
 public interface TaskMapper {
 
+    /* 当tasks不存在的时候创建tasks */    
+    @Update("create table if not exists #{tableName} (id int primary key auto_increment, name varchar(255), date date, priority int, description text)")
+    void createTable(@Param("tableName") String tableName);
+
     @Insert("insert into tasks (name, date, priority, description) values (#{name}, #{date}, #{priority}, #{description})")
     @Options(useGeneratedKeys = true, keyProperty = "id", keyColumn = "id")
     int insert(Task task);

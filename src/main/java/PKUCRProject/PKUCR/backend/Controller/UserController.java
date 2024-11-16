@@ -50,6 +50,10 @@ public class UserController {
     public User register(@RequestBody User user) {
         user.setPermission(0); // 默认非管理员权限
         userService.insert(user);
+
+        /* 为这个用户新建tasks数据表 */
+        // userService.createTaskTable("tasks" + user.getId());
+
         user = userService.login(user);
         Claims claims = new Claims();
         JwtUtils jwtUtils = new JwtUtils(claims);
