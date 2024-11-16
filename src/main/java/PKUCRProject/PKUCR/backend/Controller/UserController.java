@@ -46,9 +46,17 @@ public class UserController {
 
     @Operation(summary = "A user register, return the user's token")
     @PostMapping("/auth/register")
-    public String register(@RequestBody User user) {
+    @ResponseBody
+    public User register(@RequestBody User user) {
         user.setPermission(0); // 默认非管理员权限
-        return userService.insert(user);
+        userService.insert(user);
+        user = userService.login(user);
+        Claims claims = new Claims();
+        JwtUtils jwtUtils = new JwtUtils(claims);
+        String token = jwtUtils.getToken();
+        user.setToken(token);
+        userService.updateToken(user); // 在数据库里更新token
+        return user;
     }
 
     @Operation(summary = "Select a user by id")

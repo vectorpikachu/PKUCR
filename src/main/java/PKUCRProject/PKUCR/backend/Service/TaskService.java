@@ -14,9 +14,10 @@ public class TaskService {
     @Autowired
     private TaskMapper taskMapper;
 
-    public String insert(Task task) {
+    public Task insert(Task task) {
         taskMapper.insert(task);
-        return "insert success with id = " + task.getId();
+        Task taskInDB = taskMapper.selectById(task.getId());
+        return taskInDB;
     }
 
     public Task selectById(int id) {

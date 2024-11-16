@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -26,7 +27,8 @@ public class TaskController {
 
     @Operation(summary = "Insert a task, return a task id")
     @PostMapping("/task/insert")
-    public String insert(@RequestBody Task task) {
+    @ResponseBody
+    public Task insert(@RequestBody Task task) {
         return taskService.insert(task);
     }
 
