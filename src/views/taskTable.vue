@@ -159,6 +159,46 @@
 <script lang="ts" setup>
 import { ref, reactive } from 'vue'
 import { Sort, Loading, Timer, SortDown, SortUp } from '@element-plus/icons-vue'
+import axios from '../axios'
+
+const AXIOS_ADDRESS = {
+  INSERT: '/task/insert',
+  UPDATE: '/task/update',
+  SELECT: '/task/select',
+  DELETE: '/task/delete'
+}
+
+const send_signal = {
+  put: (t) => {
+    axios
+      .put(AXIOS_ADDRESS.UPDATE, {
+        id: 42,
+        name: t.task,
+        date: t.date + ' ' + t.time,
+        priority: t.priority,
+        description: t.memo
+      })
+      .then((res) => {
+        console.log(res)
+      })
+  },
+  post: async (t) => {
+    return await axios.post(AXIOS_ADDRESS.INSERT, {
+      name: t.task,
+      date: t.date + ' ' + t.time,
+      priority: t.priority,
+      description: t.memo
+    })
+  },
+  get: async (id) => {
+    return await axios.get(id)
+  },
+  delete: (id) => {
+    axios.delete(id).then((res) => {
+      console.log(res)
+    })
+  }
+}
 
 const COMP_ID = {
   PRIORITY: (lhs, rhs) => {
@@ -215,6 +255,7 @@ let config = {
   isEdit: ref(false),
   recentTask: ref(0),
   taskForm: reactive({
+    id: 0,
     priority: 0,
     name: '',
     date: '',
@@ -234,8 +275,9 @@ const formatTooltip = (val: number) => {
   return val / 10
 }
 
-function new_task(priority, date, name, time, memo) {
+function new_task(id, priority, date, name, time, memo) {
   return {
+    id: 0,
     priority: priority,
     date: date,
     name: name,
@@ -246,6 +288,7 @@ function new_task(priority, date, name, time, memo) {
 
 function task_from(form) {
   return {
+    id: form.id,
     priority: form.priority,
     date: form.date,
     name: form.name,
@@ -265,6 +308,7 @@ function comp_task(lhs, rhs) {
 }
 
 interface Task {
+  id: number
   priority: number
   name: string
   date: string
@@ -381,12 +425,20 @@ function taskFormSubmit() {
   config.taskFormVisible.value = false
   if (config.isEdit.value) {
     config.isEdit.value = false
+    let id = tableData.value[config.recentTask.value].id
+    config.taskForm.id = id
+    send_signal.put(config.taskForm)
     tableData.value[config.recentTask.value] = config.taskForm
   } else {
+    let response = send_signal.post(config.taskForm)
+    response.then((res) => {
+      config.taskForm.id = res.data.id
+    })
     tableData.value.push(task_from(config.taskForm))
   }
   tableData.value.sort(comp_task)
   config.taskForm = reactive({
+    id: 0,
     priority: 0,
     name: '',
     date: '',
@@ -400,6 +452,7 @@ function taskFormCancel() {
   if (config.isEdit.value) {
     config.isEdit.value = false
     config.taskForm = reactive({
+      id: 0,
       priority: 0,
       name: '',
       date: '',
@@ -417,10 +470,12 @@ function handleEdit(index, row) {
 }
 
 function handleDelete(index, row) {
-  tableData.value.splice(index, 1)
+  let task = tableData.value.splice(index, 1)[0]
+  send_signal.delete(task.id)
 }
 
 let default_task = new_task(
+  0,
   0,
   '2024-10-10',
   'Software Engineering Class',
