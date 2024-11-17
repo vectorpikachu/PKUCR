@@ -17,12 +17,12 @@ public interface TaskMapper {
 
     /* 当tasks不存在的时候创建tasks */    
     @Update({"<script>",
-        "create table if not exists ${tableName} (id int primary key auto_increment, userID int unsigned not null, name varchar(255), date date, priority int, description text, foreign key (userID) references users(id))",
+        "create table if not exists tasks (id int primary key auto_increment, user_id bigint not null, name varchar(255), date datetime, priority int, description text, foreign key (user_id) references users(id))",
         "</script>"
     })
-    void createTable(@Param("tableName") String tableName);
+    void createTable();
 
-    @Insert("insert into tasks (name, date, priority, description) values (#{name}, #{date}, #{priority}, #{description})")
+    @Insert("insert into tasks (user_id, name, date, priority, description) values (#{user_id}, #{name}, #{date}, #{priority}, #{description})")
     @Options(useGeneratedKeys = true, keyProperty = "id", keyColumn = "id")
     int insert(Task task);
 
@@ -30,6 +30,7 @@ public interface TaskMapper {
     @Results(
         {
             @Result(property = "id", column = "id"),
+            @Result(property = "user_id", column = "user_id"),
             @Result(property = "name", column = "name"),
             @Result(property = "date", column = "date"),
             @Result(property = "priority", column = "priority"),
@@ -39,7 +40,7 @@ public interface TaskMapper {
     @Select("select * from tasks where id = #{id}")
     Task selectById(@Param("id") int id);
 
-    @Update("update tasks set name = #{name}, date = #{date}, priority = #{priority}, description = #{description} where id = #{id}")
+    @Update("update tasks set user_id = #{user_id}, name = #{name}, date = #{date}, priority = #{priority}, description = #{description} where id = #{id}")
     void update(Task task);
 
     @Delete("delete from tasks where id = #{id}")

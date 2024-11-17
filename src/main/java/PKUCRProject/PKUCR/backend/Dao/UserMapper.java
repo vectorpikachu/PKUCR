@@ -28,9 +28,6 @@ public interface UserMapper {
     @Update("update users set email = #{email}, password = #{password}, permission = #{permission} where id = #{id}")
     void update(User user);
 
-    @Update("update users set token = #{token} where id = #{id}")
-    void updateToken(User user);
-
     @Delete("delete from users where id = #{id}")
     void delete(int id);
     

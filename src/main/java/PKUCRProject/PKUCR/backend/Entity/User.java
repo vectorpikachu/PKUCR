@@ -1,9 +1,17 @@
 package PKUCRProject.PKUCR.backend.Entity;
 
+import java.util.ArrayList;
+import java.util.Collection;
+
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
+
 import io.swagger.v3.oas.annotations.media.Schema;
 
 @Schema(name = "User")
-public class User {
+public class User implements UserDetails {
+
     @Schema(name = "id", required = false, example = "1")
     private int id;
 
@@ -20,8 +28,7 @@ public class User {
     private String token;
 
     public User() {
-        this.id = 1;
-        this.email = "pikacu@126.com";
+        this.email = "pikachu@126.com";
         this.password = "22222";
     }
 
@@ -40,15 +47,19 @@ public class User {
     public int getId() {
         return id;
     }
+
     public String getPassword() {
         return password;
     }
+
     public String getEmail() {
         return email;
     }
+
     public Integer getPermission() {
         return permission;
     }
+
     public String getToken() {
         return token;
     }
@@ -56,17 +67,54 @@ public class User {
     public void setId(int id) {
         this.id = id;
     }
+
     public void setPassword(String password) {
         this.password = password;
     }
+
     public void setEmail(String email) {
         this.email = email;
     }
+
     public void setPermission(Integer permission) {
         this.permission = permission;
     }
+
     public void setToken(String token) {
         this.token = token;
     }
 
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        Collection<GrantedAuthority> authorities = new ArrayList<>();
+        if (permission != null) {
+            authorities.add(new SimpleGrantedAuthority("ROLE_" + permission));
+        }
+        return authorities;
+    }
+
+    @Override
+    public String getUsername() {
+        return email;
+    }
+
+    @Override
+    public boolean isAccountNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isAccountNonLocked() {
+        return true;
+    }
+
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return true;
+    }
 }

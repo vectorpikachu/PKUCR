@@ -8,6 +8,9 @@ public class Course {
     @Schema(name = "id", required = false, example = "1")
     private int id;
 
+    @Schema(name = "user_id", required = false, example = "1")
+    private int user_id;
+
     @Schema(name = "courseID", required = false, example = "04834220")
     private String courseID;
 
@@ -17,29 +20,19 @@ public class Course {
     @Schema(name = "teacher", required = false, example = "孙艳春")
     private String teacher;
 
-    @Schema(name = "time", required = false, example = "2024-11-1 8:00:00")
-    private String time;
-
-    @Schema(name = "location", required = false, example = "二教315")
-    private String location;
-
     @Schema(name = "credit", required = false, example = "4")
     private int credit;
     // 这里还要加入课程资源等信息
-    public Course(String courseID, String courseName, String teacher, String time, String location, int credit) {
+    public Course(String courseID, String courseName, String teacher, int credit) {
         this.courseID = courseID;
         this.courseName = courseName;
         this.teacher = teacher;
-        this.time = time;
-        this.location = location;
         this.credit = credit;
     }
     public Course() {
         this.courseID = "04834220";
         this.courseName = "软件工程";
         this.teacher = "孙艳春";
-        this.time = "2024-11-1 8:00:00";
-        this.location = "二教315";
         this.credit = 4;
     }
 
@@ -48,6 +41,12 @@ public class Course {
     }
     public void setId(int id) {
         this.id = id;
+    }
+    public int getUser_id() {
+        return user_id;
+    }
+    public void setUser_id(int user_id) {
+        this.user_id = user_id;
     }
     public String getCourseID() {
         return courseID;
@@ -66,18 +65,6 @@ public class Course {
     }
     public void setTeacher(String teacher) {
         this.teacher = teacher;
-    }
-    public String getTime() {
-        return time;
-    }
-    public void setTime(String time) {
-        this.time = time;
-    }
-    public String getLocation() {
-        return location;
-    }
-    public void setLocation(String location) {
-        this.location = location;
     }
     public int getCredit() {
         return credit;

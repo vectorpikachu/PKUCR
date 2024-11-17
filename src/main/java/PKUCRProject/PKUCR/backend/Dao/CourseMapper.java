@@ -15,14 +15,14 @@ import PKUCRProject.PKUCR.backend.Entity.Course;
 @Mapper
 public interface CourseMapper {
 
-    /* 当courses不存在的时候创建tasks */    
+    /* 当courses不存在的时候创建courses */    
     @Update({"<script>",
-        "create table if not exists ${tableName} (id int primary key auto_increment, userID int unsigned not null, name varchar(255), date date, priority int, description text, foreign key (userID) references users(id))",
+        "create table if not exists courses (id int primary key auto_increment, user_id bigint not null, name varchar(255), date date, priority int, description text, foreign key (user_id) references users(id))",
         "</script>"
     })
-    void createTable(@Param("tableName") String tableName);
+    void createTable();
 
-    @Insert("insert into courses (courseID, courseName, teacher, time, location, credit) values (#{courseID}, #{courseName}, #{teacher}, #{time}, #{location}, #{credit})")
+    @Insert("insert into courses (user_id, courseID, courseName, teacher, credit) values (#{user_id}, #{courseID}, #{courseName}, #{teacher}, #{credit})")
     @Options(useGeneratedKeys = true, keyProperty = "id", keyColumn = "id")
     int insert(Course course);
 
@@ -30,18 +30,17 @@ public interface CourseMapper {
     @Results(
         {
             @Result(property = "id", column = "id"),
+            @Result(property = "user_id", column = "user_id"),
             @Result(property = "courseID", column = "courseID"),
             @Result(property = "courseName", column = "courseName"),
             @Result(property = "teacher", column = "teacher"),
-            @Result(property = "time", column = "time"),
-            @Result(property = "location", column = "location"),
             @Result(property = "credit", column = "credit"),
         }
     )
     @Select("select * from courses where id = #{id}")
     Course selectById(@Param("id") int id);
 
-    @Update("update courses set courseID = #{courseID}, courseName = #{courseName}, teacher = #{teacher}, time = #{time}, location = #{location}, credit = #{credit} where id = #{id}")
+    @Update("update courses set user_id = #{user_id}, courseID = #{courseID}, courseName = #{courseName}, teacher = #{teacher}, credit = #{credit} where id = #{id}")
     void update(Course course);
 
     @Delete("delete from courses where id = #{id}")

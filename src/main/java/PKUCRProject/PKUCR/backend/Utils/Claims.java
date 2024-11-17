@@ -5,6 +5,10 @@ import java.util.UUID;
 
 
 public class Claims {
+
+    // 现在的subject设置为email
+    private String sub;
+
     // "签发时间"
     private String iat;
 
@@ -14,13 +18,12 @@ public class Claims {
     // JWT的ID
     private String jti;
 
-    // "email"
-    private String email;
-
     // "用户拥有的权限"
     //private List<String> authorities;
     
-    public Claims(String email) {
+    public Claims(String sub) {
+        this.sub = sub;
+
         long nowMillis = System.currentTimeMillis();
         Date now = new Date(nowMillis);
         this.iat = now.toString();
@@ -30,9 +33,11 @@ public class Claims {
         this.exp = expDate.toString();
 
         this.jti = UUID.randomUUID().toString();
-        this.email = email;
     }
    
+    public String getSub() {
+        return sub;
+    }
     public String getIat() {
         return iat;
     }
@@ -42,10 +47,10 @@ public class Claims {
     public String getJti() {
         return jti;
     }
-    public String getEmail() {
-        return email;
-    }
 
+    public void setSubject(String sub) {
+        this.sub = sub;
+    }
     public void setIat(String iat) {
         this.iat = iat;
     }
@@ -54,9 +59,6 @@ public class Claims {
     }
     public void setJti(String jti) {
         this.jti = jti;
-    }
-    public void setEmail(String email) {
-        this.email = email;
     }
 
 }
