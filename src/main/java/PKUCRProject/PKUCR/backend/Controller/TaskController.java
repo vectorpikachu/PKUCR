@@ -39,11 +39,15 @@ public class TaskController {
         if (authentication == null || !authentication.isAuthenticated()) {
             return ResponseEntity.badRequest().body("Please login first");
         }
+        if (task.getName() == null) {
+            return ResponseEntity.badRequest().body("Please provide the task's name");
+        }
         UserDetails userDetails = (UserDetails) authentication.getPrincipal();
         String username = userDetails.getUsername();
 
         int userId = customUserDetailsService.getUserID(username);
         task.setUser_id(userId);
+        System.out.println(task);
         task = taskService.insert(task);
         return ResponseEntity.ok(task);
     }
