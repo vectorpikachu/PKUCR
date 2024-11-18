@@ -13,12 +13,16 @@
                 <el-icon v-else-if="config.sortStatus.date.value == SORT_STATUS.SEQ">
                   <SortDown />
                 </el-icon>
-                <el-icon v-else> <SortUp /> </el-icon>
+                <el-icon v-else>
+                  <SortUp />
+                </el-icon>
               </el-button>
             </template>
             <template #default="scope">
               <div style="display: flex; align-items: center">
-                <el-icon><timer /></el-icon>
+                <el-icon>
+                  <timer />
+                </el-icon>
                 <span style="margin-left: 10px">{{ scope.row.date }}</span>
               </div>
             </template>
@@ -33,7 +37,9 @@
                 <el-icon v-else-if="config.sortStatus.name.value == SORT_STATUS.SEQ">
                   <SortDown />
                 </el-icon>
-                <el-icon v-else> <SortUp /> </el-icon>
+                <el-icon v-else>
+                  <SortUp />
+                </el-icon>
               </el-button>
             </template>
             <template #default="scope">
@@ -58,7 +64,9 @@
                 <el-icon v-else-if="config.sortStatus.time.value == SORT_STATUS.SEQ">
                   <SortDown />
                 </el-icon>
-                <el-icon v-else> <SortUp /> </el-icon>
+                <el-icon v-else>
+                  <SortUp />
+                </el-icon>
               </el-button>
             </template>
             <template #default="scope">
@@ -70,26 +78,19 @@
           <el-table-column label="Memo" prop="memo" />
           <el-table-column>
             <template #header>
-              <el-button
-                type="primary"
-                :loading="config.taskFormVisible.value"
-                @click="config.taskFormVisible.value = true"
-              >
+              <el-button type="primary" :loading="config.taskFormVisible.value"
+                @click="config.taskFormVisible.value = true">
                 <template #loading>
                   <div class="custom-loading">
                     <svg class="circular" viewBox="-10, -10, 50, 50">
-                      <path
-                        class="path"
-                        d="
+                      <path class="path" d="
                           M 30 15
                           L 28 17
                           M 25.61 25.61
                           A 15 15, 0, 0, 1, 15 30
                           A 15 15, 0, 1, 1, 27.99 7.5
                           L 15 15
-                          "
-                        style="stroke-width: 4px; fill: rgba(0, 0, 0, 0)"
-                      />
+                          " style="stroke-width: 4px; fill: rgba(0, 0, 0, 0)" />
                     </svg>
                   </div>
                 </template>
@@ -117,33 +118,19 @@
       </el-form-item>
       <el-form-item label="Task date">
         <el-col :span="11">
-          <el-date-picker
-            v-model="config.taskForm.date"
-            type="date"
-            placeholder="Pick a date"
-            style="width: 100%"
-            value-format="YYYY-MM-DD"
-          />
+          <el-date-picker v-model="config.taskForm.date" type="date" placeholder="Pick a date" style="width: 100%"
+            value-format="YYYY-MM-DD" />
         </el-col>
         <el-col :span="2" class="text-center">
           <span class="text-gray-500">-</span>
         </el-col>
         <el-col :span="11">
-          <el-time-picker
-            v-model="config.taskForm.time"
-            placeholder="Pick a time"
-            style="width: 100%"
-            value-format="HH:mm:ss"
-          />
+          <el-time-picker v-model="config.taskForm.time" placeholder="Pick a time" style="width: 100%"
+            value-format="HH:mm:ss" />
         </el-col>
       </el-form-item>
       <el-form-item label="Task Priority">
-        <el-slider
-          v-model="config.taskForm.priority"
-          :step="10"
-          :format-tooltip="formatTooltip"
-          show-stops
-        />
+        <el-slider v-model="config.taskForm.priority" :step="10" :format-tooltip="formatTooltip" show-stops />
       </el-form-item>
       <el-form-item label="Task memo">
         <el-input v-model="config.taskForm.memo" type="textarea" />
@@ -170,21 +157,21 @@ const AXIOS_ADDRESS = {
 
 const send_signal = {
   put: (t) => {
-    axios
+    return axios
       .put(AXIOS_ADDRESS.UPDATE, {
         id: 42,
-        name: t.task,
+        name: t.name,
         date: t.date + ' ' + t.time,
         priority: t.priority,
         description: t.memo
       })
-      .then((res) => {
-        console.log(res)
-      })
+    // .then((res) => {
+    //   console.log(res)
+    // })
   },
   post: async (t) => {
     return await axios.post(AXIOS_ADDRESS.INSERT, {
-      name: t.task,
+      name: t.name,
       date: t.date + ' ' + t.time,
       priority: t.priority,
       description: t.memo
@@ -421,20 +408,40 @@ const handleSort = {
   }
 }
 
+function tableDataUpdataLocal() {
+  let data = JSON.stringify(tableData.value)
+  localStorage.setItem('tableData', data)
+}
+
+function tableDataFetchLocal() {
+  let task_table_local: Task[] = [default_task]
+  let tableDataCached = localStorage.getItem('tableData')
+  if (tableDataCached) {
+    task_table_local = JSON.parse(tableDataCached)
+  }
+  return task_table_local
+}
+
 function taskFormSubmit() {
   config.taskFormVisible.value = false
   if (config.isEdit.value) {
     config.isEdit.value = false
     let id = tableData.value[config.recentTask.value].id
     config.taskForm.id = id
-    send_signal.put(config.taskForm)
-    tableData.value[config.recentTask.value] = config.taskForm
+    let response = send_signal.put(config.taskForm)
+    response.then((res) => {
+      if (res.data == 'update success') {
+        tableData.value[config.recentTask.value] = config.taskForm
+        tableDataUpdataLocal()
+      }
+    })
   } else {
     let response = send_signal.post(config.taskForm)
     response.then((res) => {
       config.taskForm.id = res.data.id
     })
     tableData.value.push(task_from(config.taskForm))
+    tableDataUpdataLocal()
   }
   tableData.value.sort(comp_task)
   config.taskForm = reactive({
@@ -472,6 +479,7 @@ function handleEdit(index, row) {
 function handleDelete(index, row) {
   let task = tableData.value.splice(index, 1)[0]
   send_signal.delete(task.id)
+  tableDataUpdataLocal()
 }
 
 let default_task = new_task(
@@ -482,7 +490,8 @@ let default_task = new_task(
   '13:00:00',
   '1st Presentation'
 )
-let task_table: Task[] = [default_task]
+
+let task_table = tableDataFetchLocal()
 let tableData = ref(task_table)
 </script>
 
@@ -493,6 +502,7 @@ let tableData = ref(task_table)
   height: 18px;
   animation: loading-rotate 2s linear infinite;
 }
+
 .el-button .custom-loading .circular .path {
   animation: loading-dash 1.5s ease-in-out infinite;
   stroke-dasharray: 90, 150;
