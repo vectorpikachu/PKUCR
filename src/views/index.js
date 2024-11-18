@@ -17,29 +17,26 @@ const routes = [
   {
     path: '/',
     component: MainContainer, // MainContainer 是父组件
+    redirect: '/schedule',
     children: [
       {
-        path: 'schedule',
+        path: '/schedule',
         component: () => import('./schedule.vue')
       },
       {
-        path: 'setting',
+        path: '/setting',
         component: () => import('./setting.vue')
       },
       {
-        path: 'taskTable',
+        path: '/taskTable',
         component: () => import('./taskTable.vue')
       },
       {
-        path: 'calendar',
+        path: '/calendar',
         component: () => import('./calendar.vue')
       }
     ]
   },
-  {
-    path: '/',
-    redirect: '/schedule'
-  }
 ]
 
 const router = createRouter({
