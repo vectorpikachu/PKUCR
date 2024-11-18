@@ -408,7 +408,7 @@ const handleSort = {
   }
 }
 
-function tableDataUpdataLocal() {
+function tableDataUpdateLocal() {
   let data = JSON.stringify(tableData.value)
   localStorage.setItem('tableData', data)
 }
@@ -432,7 +432,7 @@ function taskFormSubmit() {
     response.then((res) => {
       if (res.data == 'update success') {
         tableData.value[config.recentTask.value] = config.taskForm
-        tableDataUpdataLocal()
+        tableDataUpdateLocal()
       }
     })
   } else {
@@ -441,7 +441,7 @@ function taskFormSubmit() {
       config.taskForm.id = res.data.id
     })
     tableData.value.push(task_from(config.taskForm))
-    tableDataUpdataLocal()
+    tableDataUpdateLocal()
   }
   tableData.value.sort(comp_task)
   config.taskForm = reactive({
@@ -479,7 +479,7 @@ function handleEdit(index, row) {
 function handleDelete(index, row) {
   let task = tableData.value.splice(index, 1)[0]
   send_signal.delete(task.id)
-  tableDataUpdataLocal()
+  tableDataUpdateLocal()
 }
 
 let default_task = new_task(
