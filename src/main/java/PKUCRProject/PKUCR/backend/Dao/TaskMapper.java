@@ -19,14 +19,14 @@ public interface TaskMapper {
 
     /* 当tasks不存在的时候创建tasks */    
     @Update({"<script>",
-        "create table if not exists tasks (id int primary key auto_increment, user_id bigint not null, name varchar(255), date datetime, priority int, description text, foreign key (user_id) references users(id))",
+        "create table if not exists tasks (id bigint primary key auto_increment, user_id bigint not null, name varchar(255), date datetime, priority int, description text, foreign key (user_id) references users(id))",
         "</script>"
     })
     void createTable();
 
     @Insert("insert into tasks (user_id, name, date, priority, description) values (#{user_id}, #{name}, #{date}, #{priority}, #{description})")
     @Options(useGeneratedKeys = true, keyProperty = "id", keyColumn = "id")
-    int insert(Task task);
+    Long insert(Task task);
 
     /* property对应Task对象的成员名 */
     @Results(
@@ -40,14 +40,14 @@ public interface TaskMapper {
         }
     )
     @Select("select * from tasks where id = #{id}")
-    Task selectById(@Param("id") int id);
+    Task selectById(@Param("id") Long id);
 
     @Select("select * from tasks where user_id = #{user_id}")
-    List<Task> selectByUserID(@Param("user_id") int user_id);
+    List<Task> selectByUserID(@Param("user_id") Long user_id);
 
     @Update("update tasks set user_id = #{user_id}, name = #{name}, date = #{date}, priority = #{priority}, description = #{description} where id = #{id}")
     void update(Task task);
 
     @Delete("delete from tasks where id = #{id}")
-    void delete(@Param("id") int id);
+    void delete(@Param("id") Long id);
 }

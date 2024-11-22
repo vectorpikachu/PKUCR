@@ -13,7 +13,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 public class User implements UserDetails {
 
     @Schema(name = "id", required = false, example = "1")
-    private int id;
+    private Long id;
 
     @Schema(name = "email", required = true, example = "pikachu@126.com")
     private String email;
@@ -32,7 +32,7 @@ public class User implements UserDetails {
         this.password = "22222";
     }
 
-    public User(int id, String email, String password, int permission) {
+    public User(Long id, String email, String password, int permission) {
         this.id = id;
         this.password = password;
         this.email = email;
@@ -44,7 +44,7 @@ public class User implements UserDetails {
         this.password = password;
     }
 
-    public int getId() {
+    public Long getId() {
         return id;
     }
 
@@ -64,7 +64,7 @@ public class User implements UserDetails {
         return token;
     }
 
-    public void setId(int id) {
+    public void setId(Long id) {
         this.id = id;
     }
 

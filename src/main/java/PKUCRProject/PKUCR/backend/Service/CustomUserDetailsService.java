@@ -42,7 +42,7 @@ public class CustomUserDetailsService implements UserDetailsService{
         return userMapper.selectByEmail(user.getEmail());
     }
 
-    public int getUserID(String username) {
+    public Long getUserID(String username) {
         return userMapper.selectByEmail(username).getId();
     }
 }

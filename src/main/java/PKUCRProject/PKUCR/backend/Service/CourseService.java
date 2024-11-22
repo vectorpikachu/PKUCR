@@ -18,7 +18,7 @@ public class CourseService {
         return courseInDB;
     }
 
-    public Course selectById(int id) {
+    public Course selectById(Long id) {
         return courseMapper.selectById(id);
         // return "selectById" + id;
     }
@@ -28,7 +28,7 @@ public class CourseService {
         return "update success";
     }
 
-    public String delete(int id) {
+    public String delete(Long id) {
         courseMapper.delete(id);
         return "delete course success by id = " + id;
     }

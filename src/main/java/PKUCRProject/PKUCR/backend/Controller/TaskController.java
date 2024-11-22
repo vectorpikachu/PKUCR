@@ -42,7 +42,7 @@ public class TaskController {
         UserDetails userDetails = (UserDetails) authentication.getPrincipal();
         String username = userDetails.getUsername();
 
-        int userId = customUserDetailsService.getUserID(username);
+        Long userId = customUserDetailsService.getUserID(username);
         return ResponseEntity.ok(taskService.selectByUserID(userId));
     }
 
@@ -59,7 +59,7 @@ public class TaskController {
         UserDetails userDetails = (UserDetails) authentication.getPrincipal();
         String username = userDetails.getUsername();
 
-        int userId = customUserDetailsService.getUserID(username);
+        Long userId = customUserDetailsService.getUserID(username);
         task.setUser_id(userId);
         // System.out.println(task);
         task = taskService.insert(task);
@@ -68,7 +68,7 @@ public class TaskController {
 
     @Operation(summary = "Select a task by id")
     @GetMapping("/task/selectById")
-    public ResponseEntity<?> selectById(@Valid @RequestParam int id) {
+    public ResponseEntity<?> selectById(@Valid @RequestParam Long id) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication == null || !authentication.isAuthenticated()) {
             return ResponseEntity.badRequest().body("Please login first");
@@ -92,14 +92,14 @@ public class TaskController {
         UserDetails userDetails = (UserDetails) authentication.getPrincipal();
         String username = userDetails.getUsername();
 
-        int userId = customUserDetailsService.getUserID(username);
+        Long userId = customUserDetailsService.getUserID(username);
         task.setUser_id(userId);
         return ResponseEntity.ok(taskService.update(task));
     }
 
     @Operation(summary = "Delete a task by id")
     @DeleteMapping("/task/delete")
-    public ResponseEntity<?> delete(@Valid @RequestParam int id) {
+    public ResponseEntity<?> delete(@Valid @RequestParam Long id) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication == null || !authentication.isAuthenticated()) {
             return ResponseEntity.badRequest().body("Please login first");

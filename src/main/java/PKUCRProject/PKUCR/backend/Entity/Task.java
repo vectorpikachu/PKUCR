@@ -6,10 +6,10 @@ import io.swagger.v3.oas.annotations.media.Schema;
 public class Task {
 
     @Schema(name = "id", required = false, example = "1")
-    private int id;
+    private Long id;
 
     @Schema(name = "user_id", required = false, example = "1")
-    private int user_id;
+    private Long user_id;
 
     @Schema(name = "name", required = true, example = "Task1")
     private String name;
@@ -23,7 +23,7 @@ public class Task {
     @Schema(name = "description", required = false, example = "This is a task")
     private String description;
 
-    public Task(int id, int user_id, String name, String date, int priority, String description) {
+    public Task(Long id, Long user_id, String name, String date, int priority, String description) {
         this.id = id;
         this.user_id = user_id;
         this.name = name;
@@ -43,10 +43,10 @@ public class Task {
                 '}';
     }
 
-    public int getId() {
+    public Long getId() {
         return id;
     }
-    public int getUser_id() {
+    public Long getUser_id() {
         return user_id;
     }
     public String getName() {
@@ -61,10 +61,10 @@ public class Task {
     public String getDescription() {
         return description;
     }
-    public void setId(int id) {
+    public void setId(Long id) {
         this.id = id;
     }
-    public void setUser_id(int user_id) {
+    public void setUser_id(Long user_id) {
         this.user_id = user_id;
     }
     public void setName(String name) {

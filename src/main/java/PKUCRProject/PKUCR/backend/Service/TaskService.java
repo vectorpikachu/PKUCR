@@ -22,7 +22,7 @@ public class TaskService {
         return taskInDB;
     }
 
-    public Task selectById(int id) {
+    public Task selectById(Long id) {
         return taskMapper.selectById(id);
         // return "selectById" + id;
     }
@@ -32,12 +32,12 @@ public class TaskService {
         return "update success";
     }
 
-    public String delete(int id) {
+    public String delete(Long id) {
         taskMapper.delete(id);
         return "delete task success by id = " + id;
     }
 
-    public List<Task> selectByUserID(int user_id) {
+    public List<Task> selectByUserID(Long user_id) {
         return taskMapper.selectByUserID(user_id);
     }
 }

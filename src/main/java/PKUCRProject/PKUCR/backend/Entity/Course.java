@@ -6,10 +6,10 @@ import io.swagger.v3.oas.annotations.media.Schema;
 public class Course {
 
     @Schema(name = "id", required = false, example = "1")
-    private int id;
+    private Long id;
 
     @Schema(name = "user_id", required = false, example = "1")
-    private int user_id;
+    private Long user_id;
 
     @Schema(name = "courseID", required = false, example = "04834220")
     private String courseID;
@@ -36,16 +36,16 @@ public class Course {
         this.credit = 4;
     }
 
-    public int getId() {
+    public Long getId() {
         return id;
     }
-    public void setId(int id) {
+    public void setId(Long id) {
         this.id = id;
     }
-    public int getUser_id() {
+    public Long getUser_id() {
         return user_id;
     }
-    public void setUser_id(int user_id) {
+    public void setUser_id(Long user_id) {
         this.user_id = user_id;
     }
     public String getCourseID() {

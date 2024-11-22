@@ -42,7 +42,7 @@ public class CourseController {
         UserDetails userDetails = (UserDetails) authentication.getPrincipal();
         String username = userDetails.getUsername();
 
-        int userId = customUserDetailsService.getUserID(username);
+        Long userId = customUserDetailsService.getUserID(username);
 
         course.setUser_id(userId);
         course = courseService.insert(course);
@@ -51,7 +51,7 @@ public class CourseController {
 
     @Operation(summary = "Select a course by id")
     @GetMapping("/course/selectById")
-    public ResponseEntity<?> selectById(@Valid @RequestParam int id) {
+    public ResponseEntity<?> selectById(@Valid @RequestParam Long id) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication == null || !authentication.isAuthenticated()) {
             return ResponseEntity.badRequest().body("Please login first");
@@ -75,14 +75,14 @@ public class CourseController {
         UserDetails userDetails = (UserDetails) authentication.getPrincipal();
         String username = userDetails.getUsername();
 
-        int userId = customUserDetailsService.getUserID(username);
+        Long userId = customUserDetailsService.getUserID(username);
         course.setUser_id(userId);
         return ResponseEntity.ok(courseService.update(course));
     }
 
     @Operation(summary = "Delete a course by id")
     @DeleteMapping("/course/delete")
-    public ResponseEntity<?> delete(@Valid @RequestParam int id) {
+    public ResponseEntity<?> delete(@Valid @RequestParam Long id) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication == null || !authentication.isAuthenticated()) {
             return ResponseEntity.badRequest().body("Please login first");
