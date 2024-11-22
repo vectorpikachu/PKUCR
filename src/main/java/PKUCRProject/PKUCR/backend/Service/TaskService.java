@@ -1,5 +1,7 @@
 package PKUCRProject.PKUCR.backend.Service;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -35,4 +37,7 @@ public class TaskService {
         return "delete task success by id = " + id;
     }
 
+    public List<Task> selectByUserID(int user_id) {
+        return taskMapper.selectByUserID(user_id);
+    }
 }

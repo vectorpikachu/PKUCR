@@ -1,5 +1,7 @@
 package PKUCRProject.PKUCR.backend.Dao;
 
+import java.util.List;
+
 import org.apache.ibatis.annotations.Delete;
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Mapper;
@@ -39,6 +41,9 @@ public interface TaskMapper {
     )
     @Select("select * from tasks where id = #{id}")
     Task selectById(@Param("id") int id);
+
+    @Select("select * from tasks where user_id = #{user_id}")
+    List<Task> selectByUserID(@Param("user_id") int user_id);
 
     @Update("update tasks set user_id = #{user_id}, name = #{name}, date = #{date}, priority = #{priority}, description = #{description} where id = #{id}")
     void update(Task task);

@@ -10,12 +10,36 @@
 
 后端的结构是这样的：
 ```
-Controller
-Entity
-Dao
-Service
-Servlet
-Utils
+src/main/java/PKUCRProject/PKUCR/backend
+├── Auth
+│   ├── CustomAuthenticationProvider.java
+│   └── JwtAuthenticationFilter.java
+├── Config
+│   └── SecurityConfig.java
+├── Controller
+│   ├── CorsController.java
+│   ├── CourseController.java
+│   ├── HelloController.java
+│   ├── TasksController.java
+│   └── UserController.java
+├── Dao
+│   ├── CourseMapper.java
+│   ├── TaskMapper.java
+│   └── UserMapper.java
+├── Entity
+│   ├── Course.java
+│   ├── Task.java
+│   ├── User.java
+│   ├── LoginRequest.java
+│   └── TokenResponse.java
+├── Service
+│   ├── CourseService.java
+│   ├── TaskService.java
+│   └── CustomUserDetailsService.java
+└── Utils
+    ├── Claims.java
+    ├── JwtUtils.java
+    └── DateUtils.java
 ```
 
 ## 使用说明

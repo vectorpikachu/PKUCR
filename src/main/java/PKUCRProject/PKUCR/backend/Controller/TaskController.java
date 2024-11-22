@@ -32,6 +32,20 @@ public class TaskController {
     @Autowired
     private CustomUserDetailsService customUserDetailsService;
 
+    @Operation(summary = "Return a user's all tasks")
+    @GetMapping("/task")
+    public ResponseEntity<?> init() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication == null || !authentication.isAuthenticated()) {
+            return ResponseEntity.badRequest().body("Please login first");
+        }
+        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+        String username = userDetails.getUsername();
+
+        int userId = customUserDetailsService.getUserID(username);
+        return ResponseEntity.ok(taskService.selectByUserID(userId));
+    }
+
     @Operation(summary = "Insert a task, return a task id")
     @PostMapping("/task/insert")
     public ResponseEntity<?> insert(@Valid @RequestBody Task task) {
@@ -47,7 +61,7 @@ public class TaskController {
 
         int userId = customUserDetailsService.getUserID(username);
         task.setUser_id(userId);
-        System.out.println(task);
+        // System.out.println(task);
         task = taskService.insert(task);
         return ResponseEntity.ok(task);
     }
