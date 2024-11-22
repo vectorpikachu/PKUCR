@@ -7,6 +7,7 @@
                 <el-input v-model="searchQuery" placeholder="搜索课程" prefix-icon="el-icon-search" style="width: 300px;"
                     @input="searchCourses" />
                 <el-button type="primary" @click="openAddCourseDialog">添加新课程</el-button>
+                <el-button type="warning" @click="handleExit" class="logout-button">返回主页</el-button>
             </div>
         </div>
 
@@ -49,7 +50,7 @@
 
                     <el-tab-pane label="资料" name="resources">
                         <el-table :data="selectedObject.materials" style="width: 100%">
-                            <el-table-column prop="name" label="文件名" />
+                            <el-table-column prop="filename" label="文件名" />
                             <el-table-column label="操作">
                                 <template v-slot="scope">
                                     <el-button type="primary" @click="downloadResource(scope.row)">下载</el-button>
@@ -93,6 +94,9 @@
 <script lang="ts" setup>
 import { ref, reactive, onMounted } from 'vue';
 import axios from '../axios';
+import { useRouter } from 'vue-router';
+
+const router = useRouter();
 
 // 课程元信息
 const objects = ref([
@@ -149,6 +153,7 @@ const fetchCourses = async () => {
 
         // 将格式化后的数据赋值给 objects
         courseMetaInfo.value = formattedData;
+        objects.value.push(...formattedData)
     } catch (error) {
         console.error('获取数据失败:', error);
         alert("获取数据失败: " + error.message);
@@ -325,6 +330,10 @@ const addCourse = () => {
         addCourseDialogVisible.value = false; // 关闭对话框
         resetAddCourseDialog(); // 重置输入框
     }
+};
+
+const handleExit = () => {
+  router.push('/taskTable');
 };
 </script>
 
