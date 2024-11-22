@@ -10,6 +10,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
 import PKUCRProject.PKUCR.backend.Service.CustomUserDetailsService;
+import PKUCRProject.PKUCR.backend.Utils.CryptoUtils;
 
 @Component
 public class CustomAuthenticationProvider implements AuthenticationProvider {
@@ -24,7 +25,8 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
 
         UserDetails userDetails = customUserDetailsService.loadUserByUsername(username);
 
-        if (!password.equals(userDetails.getPassword())) {
+        // 在这里调用加密/解密算法对password验证
+        if (!CryptoUtils.verifyPassword(password, userDetails.getPassword())) {
             throw new BadCredentialsException("Invalid password");
         }
 

@@ -17,6 +17,7 @@ import PKUCRProject.PKUCR.backend.Service.CustomUserDetailsService;
 import PKUCRProject.PKUCR.backend.Entity.LoginRequest;
 import PKUCRProject.PKUCR.backend.Entity.TokenResponse;
 import PKUCRProject.PKUCR.backend.Entity.User;
+import PKUCRProject.PKUCR.backend.Utils.CryptoUtils;
 import PKUCRProject.PKUCR.backend.Utils.JwtUtils;
 
 @Tag(name = "UserController")
@@ -67,7 +68,8 @@ public class UserController {
             return ResponseEntity.badRequest().body("Error: Email is already taken!");
         } catch (Exception e) {
             // 创建新用户
-            User user = new User(loginRequest.getEmail(), loginRequest.getPassword());
+            String encodedPassword = CryptoUtils.encodePassword(loginRequest.getPassword());
+            User user = new User(loginRequest.getEmail(), encodedPassword);
             customUserDetailsService.registerUser(user);
             final String token = jwtUtils.getToken(loginRequest.getEmail());
             TokenResponse response = new TokenResponse(token);
