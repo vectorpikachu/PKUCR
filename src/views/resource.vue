@@ -7,6 +7,7 @@
                 <el-input v-model="searchQuery" placeholder="搜索课程" prefix-icon="el-icon-search" style="width: 300px;"
                     @input="searchCourses" />
                 <el-button type="primary" @click="openAddCourseDialog">添加新课程</el-button>
+                <el-button type="warning" @click="handleExit" class="logout-button">返回主页</el-button>
             </div>
         </div>
 
@@ -25,7 +26,8 @@
         </div>
 
         <!-- 详情对话框 -->
-        <el-dialog v-model="dialogVisible" title="课程详情" @close="resetDialog">
+        <el-dialog v-model="dialogVisible" title="课程详情" @close="resetDialog" width="80%"
+            style="max-height: 70vh; overflow-y: auto;">
             <div v-if="selectedObject">
                 <p><strong>课程号:</strong> {{ selectedObject.course_id }}</p>
                 <p><strong>课程名:</strong> {{ selectedObject.name }}</p>
@@ -47,8 +49,8 @@
                     </el-tab-pane>
 
                     <el-tab-pane label="资料" name="resources">
-                        <el-table :data="selectedObject.resources" style="width: 100%">
-                            <el-table-column prop="name" label="文件名" />
+                        <el-table :data="selectedObject.materials" style="width: 100%">
+                            <el-table-column prop="filename" label="文件名" />
                             <el-table-column label="操作">
                                 <template v-slot="scope">
                                     <el-button type="primary" @click="downloadResource(scope.row)">下载</el-button>
@@ -56,8 +58,8 @@
                             </el-table-column>
                         </el-table>
                         <!--这里后端接口-->
-                        <el-upload action="`/api/upload/${selectedObject.course_id}`" :on-success="handleUploadSuccess" :on-error="handleUploadError"
-                            show-file-list="false">
+                        <el-upload action="`/api/upload/${selectedObject.course_id}`" :on-success="handleUploadSuccess"
+                            :on-error="handleUploadError" show-file-list="false">
                             <el-button type="primary">上传资料</el-button>
                         </el-upload>
                     </el-tab-pane>
@@ -91,26 +93,39 @@
 
 <script lang="ts" setup>
 import { ref, reactive, onMounted } from 'vue';
-import axios from 'axios';
+import axios from '../axios';
+import { useRouter } from 'vue-router';
 
-// 数据对象数组
+const router = useRouter();
+
+// 课程元信息
 const objects = ref([
     {
         course_id: 1,
         name: 'Class 1',
         category: 'Math',
-        comments: [{ user: 'Alice', content: 'Great course!' }],
-        // 资料形式是: name 和 url
-        resources: [{ name: 'Lecture1.pdf', url: '/files/lecture1.pdf' }],
     },
     {
         course_id: 2,
         name: 'Class 2',
         category: 'Science',
-        comments: [],
-        resources: [],
     },
 ]);
+
+// 课程详情
+const courseDetails = new Map();
+courseDetails.set(1, {
+    comments: [
+        { user: 'Alice', content: 'Great course!' },
+        { user: 'Bob', content: 'Very informative.' }
+    ],
+    materials: [
+        { filename: 'Lecture1.pdf', url: '/files/lecture1.pdf' },
+        { filename: 'Lecture2.pdf', url: '/files/lecture2.pdf' }
+    ]
+});
+
+const courseMetaInfo = ref([])
 
 const dialogVisible = ref(false);
 const addCourseDialogVisible = ref(false);
@@ -127,10 +142,21 @@ const loading = ref(false);
 const fetchCourses = async () => {
     loading.value = true;
     try {
-        const response = await axios.get('/courses'); // 后端api
-        objects.value = response.data;
+        const response = await axios.get('/api/resource'); // 后端api
+        const data = response.data;
+        const formattedData = Object.keys(data).map(key => {
+            return {
+                course_id: key,
+                ...data[key]
+            };
+        });
+
+        // 将格式化后的数据赋值给 objects
+        courseMetaInfo.value = formattedData;
+        objects.value.push(...formattedData)
     } catch (error) {
         console.error('获取数据失败:', error);
+        alert("获取数据失败: " + error.message);
     } finally {
         loading.value = false;
     }
@@ -142,8 +168,39 @@ onMounted(() => {
 });
 
 // 查看详情的处理函数
-const viewDetails = (row) => {
-    selectedObject.value = row; // 加载选中的课程数据
+const viewDetails = async (row) => {
+    const courseInfo = courseDetails.get(row.course_id);
+
+    if (courseInfo) {
+        selectedObject.value = {
+            ...row,
+            comments: courseInfo.comments,
+            materials: courseInfo.materials
+        };
+    } else {
+        selectedObject.value = row
+        console.log('Course not found!');
+        // 本地没有, 请求后端
+        try {
+            const response = await axios.get(`/api/resourse/${row.course_id}`);
+            const data = response.data;
+
+            courseDetails.set(row.course_id, {
+                comments: data.comments,
+                materials: data.materials
+            });
+
+            selectedObject.value = {
+                ...row,
+                comments: data.comments,
+                materials: data.materials
+            };
+        }
+        catch (error) {
+            console.error('Error fetching course details:', error);
+            alert("获取课程详情失败: " + error.message);
+        }
+    }
     dialogVisible.value = true;
 };
 
@@ -154,32 +211,83 @@ const resetDialog = () => {
 };
 
 // 添加评论的处理函数
-const addComment = () => {
+const addComment = async () => {
     if (newComment.value.trim()) {
-        selectedObject.value.comments.push({
-            user: 'Current User', // 替换为实际用户信息
-            content: newComment.value,
-        });
-        newComment.value = ''; // 清空输入框
+        // 上传后端
+        const commentData = {
+            user: 'test',  // TODO: 用户名, 阶段三先不管了
+            comment: newComment.value.trim()
+        };
+        try {
+            // 发起 POST 请求
+            const response = await axios.post(`/api/resource/comment/${selectedObject.value.course_id}`, commentData);
+
+            // 如果请求成功，更新本地评论数据
+            if (response.status === 200) {
+                selectedObject.value.comments.push({
+                    user: commentData.user,
+                    content: commentData.comment
+                });
+
+                const courseId = selectedObject.value.course_id;
+                if (courseDetails.has(courseId)) {
+                    courseDetails.get(courseId).comments.push({
+                        user: commentData.user,
+                        content: commentData.comment
+                    });
+                }
+
+                // 清空输入框
+                newComment.value = '';
+            } else {
+                console.error('Failed to post comment:', response.status);
+                alert('上传评论失败, 服务端错误: ' + response.status);
+            }
+        } catch (error) {
+            console.error('Error posting comment:', error);
+            alert('上传评论失败: ' + error.message);
+        }
     }
 };
 
 // 下载资料
-const downloadResource = (resource) => {
-    const link = document.createElement('a');
-    link.href = resource.url; // 文件 URL
-    link.download = resource.name; // 文件名
-    link.click();
+const downloadResource = async (resource) => {
+    try {
+        const response = await axios.get(resource.url, {
+            responseType: 'blob', // 重要，返回二进制数据
+        });
+
+        const link = document.createElement('a');
+        const blob = new Blob([response.data], { type: response.headers['content-type'] });
+        const url = window.URL.createObjectURL(blob);
+        link.href = url;
+        link.download = resource.name;
+        link.click();
+        window.URL.revokeObjectURL(url);
+    } catch (error) {
+        console.error('Error downloading resource:', error);
+        alert('Error downloading resource: ' + error.message)
+    }
 };
 
 // 上传资料成功的回调
 const handleUploadSuccess = (response, file) => {
-    selectedObject.value.resources.push({ name: file.name, url: response.url });
+    selectedObject.value.materials.push({ name: response.filename, url: response.url });
+    const courseId = selectedObject.value.course_id;
+    if (courseDetails.has(courseId)) {
+        courseDetails.get(courseId).materials.push({
+            name: response.filename,
+            url: response.url
+        });
+    }
+    console.log('Upload succeed: ', response);
+    alert('Upload succeed: ' + response.name);
 };
 
 // 上传资料失败的回调
 const handleUploadError = (error) => {
     console.error('Upload failed:', error);
+    alert('Upload failed: ' + error.message);
 };
 
 // Tab点击事件
@@ -218,12 +326,14 @@ const addCourse = () => {
             course_id: Number(newCourse.course_id), // 转换为数字
             name: newCourse.name,
             category: newCourse.category,
-            comments: [],
-            resources: [],
         });
         addCourseDialogVisible.value = false; // 关闭对话框
         resetAddCourseDialog(); // 重置输入框
     }
+};
+
+const handleExit = () => {
+  router.push('/taskTable');
 };
 </script>
 
