@@ -10,7 +10,8 @@
         <el-input v-model="form.password" type="password" placeholder="Enter your password" />
       </el-form-item>
       <el-form-item>
-        <el-button type="primary" @click="handleSubmit">Register</el-button>
+        <el-button type="primary" @click="handleSubmit">注册</el-button>
+        <el-button type="warning" @click="handleExit" class="logout-button">退出</el-button>
       </el-form-item>
     </el-form>
   </div>
@@ -76,6 +77,10 @@ const handleSubmit = async () => {
       console.log('Error in form submission')
     }
   })
+}
+
+const handleExit = () => {
+  router.push('/taskTable');
 }
 </script>
 
