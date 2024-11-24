@@ -27,4 +27,9 @@ public class AllCourseService {
         return allCoursesMapper.selectAll();
     }
 
+    public BasicCourse selectByCourseID(Long courseID) {
+        return allCoursesMapper.selectByCourseID(courseID);
+    }
+
+
 }

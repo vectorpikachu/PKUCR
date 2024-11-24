@@ -10,7 +10,7 @@ import PKUCRProject.PKUCR.backend.Entity.BasicCourse;
 
 @Mapper
 public interface AllCoursesMapper {
-    @Insert("insert into all_courses (courseID, courseName, teacher, credit) values (#{courseID}, #{courseName}, #{teacher}, #{credit})")
+    @Insert("insert into all_courses (courseID, courseName, category, teacher, credit) values (#{courseID}, #{courseName}, #{category}, #{teacher}, #{credit})")
     @Options(useGeneratedKeys = true, keyProperty = "id", keyColumn = "id")
     Long insert(BasicCourse course);
     
@@ -19,4 +19,7 @@ public interface AllCoursesMapper {
 
     @Select("select * from all_courses")
     List<BasicCourse> selectAll();
+
+    @Select("select * from all_courses where course_id = #{courseID}")
+    BasicCourse selectByCourseID(Long courseID);
 }

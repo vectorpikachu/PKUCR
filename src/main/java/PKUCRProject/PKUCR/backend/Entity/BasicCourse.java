@@ -9,18 +9,21 @@ public class BasicCourse {
     private Long id;
     private String courseID;
     private String courseName;
+    private String category;
     private String teacher;
     private int credit;
     // 这里还要加入课程资源等信息
-    public BasicCourse(String courseID, String courseName, String teacher, int credit) {
+    public BasicCourse(String courseID, String courseName, String category, String teacher, int credit) {
         this.courseID = courseID;
         this.courseName = courseName;
+        this.category = category;
         this.teacher = teacher;
         this.credit = credit;
     }
     public BasicCourse() {
         this.courseID = "04834220";
         this.courseName = "软件工程";
+        this.category = "专业课";
         this.teacher = "孙艳春";
         this.credit = 4;
     }
@@ -42,6 +45,12 @@ public class BasicCourse {
     }
     public void setCourseName(String courseName) {
         this.courseName = courseName;
+    }
+    public String getCategory() {
+        return category;
+    }
+    public void setCategory(String category) {
+        this.category = category;
     }
     public String getTeacher() {
         return teacher;

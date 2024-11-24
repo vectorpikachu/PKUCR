@@ -9,8 +9,8 @@ public class Course extends BasicCourse{
     private Long user_id;
 
     // 这里还要加入课程资源等信息
-    public Course(String courseID, String courseName, String teacher, int credit) {
-        super(courseID, courseName, teacher, credit);
+    public Course(String courseID, String courseName, String category, String teacher, int credit) {
+        super(courseID, courseName, category, teacher, credit);
     }
     public Course() {
         super();
