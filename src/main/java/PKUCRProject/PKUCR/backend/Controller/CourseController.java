@@ -32,6 +32,20 @@ public class CourseController {
     @Autowired
     private CustomUserDetailsService customUserDetailsService;
 
+    @Operation(summary = "Return a user's all courses")
+    @GetMapping("/course")
+    public ResponseEntity<?> initByUserID() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication == null || !authentication.isAuthenticated()) {
+            return ResponseEntity.badRequest().body("Please login first");
+        }
+        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+        String username = userDetails.getUsername();
+
+        Long userId = customUserDetailsService.getUserID(username);
+        return ResponseEntity.ok(courseService.selectByUserID(userId));
+    }
+
     @Operation(summary = "Insert a course, return a course id")
     @PostMapping("/course/insert")
     public ResponseEntity<?> insert(@Valid @RequestBody Course course) {

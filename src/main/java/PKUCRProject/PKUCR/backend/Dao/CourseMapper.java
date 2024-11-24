@@ -9,6 +9,7 @@ import org.apache.ibatis.annotations.Result;
 import org.apache.ibatis.annotations.Results;
 import org.apache.ibatis.annotations.Select;
 import org.apache.ibatis.annotations.Update;
+import java.util.List;
 
 import PKUCRProject.PKUCR.backend.Entity.Course;
 
@@ -46,4 +47,6 @@ public interface CourseMapper {
     @Delete("delete from courses where id = #{id}")
     void delete(@Param("id") Long id);
 
+    @Select("select * from courses where user_id = #{user_id}")
+    List<Course> selectByUserID(@Param("user_id") Long user_id);
 }

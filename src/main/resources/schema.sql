@@ -15,6 +15,14 @@ CREATE TABLE IF NOT EXISTS courses (
     FOREIGN KEY (user_id) REFERENCES users(id)
 );
 
+CREATE TABLE IF NOT EXISTS all_courses (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    courseID VARCHAR(255),
+    courseName VARCHAR(255),
+    teacher VARCHAR(255),
+    credit INT
+);
+
 CREATE TABLE IF NOT EXISTS tasks (
     id BIGINT AUTO_INCREMENT PRIMARY KEY,
     user_id BIGINT,

@@ -1,5 +1,7 @@
 package PKUCRProject.PKUCR.backend.Service;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -31,5 +33,9 @@ public class CourseService {
     public String delete(Long id) {
         courseMapper.delete(id);
         return "delete course success by id = " + id;
+    }
+
+    public List<Course> selectByUserID(Long user_id) {
+        return courseMapper.selectByUserID(user_id);
     }
 }
