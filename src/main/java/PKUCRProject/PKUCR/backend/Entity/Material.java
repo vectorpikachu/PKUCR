@@ -4,17 +4,17 @@ public class Material {
     
     private Long id;
     private Long userID;
-    private Long courseID;
-    private String name;
+    private String courseID;
+    private String filename;
     private String url;
     private String time;
 
     public Material() {
     }
 
-    public Material(Long courseID, String name, String url, String time) {
+    public Material(String courseID, String filename, String url, String time) {
         this.courseID = courseID;
-        this.name = name;
+        this.filename = filename;
         this.url = url;
         this.time = time;
     }
@@ -31,17 +31,17 @@ public class Material {
     public void setUserID(Long userID) {
         this.userID = userID;
     }
-    public Long getCourseID() {
+    public String getCourseID() {
         return courseID;
     }
-    public void setCourseID(Long courseID) {
+    public void setCourseID(String courseID) {
         this.courseID = courseID;
     }
-    public String getName() {
-        return name;
+    public String getFilename() {
+        return filename;
     }
-    public void setName(String name) {
-        this.name = name;
+    public void setFilename(String filename) {
+        this.filename = filename;
     }
     public String getUrl() {
         return url;

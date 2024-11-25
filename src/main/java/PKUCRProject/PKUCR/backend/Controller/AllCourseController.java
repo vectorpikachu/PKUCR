@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -26,7 +27,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 
-import java.sql.Date;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Tag(name = "CourseController")
@@ -111,8 +112,8 @@ public class AllCourseController {
         ArrayNode materialsArray = mapper.createArrayNode();
         materials.forEach(material -> {
             ObjectNode materialObject = mapper.createObjectNode();
-            materialObject.put("filename", material.getName());
-            materialObject.put("url", "/api/resource/material/" + courseId + "/" + material.getName());
+            materialObject.put("filename", material.getFilename());
+            materialObject.put("url", "/api/resource/material/" + courseId + "/" + material.getFilename());
             materialsArray.add(materialObject);
         });
         jsonObject.set("materials", materialsArray);
@@ -136,12 +137,32 @@ public class AllCourseController {
         comment.setContent(commentRequest.getComment());
         comment.setUserID(userService.getUserID(commentRequest.getUser()));
         
-        Date date = new Date(System.currentTimeMillis());
+        LocalDateTime date = LocalDateTime.now();
         comment.setTime(date.toString());
 
         commentService.insertComment(comment);
         jsonObject.put("status", "success");
         return ResponseEntity.ok(jsonObject);
+    }
+
+    // 上传资料
+    @Operation(summary = "Upload a material")
+    @PostMapping("/api/resource/material/{courseId}")
+    public ResponseEntity<?> uploadMaterial(@PathVariable("courseId") String courseId, @Valid @RequestBody Material material) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication == null || !authentication.isAuthenticated()) {
+            return ResponseEntity.badRequest().body("Please login first");
+        }
+        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+        String userEmail = userDetails.getUsername();
+        Long userId = userService.getUserID(userEmail);
+        material.setCourseID(courseId);
+        material.setUserID(userId);
+        // Date date = new Date(System.currentTimeMillis());
+        LocalDateTime date = LocalDateTime.now();
+        material.setTime(date.toString());
+        materialService.insertMaterial(material);
+        return ResponseEntity.ok("ok");
     }
 }
 

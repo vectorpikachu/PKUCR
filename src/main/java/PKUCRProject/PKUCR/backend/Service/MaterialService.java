@@ -17,4 +17,8 @@ public class MaterialService {
         return materialMapper.selectByCourseID(courseID);
     }
 
+    public void insertMaterial(Material material) {
+        materialMapper.insertMaterial(material);
+    }
+
 }
