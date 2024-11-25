@@ -21,5 +21,5 @@ public interface AllCoursesMapper {
     List<BasicCourse> selectAll();
 
     @Select("select * from all_courses where course_id = #{courseID}")
-    BasicCourse selectByCourseID(Long courseID);
+    BasicCourse selectByCourseID(String courseID);
 }

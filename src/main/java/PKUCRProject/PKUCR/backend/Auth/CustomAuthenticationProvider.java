@@ -18,6 +18,9 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
     @Autowired
     private CustomUserDetailsService customUserDetailsService;
 
+    /**
+     * 自定义验证方式
+     */
     @Override
     public Authentication authenticate(Authentication authentication) throws AuthenticationException {
         String username = authentication.getName();

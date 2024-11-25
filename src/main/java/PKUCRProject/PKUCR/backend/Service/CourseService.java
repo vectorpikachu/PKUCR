@@ -22,7 +22,6 @@ public class CourseService {
 
     public Course selectById(Long id) {
         return courseMapper.selectById(id);
-        // return "selectById" + id;
     }
 
     public String update(Course course) {
