@@ -38,7 +38,7 @@
                     <el-tab-pane label="评价" name="comments">
                         <el-table :data="selectedObject.comments" style="width: 100%">
                             <el-table-column prop="user" label="用户" width="120" />
-                            <el-table-column prop="content" label="评价内容" />
+                            <el-table-column prop="comment" label="评价内容" />
                         </el-table>
                         <el-form @submit.prevent="addComment">
                             <el-form-item>
@@ -103,12 +103,12 @@ const objects = ref([
     {
         course_id: 1,
         name: 'Class 1',
-        category: 'Math',
+        category: '专业课',
     },
     {
         course_id: 2,
         name: 'Class 2',
-        category: 'Science',
+        category: '政治课',
     },
 ]);
 
@@ -116,8 +116,8 @@ const objects = ref([
 const courseDetails = new Map();
 courseDetails.set(1, {
     comments: [
-        { user: 'Alice', content: 'Great course!' },
-        { user: 'Bob', content: 'Very informative.' }
+        { user: 'Alice', comment: 'Great course!' },
+        { user: 'Bob', comment: 'Very informative.' }
     ],
     materials: [
         { filename: 'Lecture1.pdf', url: '/files/lecture1.pdf' },
@@ -182,7 +182,7 @@ const viewDetails = async (row) => {
         console.log('Course not found!');
         // 本地没有, 请求后端
         try {
-            const response = await axios.get(`/api/resourse/${row.course_id}`);
+            const response = await axios.get(`/api/resource/${row.course_id}`);
             const data = response.data;
 
             courseDetails.set(row.course_id, {
@@ -226,14 +226,14 @@ const addComment = async () => {
             if (response.status === 200) {
                 selectedObject.value.comments.push({
                     user: commentData.user,
-                    content: commentData.comment
+                    comment: commentData.comment
                 });
 
                 const courseId = selectedObject.value.course_id;
                 if (courseDetails.has(courseId)) {
                     courseDetails.get(courseId).comments.push({
                         user: commentData.user,
-                        content: commentData.comment
+                        comment: commentData.comment
                     });
                 }
 
@@ -276,12 +276,12 @@ const handleUploadSuccess = (response, file) => {
     const courseId = selectedObject.value.course_id;
     if (courseDetails.has(courseId)) {
         courseDetails.get(courseId).materials.push({
-            name: response.filename,
+            filename: response.filename,
             url: response.url
         });
     }
     console.log('Upload succeed: ', response);
-    alert('Upload succeed: ' + response.name);
+    alert('Upload succeed: ' + response.filename);
 };
 
 // 上传资料失败的回调
