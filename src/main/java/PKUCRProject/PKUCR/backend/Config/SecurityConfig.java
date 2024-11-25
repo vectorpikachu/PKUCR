@@ -35,6 +35,7 @@ public class SecurityConfig {
             .authorizeHttpRequests(authorize -> authorize
                 .requestMatchers("/auth/**").permitAll() // 登录接口无需认证
                 .requestMatchers("/task/**").authenticated() // 需要认证的任务管理接口
+                .requestMatchers("/api/resource/comment/**").authenticated() // 需要认证的评论接口
                 .requestMatchers("/v3/api-docs/**", "/swagger-ui.html", "/webjars/**", "/swagger-resources/**").permitAll() // Swagger相关路径无需认证
                 .anyRequest().permitAll() // 其他请求无需认证
             )

@@ -49,4 +49,8 @@ public class CustomUserDetailsService implements UserDetailsService{
     public User getUserById(Long userID) {
         return userMapper.selectById(userID);
     }
+
+    public User getUserByEmail(String email) {
+        return userMapper.selectByEmail(email);
+    }
 }

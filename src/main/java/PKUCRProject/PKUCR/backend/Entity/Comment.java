@@ -3,7 +3,7 @@ package PKUCRProject.PKUCR.backend.Entity;
 public class Comment {
     private Long id;
     private Long userID;
-    private Long courseID;
+    private String courseID;
     private String content;
     private String time;
     // private String userEmail;
@@ -11,7 +11,7 @@ public class Comment {
     public Comment() {
     }
 
-    public Comment(Long userID, Long courseID, String content, String time) {
+    public Comment(Long userID, String courseID, String content, String time) {
         this.userID = userID;
         this.courseID = courseID;
         this.content = content;
@@ -30,11 +30,11 @@ public class Comment {
     public void setUserID(Long userID) {
         this.userID = userID;
     }
-    public Long getCourseID() {
+    public String getCourseID() {
         return courseID;
     }
-    public void setCourseID(Long courseID) {
-        this.courseID = courseID;
+    public void setCourseID(String courseId) {
+        this.courseID = courseId;
     }
     public String getContent() {
         return content;

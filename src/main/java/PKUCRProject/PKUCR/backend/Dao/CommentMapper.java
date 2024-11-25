@@ -1,5 +1,6 @@
 package PKUCRProject.PKUCR.backend.Dao;
 
+import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Result;
 import org.apache.ibatis.annotations.Results;
@@ -20,4 +21,8 @@ public interface CommentMapper {
         @Result(property = "time", column = "time")
     })
     List<Comment> selectByCourseID(String course_id);
+
+    @Insert("insert into comments (user_id, course_id, content, time) values (#{userID}, #{courseID}, #{content}, #{time})")
+    void insertComment(Comment comment);
+
 }

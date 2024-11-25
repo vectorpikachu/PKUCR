@@ -17,4 +17,8 @@ public class CommentService {
         return commentMapper.selectByCourseID(courseID);
     }
 
+    public void insertComment(Comment comment){
+        commentMapper.insertComment(comment);
+    }
+
 }
