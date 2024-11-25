@@ -97,13 +97,17 @@ const handleExit = () => {
 
 .logo {
   display: flex;
-  justify-content: center; /* 居中显示 */
-  margin-bottom: 20px; /* logo 和标题之间的间距 */
+  justify-content: center;
+  /* 居中显示 */
+  margin-bottom: 20px;
+  /* logo 和标题之间的间距 */
 }
 
 .logo img {
-  height: 200px; /* 根据需要调整高度 */
-  width: auto; /* 自适应宽度 */
+  height: 200px;
+  /* 根据需要调整高度 */
+  width: auto;
+  /* 自适应宽度 */
 }
 
 h1 {

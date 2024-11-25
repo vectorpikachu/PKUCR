@@ -1,11 +1,6 @@
 <template>
   <div>
-    <el-table
-      :data="processedSchedule"
-      v-loading="loading"
-      row-class-name="cellRow"
-      class="schedule"
-    >
+    <el-table :data="processedSchedule" v-loading="loading" row-class-name="cellRow" class="schedule">
       <el-table-column prop="time" label="时间" width="120"></el-table-column>
 
       <el-table-column cell-class-name="cell" label="星期一">
@@ -102,9 +97,9 @@
 </template>
 
 <script>
-import axios from 'axios'
+import axios from '../axios'
 
-const time_sects = [
+const timeSects = [
   '08:00 - 08:50',
   '09:00 - 09:50',
   '10:10 - 11:00',
@@ -126,7 +121,7 @@ export default {
       // default schedule
       schedule: [{ day: 'monday', time: '08:00 - 08:50', subject: '高等数学', details: 'url' }],
       processedSchedule: [],
-      rowCount: time_sects.length,
+      rowCount: timeSects.length,
       loading: true,
       detailsDialogVisible: false,
       editDialogVisible: false,
@@ -174,7 +169,7 @@ export default {
     processScheduleData() {
       const timeSlots = {}
 
-      for (let time of time_sects) {
+      for (let time of timeSects) {
         timeSlots[time] = {
           time: time,
           monday: '',

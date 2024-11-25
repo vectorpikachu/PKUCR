@@ -4,7 +4,7 @@
         <div class="blank"></div>
         <div class="input">
             <el-autocomplete v-model="state" :fetch-suggestions="querySearchAsync" placeholder="Search for resources"
-                @select="handleSelect" style="width: 30vw;"/>
+                @select="handleSelect" style="width: 30vw;" />
         </div>
         <div class="button-group">
             <el-button v-if="!authStore.isAuthenticated" type="primary" @click="goToLogin">登录</el-button>
@@ -102,7 +102,7 @@ const goToLogout = () => {
 }
 
 .logo img {
-  height: 80px;
-  width: auto;
+    height: 80px;
+    width: auto;
 }
 </style>

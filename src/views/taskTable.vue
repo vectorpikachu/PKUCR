@@ -7,10 +7,10 @@
             <template #header>
               <el-button type="info" text @click="handleSort.date">
                 Date
-                <el-icon v-if="config.sortStatus.date.value == SORT_STATUS.NONE">
+                <el-icon v-if="config.sortStatus.date.value === SORT_STATUS.NONE">
                   <Sort />
                 </el-icon>
-                <el-icon v-else-if="config.sortStatus.date.value == SORT_STATUS.SEQ">
+                <el-icon v-else-if="config.sortStatus.date.value === SORT_STATUS.SEQ">
                   <SortDown />
                 </el-icon>
                 <el-icon v-else>
@@ -31,10 +31,10 @@
             <template #header>
               <el-button type="info" text @click="handleSort.name">
                 Task
-                <el-icon v-if="config.sortStatus.name.value == SORT_STATUS.NONE">
+                <el-icon v-if="config.sortStatus.name.value === SORT_STATUS.NONE">
                   <Sort />
                 </el-icon>
-                <el-icon v-else-if="config.sortStatus.name.value == SORT_STATUS.SEQ">
+                <el-icon v-else-if="config.sortStatus.name.value === SORT_STATUS.SEQ">
                   <SortDown />
                 </el-icon>
                 <el-icon v-else>
@@ -58,10 +58,10 @@
             <template #header>
               <el-button type="info" text @click="handleSort.time">
                 Time
-                <el-icon v-if="config.sortStatus.time.value == SORT_STATUS.NONE">
+                <el-icon v-if="config.sortStatus.time.value === SORT_STATUS.NONE">
                   <Sort />
                 </el-icon>
-                <el-icon v-else-if="config.sortStatus.time.value == SORT_STATUS.SEQ">
+                <el-icon v-else-if="config.sortStatus.time.value === SORT_STATUS.SEQ">
                   <SortDown />
                 </el-icon>
                 <el-icon v-else>
@@ -111,6 +111,7 @@
     </el-col>
   </el-row>
 
+  <!-- Dialog of adding task -->
   <el-dialog v-model="config.taskFormVisible.value" title="Add New Task" width="500">
     <el-form :model="config.taskForm" label-width="auto" style="max-width: 600px">
       <el-form-item label="Task name">
@@ -148,6 +149,7 @@ import { ref, reactive } from 'vue'
 import { Sort, Loading, Timer, SortDown, SortUp } from '@element-plus/icons-vue'
 import axios from '../axios'
 
+// Backend axios address
 const AXIOS_ADDRESS = {
   INSERT: '/task/insert',
   UPDATE: '/task/update',
@@ -155,7 +157,8 @@ const AXIOS_ADDRESS = {
   DELETE: '/task/delete'
 }
 
-const send_signal = {
+// Message exchanging functinos with server
+const sendSignal = {
   put: (t) => {
     return axios
       .put(AXIOS_ADDRESS.UPDATE, {
@@ -237,6 +240,7 @@ const SORT_STATUS = {
   REV: 2
 }
 
+// Status buffer for functions
 let config = {
   taskFormVisible: ref(false),
   isEdit: ref(false),
@@ -262,7 +266,7 @@ const formatTooltip = (val: number) => {
   return val / 10
 }
 
-function new_task(id, priority, date, name, time, memo) {
+function newTask(id, priority, date, name, time, memo) {
   return {
     id: 0,
     priority: priority,
@@ -273,7 +277,8 @@ function new_task(id, priority, date, name, time, memo) {
   }
 }
 
-function task_from(form) {
+// Data sttucture of task
+function taskFrom(form) {
   return {
     id: form.id,
     priority: form.priority,
@@ -284,10 +289,10 @@ function task_from(form) {
   }
 }
 
-function comp_task(lhs, rhs) {
+function compTask(lhs, rhs) {
   for (const comp of config.compTask.value) {
     let res = comp[1](lhs, rhs)
-    if (res != 0)
+    if (res !== 0)
       if (comp[0](lhs, rhs) >= 0) return res
       else return -res
   }
@@ -303,6 +308,7 @@ interface Task {
   memo: string
 }
 
+// Different types of sort function
 const handleSort = {
   name: () => {
     config.sortStatus.name.value = (config.sortStatus.name.value + 1) % 3
@@ -311,12 +317,12 @@ const handleSort = {
     switch (val) {
       case SORT_STATUS.NONE:
         for (let i = 0; ; ++i) {
-          if (config.compTask.value[i][0](0, 0) == -COMP_ID.NAME(0, 0)) {
+          if (config.compTask.value[i][0](0, 0) === -COMP_ID.NAME(0, 0)) {
             index = i
             break
           }
         }
-        if (index != -1) {
+        if (index !== -1) {
           config.compTask.value.splice(index, 1)
         }
         break
@@ -326,18 +332,19 @@ const handleSort = {
         break
       case SORT_STATUS.REV:
         for (let i = 0; ; ++i) {
-          if (config.compTask.value[i][0](0, 0) == COMP_ID.NAME(0, 0)) {
+          if (config.compTask.value[i][0](0, 0) === COMP_ID.NAME(0, 0)) {
             index = i
             break
           }
         }
-        if (index != -1) {
+        if (index !== -1) {
           config.compTask.value.splice(index, 1, [COMP_ID.NEG(COMP_ID.NAME), COMP_TASK.NAME])
         }
         break
     }
-    tableData.value.sort(comp_task)
+    tableData.value.sort(compTask)
   },
+  
   date: () => {
     config.sortStatus.date.value = (config.sortStatus.date.value + 1) % 3
     let val = config.sortStatus.date.value
@@ -345,12 +352,12 @@ const handleSort = {
     switch (val) {
       case SORT_STATUS.NONE:
         for (let i = 0; ; ++i) {
-          if (config.compTask.value[i][0](0, 0) == -COMP_ID.DATE(0, 0)) {
+          if (config.compTask.value[i][0](0, 0) === -COMP_ID.DATE(0, 0)) {
             index = i
             break
           }
         }
-        if (index != -1) {
+        if (index !== -1) {
           config.compTask.value.splice(index, 1)
         }
         break
@@ -360,18 +367,19 @@ const handleSort = {
         break
       case SORT_STATUS.REV:
         for (let i = 0; ; ++i) {
-          if (config.compTask.value[i][0](0, 0) == COMP_ID.DATE(0, 0)) {
+          if (config.compTask.value[i][0](0, 0) === COMP_ID.DATE(0, 0)) {
             index = i
             break
           }
         }
-        if (index != -1) {
+        if (index !== -1) {
           config.compTask.value.splice(index, 1, [COMP_ID.NEG(COMP_ID.DATE), COMP_TASK.DATE])
         }
         break
     }
-    tableData.value.sort(comp_task)
+    tableData.value.sort(compTask)
   },
+
   time: () => {
     config.sortStatus.time.value = (config.sortStatus.time.value + 1) % 3
     let val = config.sortStatus.time.value
@@ -379,12 +387,12 @@ const handleSort = {
     switch (val) {
       case SORT_STATUS.NONE:
         for (let i = 0; ; ++i) {
-          if (config.compTask.value[i][0](0, 0) == -COMP_ID.TIME(0, 0)) {
+          if (config.compTask.value[i][0](0, 0) === -COMP_ID.TIME(0, 0)) {
             index = i
             break
           }
         }
-        if (index != -1) {
+        if (index !== -1) {
           config.compTask.value.splice(index, 1)
         }
         break
@@ -394,27 +402,29 @@ const handleSort = {
         break
       case SORT_STATUS.REV:
         for (let i = 0; ; ++i) {
-          if (config.compTask.value[i][0](0, 0) == COMP_ID.TIME(0, 0)) {
+          if (config.compTask.value[i][0](0, 0) === COMP_ID.TIME(0, 0)) {
             index = i
             break
           }
         }
-        if (index != -1) {
+        if (index !== -1) {
           config.compTask.value.splice(index, 1, [COMP_ID.NEG(COMP_ID.TIME), COMP_TASK.TIME])
         }
         break
     }
-    tableData.value.sort(comp_task)
+    tableData.value.sort(compTask)
   }
 }
 
+// Update data into localstorage
 function tableDataUpdateLocal() {
   let data = JSON.stringify(tableData.value)
   localStorage.setItem('tableData', data)
 }
 
+// Fetch initial data from server
 function tableDataFetchLocal() {
-  let task_table_local: Task[] = [default_task]
+  let task_table_local: Task[] = [defaultTask]
   let tableDataCached = localStorage.getItem('tableData')
   if (tableDataCached) {
     task_table_local = JSON.parse(tableDataCached)
@@ -422,28 +432,29 @@ function tableDataFetchLocal() {
   return task_table_local
 }
 
+// Submite task form to server and update local data
 function taskFormSubmit() {
   config.taskFormVisible.value = false
   if (config.isEdit.value) {
     config.isEdit.value = false
     let id = tableData.value[config.recentTask.value].id
     config.taskForm.id = id
-    let response = send_signal.put(config.taskForm)
+    let response = sendSignal.put(config.taskForm)
     response.then((res) => {
-      if (res.data == 'update success') {
+      if (res.data === 'update success') {
         tableData.value[config.recentTask.value] = config.taskForm
         tableDataUpdateLocal()
       }
     })
   } else {
-    let response = send_signal.post(config.taskForm)
+    let response = sendSignal.post(config.taskForm)
     response.then((res) => {
       config.taskForm.id = res.data.id
     })
-    tableData.value.push(task_from(config.taskForm))
+    tableData.value.push(taskFrom(config.taskForm))
     tableDataUpdateLocal()
   }
-  tableData.value.sort(comp_task)
+  tableData.value.sort(compTask)
   config.taskForm = reactive({
     id: 0,
     priority: 0,
@@ -478,11 +489,11 @@ function handleEdit(index, row) {
 
 function handleDelete(index, row) {
   let task = tableData.value.splice(index, 1)[0]
-  send_signal.delete(task.id)
+  sendSignal.delete(task.id)
   tableDataUpdateLocal()
 }
 
-let default_task = new_task(
+let defaultTask = newTask(
   0,
   0,
   '2024-10-10',
@@ -491,8 +502,9 @@ let default_task = new_task(
   '1st Presentation'
 )
 
-let task_table = tableDataFetchLocal()
-let tableData = ref(task_table)
+// Initialize local data
+let taskTable = tableDataFetchLocal()
+let tableData = ref(taskTable)
 </script>
 
 <style scoped>

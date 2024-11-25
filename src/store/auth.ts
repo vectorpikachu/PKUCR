@@ -10,7 +10,7 @@ export const useAuthStore = defineStore('auth', () => {
   const login = async (email: string, password: string) => {
     try {
       // 此处是后端api
-      const response = await axios.post('/auth/login', { email, password});
+      const response = await axios.post('/auth/login', { email, password });
       token.value = response.data.token;
       localStorage.setItem('token', token.value || '');
     } catch (error) {
@@ -21,7 +21,7 @@ export const useAuthStore = defineStore('auth', () => {
   const register = async (email: string, password: string) => {
     try {
       // 此处是后端api
-      const response = await axios.post('/auth/register', { email, password});
+      const response = await axios.post('/auth/register', { email, password });
       token.value = response.data.token;
       localStorage.setItem('token', token.value || '');
     } catch (error) {
