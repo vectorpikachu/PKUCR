@@ -190,4 +190,4 @@ TODO: 为了安全，我们应该使用`https`来传输token。
 
 ## 测试
 
-使用`Postman`进行测试。
+使用`Postman`进行测试。观察数据库。
