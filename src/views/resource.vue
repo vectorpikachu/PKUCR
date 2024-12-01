@@ -39,6 +39,11 @@
                         <el-table :data="selectedObject.comments" style="width: 100%">
                             <el-table-column prop="user" label="用户" width="120" />
                             <el-table-column prop="comment" label="评价内容" />
+                            <el-table-column label="操作">
+                                <template v-slot="scope">
+                                    <el-button type="danger" @click="deleteComment(scope.row)">删除</el-button>
+                                </template>
+                            </el-table-column>
                         </el-table>
                         <el-form @submit.prevent="addComment">
                             <el-form-item>
@@ -54,6 +59,7 @@
                             <el-table-column label="操作">
                                 <template v-slot="scope">
                                     <el-button type="primary" @click="downloadResource(scope.row)">下载</el-button>
+                                    <el-button type="danger" @click="deleteResource(scope.row)">删除</el-button>
                                 </template>
                             </el-table-column>
                         </el-table>
@@ -95,18 +101,19 @@
 import { ref, reactive, onMounted } from 'vue'
 import axios from '../axios'
 import { useRouter } from 'vue-router'
+import { ElMessage } from 'element-plus';
 
 const router = useRouter()
 
 // 课程元信息
 const objects = ref([
     {
-        course_id: 1,
+        course_id: '1',
         name: 'Class 1',
         category: '专业课',
     },
     {
-        course_id: 2,
+        course_id: '2',
         name: 'Class 2',
         category: '政治课',
     },
@@ -114,14 +121,14 @@ const objects = ref([
 
 // 课程详情
 const courseDetails = new Map()
-courseDetails.set(1, {
+courseDetails.set('1', {
     comments: [
-        { user: 'Alice', comment: 'Great course!' },
-        { user: 'Bob', comment: 'Very informative.' }
+        { id: 1, user: 'Alice', comment: 'Great course!' },
+        { id: 2, user: 'Bob', comment: 'Very informative.' }
     ],
     materials: [
-        { filename: 'Lecture1.pdf', url: '/files/lecture1.pdf' },
-        { filename: 'Lecture2.pdf', url: '/files/lecture2.pdf' }
+        { id: 1, filename: 'Lecture1.pdf', url: '/files/lecture1.pdf' },
+        { id: 2, filename: 'Lecture2.pdf', url: '/files/lecture2.pdf' }
     ]
 })
 
@@ -177,6 +184,7 @@ const viewDetails = async (row) => {
             comments: courseInfo.comments,
             materials: courseInfo.materials
         }
+        dialogVisible.value = true
     } else {
         selectedObject.value = row
         console.log('Course not found!')
@@ -195,13 +203,14 @@ const viewDetails = async (row) => {
                 comments: data.comments,
                 materials: data.materials
             }
+            dialogVisible.value = true
         }
         catch (error) {
             console.error('Error fetching course details:', error)
             alert("获取课程详情失败: " + error.message)
         }
     }
-    dialogVisible.value = true
+
 }
 
 // 重置对话框状态
@@ -215,7 +224,7 @@ const addComment = async () => {
     if (newComment.value.trim()) {
         // 上传后端
         const commentData = {
-            user: 'test',  // TODO: 用户名, 阶段三先不管了
+            user: localStorage.getItem('username'),  // TODO: 用户名, 阶段三先不管了
             comment: newComment.value.trim()
         }
         try {
@@ -250,6 +259,27 @@ const addComment = async () => {
     }
 }
 
+const deleteComment = async (comment) => {
+    try {
+        const response = await axios.delete(`/api/resource/comment/${comment.id}`)
+
+        if (response.status === 200) {
+            const course = courseDetails.get(selectedObject.value.course_id);
+            if (course) {
+                const index = course.comments.findIndex(c => c.id === comment.id);
+                if (index !== -1) {
+                    course.comments.splice(index, 1);
+                }
+            }
+            ElMessage.info('删除成功')
+        } else {
+            alert('删除评论失败, 服务端错误: ' + response.status)
+        }
+    } catch (error) {
+        alert('删除评论失败 ' + error.message)
+    }
+}
+
 // 下载资料
 const downloadResource = async (resource) => {
     try {
@@ -267,6 +297,29 @@ const downloadResource = async (resource) => {
     } catch (error) {
         console.error('Error downloading resource:', error)
         alert('Error downloading resource: ' + error.message)
+    }
+}
+
+// 删除资料
+const deleteResource = async (resource) => {
+    try {
+        const response = await axios.delete(`/api/resource/material/${resource.id}`)
+
+        if (response.status === 200) {
+            const course = courseDetails.get(selectedObject.value.course_id);
+            if (course) {
+                // 找到 materials 数组并删除相应的 material
+                const index = course.materials.findIndex(material => material.id === resource.id);
+                if (index !== -1) {
+                    course.materials.splice(index, 1);  // 删除指定的 material
+                }
+            }
+            ElMessage.info('删除成功')
+        } else {
+            alert('删除资料失败, 服务端错误: ' + response.status)
+        }
+    } catch (error) {
+        alert('删除资料失败 ' + error.message)
     }
 }
 
@@ -320,15 +373,30 @@ const resetAddCourseDialog = () => {
 }
 
 // 添加新课程的处理函数
-const addCourse = () => {
+const addCourse = async () => {
     if (newCourse.course_id && newCourse.name && newCourse.category) {
-        objects.value.push({
-            course_id: Number(newCourse.course_id), // 转换为数字
-            name: newCourse.name,
-            category: newCourse.category,
-        })
-        addCourseDialogVisible.value = false // 关闭对话框
-        resetAddCourseDialog() // 重置输入框
+        try {
+            // 发起 POST 请求
+            const courseData = {
+                course_id: newCourse.course_id,
+                name: newCourse.name,
+                category: newCourse.category
+            }
+            const response = await axios.post(`/api/resource/${newCourse.course_id}`, courseData)
+
+            // 如果请求成功，更新本地评论数据
+            if (response.status === 200) {
+                objects.value.push(courseData)
+                addCourseDialogVisible.value = false
+                resetAddCourseDialog() // 重置输入框
+            } else {
+                console.error('Failed to post course:', response.status)
+                alert('添加课程失败, 服务端错误: ' + response.status)
+            }
+        } catch (error) {
+            console.error('Error posting course:', error)
+            alert('添加课程失败: ' + error.message)
+        }
     }
 }
 
