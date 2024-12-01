@@ -1,4 +1,6 @@
-package main.java.PKUCRProject.PKUCR.backend.Dao;
+package PKUCRProject.PKUCR.backend.Dao;
+
+import java.util.List;
 
 import org.apache.ibatis.annotations.Delete;
 import org.apache.ibatis.annotations.Insert;
@@ -10,26 +12,23 @@ import org.apache.ibatis.annotations.Results;
 import org.apache.ibatis.annotations.Select;
 import org.apache.ibatis.annotations.Update;
 
-import PKUCRProject.PKUCR.backend.Entity.Task;
 import PKUCRProject.PKUCR.backend.Entity.User;
+import PKUCRProject.PKUCR.backend.Entity.Resource;
 
 @Mapper
-public class ResourceMapper {
+public interface ResourceMapper {
 
-    @Insert("insert into users (username, password, permission) values (#{username}, #{password}, #{permission})")
+    @Insert("INSERT INTO materials (resourceID, courseID, userID, fileName, uploadTime, savePath) " +
+            "VALUES (#{materialID}, #{courseID}, #{userID}, #{fileName}, #{uploadTime}, #{savePath})")
     @Options(useGeneratedKeys = true, keyProperty = "id", keyColumn = "id")
-    int insert(User user);
+    Long insertResource(Resource resource);
 
-    @Select("select * from users where username = #{username}")
-    User selectByUsername(String username);
+    @Select("SELECT * FROM resources WHERE courseID = #{courseID}")
+    List<Resource> selectResourcesByCourseID(String courseID);
 
-    @Select("select * from users where id = #{id}")
-    User selectById(int id);
+    @Select("SELECT * FROM resources WHERE resourceID = #{resourceID}")
+    List<Resource> selectResourcesByMaterialID(String resourceID);
 
-    @Update("update users set username = #{username}, password = #{password}, permission = #{permission} where id = #{id}")
-    void update(User user);
-
-    @Delete("delete from users where id = #{id}")
-    void delete(int id);
-    
+    //@Delete("delete from users where id = #{id}")
+    //void delete(int id);
 }
