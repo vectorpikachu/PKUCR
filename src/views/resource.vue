@@ -38,7 +38,7 @@
                     <el-tab-pane label="评价" name="comments">
                         <el-table :data="selectedObject.comments" style="width: 100%">
                             <el-table-column prop="user" label="用户" width="120" />
-                            <el-table-column prop="content" label="评价内容" />
+                            <el-table-column prop="comment" label="评价内容" />
                         </el-table>
                         <el-form @submit.prevent="addComment">
                             <el-form-item>
@@ -92,123 +92,123 @@
 </template>
 
 <script lang="ts" setup>
-import { ref, reactive, onMounted } from 'vue';
-import axios from '../axios';
-import { useRouter } from 'vue-router';
+import { ref, reactive, onMounted } from 'vue'
+import axios from '../axios'
+import { useRouter } from 'vue-router'
 
-const router = useRouter();
+const router = useRouter()
 
 // 课程元信息
 const objects = ref([
     {
         course_id: 1,
         name: 'Class 1',
-        category: 'Math',
+        category: '专业课',
     },
     {
         course_id: 2,
         name: 'Class 2',
-        category: 'Science',
+        category: '政治课',
     },
-]);
+])
 
 // 课程详情
-const courseDetails = new Map();
+const courseDetails = new Map()
 courseDetails.set(1, {
     comments: [
-        { user: 'Alice', content: 'Great course!' },
-        { user: 'Bob', content: 'Very informative.' }
+        { user: 'Alice', comment: 'Great course!' },
+        { user: 'Bob', comment: 'Very informative.' }
     ],
     materials: [
         { filename: 'Lecture1.pdf', url: '/files/lecture1.pdf' },
         { filename: 'Lecture2.pdf', url: '/files/lecture2.pdf' }
     ]
-});
+})
 
 const courseMetaInfo = ref([])
 
-const dialogVisible = ref(false);
-const addCourseDialogVisible = ref(false);
-const selectedObject = ref(null);
-const activeTab = ref('comments'); // 用来控制默认打开的 tab
-const newComment = ref(''); // 用于存储新评论内容
-const searchQuery = ref(''); // 用于存储搜索关键词
-const filteredObjects = ref(objects.value); // 用于存储筛选后的课程数据
-const newCourse = reactive({ course_id: '', name: '', category: '' }); // 用于存储新课程数据
+const dialogVisible = ref(false)
+const addCourseDialogVisible = ref(false)
+const selectedObject = ref(null)
+const activeTab = ref('comments') // 用来控制默认打开的 tab
+const newComment = ref('') // 用于存储新评论内容
+const searchQuery = ref('') // 用于存储搜索关键词
+const filteredObjects = ref(objects.value) // 用于存储筛选后的课程数据
+const newCourse = reactive({ course_id: '', name: '', category: '' }) // 用于存储新课程数据
 
-const loading = ref(false);
+const loading = ref(false)
 
 // 页面初始化时拿全部数据
 const fetchCourses = async () => {
-    loading.value = true;
+    loading.value = true
     try {
-        const response = await axios.get('/api/resource'); // 后端api
-        const data = response.data;
+        const response = await axios.get('/api/resource') // 后端api
+        const data = response.data
         const formattedData = Object.keys(data).map(key => {
             return {
                 course_id: key,
                 ...data[key]
-            };
-        });
+            }
+        })
 
         // 将格式化后的数据赋值给 objects
-        courseMetaInfo.value = formattedData;
+        courseMetaInfo.value = formattedData
         objects.value.push(...formattedData)
     } catch (error) {
-        console.error('获取数据失败:', error);
-        alert("获取数据失败: " + error.message);
+        console.error('获取数据失败:', error)
+        alert("获取数据失败: " + error.message)
     } finally {
-        loading.value = false;
+        loading.value = false
     }
-};
+}
 
 // 页面加载前会调用
 onMounted(() => {
-    fetchCourses();
-});
+    fetchCourses()
+})
 
 // 查看详情的处理函数
 const viewDetails = async (row) => {
-    const courseInfo = courseDetails.get(row.course_id);
+    const courseInfo = courseDetails.get(row.course_id)
 
     if (courseInfo) {
         selectedObject.value = {
             ...row,
             comments: courseInfo.comments,
             materials: courseInfo.materials
-        };
+        }
     } else {
         selectedObject.value = row
-        console.log('Course not found!');
+        console.log('Course not found!')
         // 本地没有, 请求后端
         try {
-            const response = await axios.get(`/api/resourse/${row.course_id}`);
-            const data = response.data;
+            const response = await axios.get(`/api/resource/${row.course_id}`)
+            const data = response.data
 
             courseDetails.set(row.course_id, {
                 comments: data.comments,
                 materials: data.materials
-            });
+            })
 
             selectedObject.value = {
                 ...row,
                 comments: data.comments,
                 materials: data.materials
-            };
+            }
         }
         catch (error) {
-            console.error('Error fetching course details:', error);
-            alert("获取课程详情失败: " + error.message);
+            console.error('Error fetching course details:', error)
+            alert("获取课程详情失败: " + error.message)
         }
     }
-    dialogVisible.value = true;
-};
+    dialogVisible.value = true
+}
 
 // 重置对话框状态
 const resetDialog = () => {
-    selectedObject.value = null;
-    newComment.value = '';
-};
+    selectedObject.value = null
+    newComment.value = ''
+}
 
 // 添加评论的处理函数
 const addComment = async () => {
@@ -217,83 +217,83 @@ const addComment = async () => {
         const commentData = {
             user: 'test',  // TODO: 用户名, 阶段三先不管了
             comment: newComment.value.trim()
-        };
+        }
         try {
             // 发起 POST 请求
-            const response = await axios.post(`/api/resource/comment/${selectedObject.value.course_id}`, commentData);
+            const response = await axios.post(`/api/resource/comment/${selectedObject.value.course_id}`, commentData)
 
             // 如果请求成功，更新本地评论数据
             if (response.status === 200) {
                 selectedObject.value.comments.push({
                     user: commentData.user,
-                    content: commentData.comment
-                });
+                    comment: commentData.comment
+                })
 
-                const courseId = selectedObject.value.course_id;
+                const courseId = selectedObject.value.course_id
                 if (courseDetails.has(courseId)) {
                     courseDetails.get(courseId).comments.push({
                         user: commentData.user,
-                        content: commentData.comment
-                    });
+                        comment: commentData.comment
+                    })
                 }
 
                 // 清空输入框
-                newComment.value = '';
+                newComment.value = ''
             } else {
-                console.error('Failed to post comment:', response.status);
-                alert('上传评论失败, 服务端错误: ' + response.status);
+                console.error('Failed to post comment:', response.status)
+                alert('上传评论失败, 服务端错误: ' + response.status)
             }
         } catch (error) {
-            console.error('Error posting comment:', error);
-            alert('上传评论失败: ' + error.message);
+            console.error('Error posting comment:', error)
+            alert('上传评论失败: ' + error.message)
         }
     }
-};
+}
 
 // 下载资料
 const downloadResource = async (resource) => {
     try {
         const response = await axios.get(resource.url, {
             responseType: 'blob', // 重要，返回二进制数据
-        });
+        })
 
-        const link = document.createElement('a');
-        const blob = new Blob([response.data], { type: response.headers['content-type'] });
-        const url = window.URL.createObjectURL(blob);
-        link.href = url;
-        link.download = resource.name;
-        link.click();
-        window.URL.revokeObjectURL(url);
+        const link = document.createElement('a')
+        const blob = new Blob([response.data], { type: response.headers['content-type'] })
+        const url = window.URL.createObjectURL(blob)
+        link.href = url
+        link.download = resource.name
+        link.click()
+        window.URL.revokeObjectURL(url)
     } catch (error) {
-        console.error('Error downloading resource:', error);
+        console.error('Error downloading resource:', error)
         alert('Error downloading resource: ' + error.message)
     }
-};
+}
 
 // 上传资料成功的回调
 const handleUploadSuccess = (response, file) => {
-    selectedObject.value.materials.push({ name: response.filename, url: response.url });
-    const courseId = selectedObject.value.course_id;
+    selectedObject.value.materials.push({ name: response.filename, url: response.url })
+    const courseId = selectedObject.value.course_id
     if (courseDetails.has(courseId)) {
         courseDetails.get(courseId).materials.push({
-            name: response.filename,
+            filename: response.filename,
             url: response.url
-        });
+        })
     }
-    console.log('Upload succeed: ', response);
-    alert('Upload succeed: ' + response.name);
-};
+    console.log('Upload succeed: ', response)
+    alert('Upload succeed: ' + response.filename)
+}
 
 // 上传资料失败的回调
 const handleUploadError = (error) => {
-    console.error('Upload failed:', error);
-    alert('Upload failed: ' + error.message);
-};
+    console.error('Upload failed:', error)
+    alert('Upload failed: ' + error.message)
+}
 
 // Tab点击事件
 const handleTabClick = (tab) => {
-    console.log(tab.name); // 打印当前 tab 的名称
-};
+    console.log(tab.name) // 打印当前 tab 的名称
+}
 
 // 搜索课程的处理函数
 const searchCourses = () => {
@@ -301,23 +301,23 @@ const searchCourses = () => {
         filteredObjects.value = objects.value.filter(course =>
             course.name.toLowerCase().includes(searchQuery.value.toLowerCase()) ||
             course.course_id.toString().includes(searchQuery.value)
-        );
+        )
     } else {
-        filteredObjects.value = objects.value;
+        filteredObjects.value = objects.value
     }
-};
+}
 
 // 打开添加新课程对话框
 const openAddCourseDialog = () => {
-    addCourseDialogVisible.value = true;
-};
+    addCourseDialogVisible.value = true
+}
 
 // 重置添加新课程对话框
 const resetAddCourseDialog = () => {
-    newCourse.course_id = '';
-    newCourse.name = '';
-    newCourse.category = '';
-};
+    newCourse.course_id = ''
+    newCourse.name = ''
+    newCourse.category = ''
+}
 
 // 添加新课程的处理函数
 const addCourse = () => {
@@ -326,15 +326,15 @@ const addCourse = () => {
             course_id: Number(newCourse.course_id), // 转换为数字
             name: newCourse.name,
             category: newCourse.category,
-        });
-        addCourseDialogVisible.value = false; // 关闭对话框
-        resetAddCourseDialog(); // 重置输入框
+        })
+        addCourseDialogVisible.value = false // 关闭对话框
+        resetAddCourseDialog() // 重置输入框
     }
-};
+}
 
 const handleExit = () => {
-  router.push('/taskTable');
-};
+    router.push('/taskTable')
+}
 </script>
 
 <style scoped>
