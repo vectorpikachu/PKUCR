@@ -7,6 +7,5 @@ CREATE TABLE IF NOT EXISTS resources (
     userID BIGINT NOT NULL,
     fileName VARCHAR(255) NOT NULL,
     filePath VARCHAR(255) NOT NULL,
-    fileContent VARCHAR(255);
     uploadTime DATETIME NOT NULL
 );

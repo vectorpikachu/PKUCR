@@ -33,11 +33,16 @@ public class ResourceService {
     }
 
     /**
-     * 根据资料ID获取对应的课程资料
-     * @param materialID 用户ID
-     * @return 对应的资料
+     * 获取文件路径
+     * @param courseID 课程ID
+     * @param resourceID 资料ID
+     * @return resource
      */
-    public Resource getResourcesByUserID(Long userID) {
-        return resourceMapper.selectResourcesByUserID(userID);
+    public Resource getResource(String courseID, Long resourceID) {
+        Resource resource = materialMapper.selectResourceByCourseIDAndresourceID(courseID, resourceID);
+        if (resource == null) {
+            throw new RuntimeException("Resource not found in the database");
+        }
+        return resource;
     }
 }

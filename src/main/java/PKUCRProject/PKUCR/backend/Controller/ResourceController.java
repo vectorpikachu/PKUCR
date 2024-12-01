@@ -2,6 +2,7 @@ package main.java.PKUCRProject.PKUCR.backend.Controller;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.http.HttpHeaders;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -72,7 +73,7 @@ public class ResourceController {
         resourceService.insertResource(resource);
 
         // 根据文件名生成具体URL并返回
-        String fileUrl = "/files/" + resource.getID();
+        String fileUrl = "/api/resource/material/"+resource.getCourseID()+"/"+resource.getID();
         Map<String, String> response = Map.of(
             "filename", resource.getFilename(),
             "url", fileUrl
@@ -81,15 +82,27 @@ public class ResourceController {
         return ResponseEntity.ok(response);
     }
 
-    @Operation(summary = "Select a resource by id")
-    @GetMapping("/resourceSelectById")
-    public Resource selectById(@RequestBody int id) {
-        return resourceService.selectById(id);
-    }
+    @Operation(summary = "Download a resource")
+    @GetMapping("/api/resource/material/{courseId}/{resourceID}")
+    public ResponseEntity<?> downloadResource(@PathVariable("courseId") String courseID, @PathVariable("resourceID") String resourceID) {
+        main.java.PKUCRProject.PKUCR.backend.Entity.Resource resource = resourceService.getResource(courseID, resourceID);
+        
+        // 检查文件是否存在
+        Strng filePath = resource.getFilePath();
+        File file = new File(filePath);
+        if (!file.exists()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("File not found");
+        }
 
-    @Operation(summary = "Delete a resource by id")
-    @DeleteMapping("/resourceDelete")
-    public String delete(@RequestBody int id) {
-        return resourceService.delete(id);
+        // 返回文件内容
+        try {
+            byte[] fileContent = Files.readAllBytes(file.toPath());
+            return ResponseEntity.ok()
+                    .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; resourceID=\"" + resourceID + "\"")
+                    .contentType(MediaType.APPLICATION_OCTET_STREAM)
+                    .body(fileContent);
+        } catch (IOException e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error reading file");
+        }
     }
 }

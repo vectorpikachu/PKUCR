@@ -18,16 +18,13 @@ import PKUCRProject.PKUCR.backend.Entity.Resource;
 @Mapper
 public interface ResourceMapper {
 
-    @Insert("INSERT INTO materials (resourceID, courseID, userID, fileName, uploadTime, savePath) " +
-            "VALUES (#{materialID}, #{courseID}, #{userID}, #{fileName}, #{uploadTime}, #{savePath})")
+    @Insert("INSERT INTO resources (resourceID, courseID, userID, fileName, uploadTime, savePath) " +
+            "VALUES (#{resourceID}, #{courseID}, #{userID}, #{fileName}, #{uploadTime}, #{savePath})")
     @Options(useGeneratedKeys = true, keyProperty = "id", keyColumn = "id")
     Long insertResource(Resource resource);
 
-    @Select("SELECT * FROM resources WHERE courseID = #{courseID}")
-    List<Resource> selectResourcesByCourseID(String courseID);
-
-    @Select("SELECT * FROM resources WHERE resourceID = #{resourceID}")
-    List<Resource> selectResourcesByMaterialID(String resourceID);
+    @Select("SELECT Resource FROM resources WHERE courseID = #{courseID} AND resourceID = #{resourceID}")
+    String selectResourceByCourseIDAndResourceID(@Param("courseID") String courseID, @Param("resourceID") String resourceID);
 
     //@Delete("delete from users where id = #{id}")
     //void delete(int id);
