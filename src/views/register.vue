@@ -3,6 +3,9 @@
     <div class="logo"><img src="@/assets/PKUCR-logo.svg" alt="Logo" /></div>
     <h1>Register</h1>
     <el-form :model="form" ref="formRef" label-width="80px">
+      <el-form-item label="Name" prop="name">
+        <el-input v-model="form.email" placeholder="Enter your name" />
+      </el-form-item>
       <el-form-item label="Email" prop="email" :rules="emailRules">
         <el-input v-model="form.email" placeholder="Enter your email" />
       </el-form-item>
@@ -30,6 +33,7 @@ const authStore = useAuthStore();
 const formRef = ref<InstanceType<typeof ElForm>>(null)
 
 const form = ref({
+  name: '',
   email: '',
   password: ''
 })
@@ -66,7 +70,7 @@ const handleSubmit = async () => {
         //   email: form.value.email,
         //   password: form.value.password
         // });
-        await authStore.register(form.value.email, form.value.password);
+        await authStore.register(form.value.email, form.value.password, form.value.name);
         // console.log('Register successful:', response.data);
         // 跳转到首页
         router.push('/taskTable');

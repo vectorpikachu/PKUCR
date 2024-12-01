@@ -4,6 +4,7 @@ import axios from '../axios'
 
 export const useAuthStore = defineStore('auth', () => {
   const token = ref<string | null>(localStorage.getItem('token'));
+  const username = ref<string | null>(localStorage.getItem('username'));
 
   const isAuthenticated = computed(() => !!token.value);
 
@@ -12,18 +13,22 @@ export const useAuthStore = defineStore('auth', () => {
       // 此处是后端api
       const response = await axios.post('/auth/login', { email, password });
       token.value = response.data.token;
+      username.value = response.data.username;  // 获取并保存用户名
       localStorage.setItem('token', token.value || '');
+      localStorage.setItem('username', username.value || '');
     } catch (error) {
       throw new Error(`Login failed! ${error}`);
     }
   };
 
-  const register = async (email: string, password: string) => {
+  const register = async (email: string, password: string, name: string) => {
     try {
       // 此处是后端api
-      const response = await axios.post('/auth/register', { email, password });
+      const response = await axios.post('/auth/register', { email, password, name});
       token.value = response.data.token;
+      username.value = response.data.username;  // 获取并保存用户名
       localStorage.setItem('token', token.value || '');
+      localStorage.setItem('username', username.value || '');
     } catch (error) {
       throw new Error(`Register failed! ${error}`);
     }
@@ -31,7 +36,9 @@ export const useAuthStore = defineStore('auth', () => {
 
   const logout = () => {
     token.value = null;
+    username.value = null;
     localStorage.removeItem('token');
+    localStorage.removeItem('username');
   };
 
   return {

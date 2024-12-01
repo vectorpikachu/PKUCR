@@ -9,13 +9,14 @@
         <div class="button-group">
             <el-button v-if="!authStore.isAuthenticated" type="primary" @click="goToLogin">登录</el-button>
             <el-button v-if="!authStore.isAuthenticated" type="success" @click="goToRegister">注册</el-button>
+            <span>{{ username }}</span>
             <el-button v-if="authStore.isAuthenticated" type="danger" @click="goToLogout">登出</el-button>
         </div>
     </div>
 </template>
 
 <script lang="ts" setup>
-import { onMounted, ref } from 'vue'
+import { onMounted, ref, computed } from 'vue'
 import { useRouter } from 'vue-router'
 import { useAuthStore } from '@/store/auth'
 //import {logo} from '../assets/PKUCR-logo2.svg'
@@ -23,6 +24,10 @@ import { useAuthStore } from '@/store/auth'
 //const logoUrl = logo
 const router = useRouter()
 const authStore = useAuthStore()
+
+const username = computed(() => {
+  return localStorage.getItem('username');
+});
 
 const state = ref('')
 
