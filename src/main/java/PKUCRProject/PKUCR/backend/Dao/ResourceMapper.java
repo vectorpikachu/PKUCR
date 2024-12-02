@@ -24,7 +24,7 @@ public interface ResourceMapper {
     Long insertResource(Resource resource);
 
     @Select("SELECT Resource FROM resources WHERE courseID = #{courseID} AND resourceID = #{resourceID}")
-    String selectResourceByCourseIDAndResourceID(@Param("courseID") String courseID, @Param("resourceID") String resourceID);
+    Resource selectResource(@Param("courseID") Long courseID, @Param("resourceID") Long resourceID);
 
     //@Delete("delete from users where id = #{id}")
     //void delete(int id);

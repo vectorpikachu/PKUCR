@@ -1,23 +1,28 @@
-package main.java.PKUCRProject.PKUCR.backend.Controller;
+package PKUCRProject.PKUCR.backend.Controller;
 
 import java.io.File;
 import java.io.IOException;
-import java.net.http.HttpHeaders;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.LocalDateTime;
 import java.util.Map;
-import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.http.ResponseEntity;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.HttpHeaders;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -34,12 +39,13 @@ public class ResourceController {
     private ResourceService resourceService;
 
     @Operation(summary = "Upload a resource file")
-    @PostMapping("/api/resource/material/{courseId}")
+    @PostMapping("/api/resource/material/{courseID}")
     public ResponseEntity<?> uploadResource(
-            @PathVariable("courseId") String courseId, 
-            @Valid @RequestBody main.java.PKUCRProject.PKUCR.backend.Entity.Resource resource) {
+            @PathVariable("courseID") Long courseID, 
+            @RequestBody Resource resource,
+            @RequestParam("file") MultipartFile file) {
 
-        // 确认上传用户登录状态
+        /*// 确认上传用户登录状态
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication == null || !authentication.isAuthenticated()) {
             return ResponseEntity.badRequest().body("Please login first");
@@ -48,32 +54,34 @@ public class ResourceController {
         UserDetails userDetails = (UserDetails) authentication.getPrincipal();
         String userEmail = userDetails.getUsername();
         Long userId = userService.getUserID(userEmail);
+        */
+        Long userId = 0L; //暂时不考虑作者信息
 
-        resource.setCourseID(courseId);
+        if (file.isEmpty()) {
+            return ResponseEntity.badRequest().body("No file uploaded");
+        }
+
+        resource.setCourseID(courseID);
         resource.setUserID(userId);
         resource.setTime(LocalDateTime.now().toString());
 
-        //生成唯一的resourceID
-        String resourceID = UUID.randomUUID().toString();
-        resource.setResourceID(resourceID);
-
-        String savePath = "/data/resources/" + courseId + "/";
-        String fullFilePath = "/data/resources/" + courseId + "/" + resource.getID() + "_" + resource.getFilename();
+        String savePath = "/data/resources/" + courseID.toString() + "/";
+        String fullFilePath = "/data/resources/" + courseID.toString() + "/" + resource.getResourceID() + "_" + resource.getFilename();
 
         // 保存文件（文件内容需要在 POST BODY 中提供）
         try {
             Path path = Paths.get(fullFilePath);
             Files.createDirectories(path.getParent());
-            Files.write(path, resource.getFileContent().getBytes()); // 文件内容需要在BODY中注明
+            Files.copy(file.getInputStream(), path); // 文件内容需要在BODY中注明
         } catch (IOException e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to save file");
         }
-        resource.setSavePath(fullFilePath);
+        resource.setFilePath(fullFilePath);
 
         resourceService.insertResource(resource);
 
         // 根据文件名生成具体URL并返回
-        String fileUrl = "/api/resource/material/"+resource.getCourseID()+"/"+resource.getID();
+        String fileUrl = "/api/resource/material/"+resource.getCourseID().toString()+"/"+resource.getResourceID().toString();
         Map<String, String> response = Map.of(
             "filename", resource.getFilename(),
             "url", fileUrl
@@ -83,12 +91,12 @@ public class ResourceController {
     }
 
     @Operation(summary = "Download a resource")
-    @GetMapping("/api/resource/material/{courseId}/{resourceID}")
-    public ResponseEntity<?> downloadResource(@PathVariable("courseId") String courseID, @PathVariable("resourceID") String resourceID) {
-        main.java.PKUCRProject.PKUCR.backend.Entity.Resource resource = resourceService.getResource(courseID, resourceID);
+    @GetMapping("/api/resource/material/{courseID}/{resourceID}")
+    public ResponseEntity<?> downloadResource(@PathVariable("courseID") Long courseID, @PathVariable("resourceID") Long resourceID) {
+        PKUCRProject.PKUCR.backend.Entity.Resource resource = resourceService.getResource(courseID, resourceID);
         
         // 检查文件是否存在
-        Strng filePath = resource.getFilePath();
+        String filePath = resource.getFilePath();
         File file = new File(filePath);
         if (!file.exists()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("File not found");
@@ -98,7 +106,7 @@ public class ResourceController {
         try {
             byte[] fileContent = Files.readAllBytes(file.toPath());
             return ResponseEntity.ok()
-                    .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; resourceID=\"" + resourceID + "\"")
+                    .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; resourceID=\"" + resourceID.toString() + "\"")
                     .contentType(MediaType.APPLICATION_OCTET_STREAM)
                     .body(fileContent);
         } catch (IOException e) {

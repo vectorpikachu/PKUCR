@@ -1,14 +1,20 @@
-package main.java.PKUCRProject.PKUCR.backend.Entity;
+package PKUCRProject.PKUCR.backend.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import org.hibernate.annotations.GenericGenerator;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 
 @Schema(name = "Resource")
 public class Resource {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Schema(name = "resourceID", required = false, example = "1")
     private long resourceID;
 
     @Schema(name = "courseID", required = true, example = "ics")
-    private String courseID;
+    private Long courseID;
 
     @Schema(name = "userID", required = true, example = "1")
     private Long userID;
@@ -25,7 +31,7 @@ public class Resource {
     @Schema(name = "uploadTime", required = true, example = "2024-11-30T12:34:56")
     private String uploadTime;
 
-    public Resource(Long resourceID, String courseID, String userID, String fileName, String filePath, int permission, String uploadTime) {
+    public Resource(Long resourceID, Long courseID, Long userID, String fileName, String filePath, int permission, String uploadTime) {
         this.resourceID = resourceID;
         this.courseID = courseID;
         this.userID = userID;
@@ -33,17 +39,17 @@ public class Resource {
         this.filePath = filePath;
         this.uploadTime = uploadTime;
     }
-    public void setID(Long id) {
+    public void setResourceID(Long id) {
         this.resourceID = id;
     }
-    public int getID() {
-        return id;
+    public Long getResourceID() {
+        return resourceID;
     }
 
-    public String getCourseID() {
+    public Long getCourseID() {
         return courseID;
     }
-    public void setCourseID(String courseID) {
+    public void setCourseID(Long courseID) {
         this.courseID = courseID;
     }
 
@@ -64,7 +70,7 @@ public class Resource {
     public String getFilePath() {
         return filePath;
     }
-    public void SetFilePath(String filePath) {
+    public void setFilePath(String filePath) {
         this.filePath=filePath;
     }
 
