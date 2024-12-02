@@ -48,6 +48,10 @@ public class AllCourseController {
     private CustomUserDetailsService userService;
 
 
+    
+    /** 
+     * @return ResponseEntity<?>
+     */
     @Operation(summary = "Return all courses")
     @GetMapping("/api/resource")
     public ResponseEntity<?> selectAll() {

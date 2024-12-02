@@ -9,6 +9,10 @@ public class CommentRequest {
     @JsonProperty("comment")
     private String comment;
 
+    
+    /** 
+     * @param user
+     */
     public void setUser(String user) {
         this.user = user;
     }

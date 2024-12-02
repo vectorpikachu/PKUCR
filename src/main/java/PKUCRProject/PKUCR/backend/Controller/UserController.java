@@ -37,6 +37,11 @@ public class UserController {
         this.authenticationManager = authenticationManager;
     }
 
+    
+    /** 
+     * @param loginRequest
+     * @return ResponseEntity<?>
+     */
     @Operation(summary = "A user loging in, return the user's token")
     @PostMapping("/auth/login")
     public ResponseEntity<?> login(@RequestBody LoginRequest loginRequest) {

@@ -8,6 +8,12 @@ public class CryptoUtils {
     private CryptoUtils() {
     }
 
+    
+    /** 
+     * @param providedPassword
+     * @param storedPassword
+     * @return boolean
+     */
     public static boolean verifyPassword(String providedPassword, String storedPassword) {
         return bCryptPasswordEncoder.matches(providedPassword, storedPassword);
     }

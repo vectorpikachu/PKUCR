@@ -18,6 +18,10 @@ public class Comment {
         this.time = time;
     }
 
+    
+    /** 
+     * @return Long
+     */
     public Long getID() {
         return id;
     }

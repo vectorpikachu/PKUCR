@@ -9,6 +9,12 @@ import org.springframework.web.bind.annotation.RestController;
 @CrossOrigin(origins = "*", maxAge = 3600)
 public class HelloController {
     
+    
+    /** 
+     * @param "name"
+     * @param name
+     * @return String
+     */
     @GetMapping("/hello")
     public String hello(@RequestParam(value = "name", defaultValue = "World") String name) {
       return String.format("Hello %s!", name);

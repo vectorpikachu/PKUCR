@@ -7,6 +7,10 @@ public class TokenResponse {
         this.token = token;
     }
 
+    
+    /** 
+     * @return String
+     */
     public String getToken() {
         return token;
     }

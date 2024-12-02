@@ -32,6 +32,10 @@ public class CourseController {
     @Autowired
     private CustomUserDetailsService customUserDetailsService;
 
+    
+    /** 
+     * @return ResponseEntity<?>
+     */
     @Operation(summary = "Return a user's all courses")
     @GetMapping("/course")
     public ResponseEntity<?> initByUserID() {

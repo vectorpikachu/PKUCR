@@ -32,6 +32,10 @@ public class Task {
         this.description = description;
     }
 
+    
+    /** 
+     * @return String
+     */
     @Override
     public String toString() {
         return "Task{" +

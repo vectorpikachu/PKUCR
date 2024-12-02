@@ -28,6 +28,10 @@ public class BasicCourse {
         this.credit = 4;
     }
 
+    
+    /** 
+     * @return Long
+     */
     public Long getId() {
         return id;
     }

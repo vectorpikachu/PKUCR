@@ -35,6 +35,10 @@ public class Claims {
         this.jti = UUID.randomUUID().toString();
     }
    
+    
+    /** 
+     * @return String
+     */
     public String getSub() {
         return sub;
     }

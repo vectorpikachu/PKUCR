@@ -16,6 +16,10 @@ public class Course extends BasicCourse{
         super();
     }
 
+    
+    /** 
+     * @return Long
+     */
     public Long getUser_id() {
         return user_id;
     }

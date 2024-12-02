@@ -16,6 +16,11 @@ public class TaskService {
     @Autowired
     private TaskMapper taskMapper;
 
+    
+    /** 
+     * @param task
+     * @return Task
+     */
     public Task insert(Task task) {
         taskMapper.insert(task);
         Task taskInDB = taskMapper.selectById(task.getId());

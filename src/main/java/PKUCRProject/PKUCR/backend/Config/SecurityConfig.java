@@ -17,6 +17,12 @@ import PKUCRProject.PKUCR.backend.Auth.JwtAuthenticationFilter;
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
+    
+    /** 
+     * @param http
+     * @return SecurityFilterChain
+     * @throws Exception
+     */
     @SuppressWarnings("unused") // request 参数没有被使用, 但是写在这里有助于理解
     @Bean
     protected SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {

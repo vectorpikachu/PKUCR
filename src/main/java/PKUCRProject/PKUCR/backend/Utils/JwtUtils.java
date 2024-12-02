@@ -29,6 +29,11 @@ public class JwtUtils {
         System.out.println("Generated shared secret: " + Base64.getEncoder().encodeToString(sharedSecret));
     }
 
+    
+    /** 
+     * @param email
+     * @return String
+     */
     public String getToken(String email) {
         Claims claims = new Claims(email);
         ObjectMapper objectMapper = new ObjectMapper();

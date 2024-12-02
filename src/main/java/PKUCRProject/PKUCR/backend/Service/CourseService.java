@@ -14,6 +14,11 @@ public class CourseService {
     @Autowired
     private CourseMapper courseMapper;
 
+    
+    /** 
+     * @param course
+     * @return Course
+     */
     public Course insert(Course course) {
         courseMapper.insert(course);
         Course courseInDB = courseMapper.selectById(course.getId());
