@@ -39,6 +39,7 @@ public class Resource {
         this.filePath = filePath;
         this.uploadTime = uploadTime;
     }
+    public Resource() {}
     public void setResourceID(Long id) {
         this.resourceID = id;
     }
@@ -60,10 +61,10 @@ public class Resource {
         this.userID = userID;
     }
 
-    public String getFilename() {
+    public String getFileName() {
         return fileName;
     }
-    public void setFilename(String fileName) {
+    public void setFileName(String fileName) {
         this.fileName = fileName;
     }
 

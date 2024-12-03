@@ -41,8 +41,8 @@ public class ResourceController {
     @Operation(summary = "Upload a resource file")
     @PostMapping("/api/resource/material/{courseID}")
     public ResponseEntity<?> uploadResource(
-            @PathVariable("courseID") Long courseID, 
-            @RequestBody Resource resource,
+            @PathVariable("courseID") Long courseID,
+            @RequestParam("fileName") String fileName,
             @RequestParam("file") MultipartFile file) {
 
         /*// 确认上传用户登录状态
@@ -61,12 +61,16 @@ public class ResourceController {
             return ResponseEntity.badRequest().body("No file uploaded");
         }
 
+        Resource resource = new Resource();
         resource.setCourseID(courseID);
         resource.setUserID(userId);
+        resource.setFileName(fileName);
+        String filePath = "/data/resources/" + courseID.toString() + "/"; //其实是dir
+        resource.setFilePath(filePath);
         resource.setTime(LocalDateTime.now().toString());
 
-        String savePath = "/data/resources/" + courseID.toString() + "/";
-        String fullFilePath = "/data/resources/" + courseID.toString() + "/" + resource.getResourceID() + "_" + resource.getFilename();
+        resourceService.insertResource(resource);
+        String fullFilePath = "/data/resources/" + courseID.toString() + "/" + resource.getResourceID() + "_" + resource.getFileName();
 
         // 保存文件（文件内容需要在 POST BODY 中提供）
         try {
@@ -74,16 +78,13 @@ public class ResourceController {
             Files.createDirectories(path.getParent());
             Files.copy(file.getInputStream(), path); // 文件内容需要在BODY中注明
         } catch (IOException e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to save file");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("IOException: fail to save file.");
         }
-        resource.setFilePath(fullFilePath);
-
-        resourceService.insertResource(resource);
 
         // 根据文件名生成具体URL并返回
         String fileUrl = "/api/resource/material/"+resource.getCourseID().toString()+"/"+resource.getResourceID().toString();
         Map<String, String> response = Map.of(
-            "filename", resource.getFilename(),
+            "filename", resource.getFileName(),
             "url", fileUrl
         );
 
@@ -96,7 +97,8 @@ public class ResourceController {
         PKUCRProject.PKUCR.backend.Entity.Resource resource = resourceService.getResource(courseID, resourceID);
         
         // 检查文件是否存在
-        String filePath = resource.getFilePath();
+        String fileDir = resource.getFilePath();
+        String filePath = fileDir + resource.getResourceID().toString()+'_'+resource.getFileName().toString();
         File file = new File(filePath);
         if (!file.exists()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("File not found");

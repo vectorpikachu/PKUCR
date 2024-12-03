@@ -18,9 +18,9 @@ import PKUCRProject.PKUCR.backend.Entity.Resource;
 @Mapper
 public interface ResourceMapper {
 
-    @Insert("INSERT INTO resources (resourceID, courseID, userID, fileName, uploadTime, savePath) " +
-            "VALUES (#{resourceID}, #{courseID}, #{userID}, #{fileName}, #{uploadTime}, #{savePath})")
-    @Options(useGeneratedKeys = true, keyProperty = "id", keyColumn = "id")
+    @Insert("INSERT INTO resources (resourceID, courseID, userID, fileName, uploadTime, filePath) " +
+            "VALUES (#{resourceID}, #{courseID}, #{userID}, #{fileName}, #{uploadTime}, #{filePath})")
+    @Options(useGeneratedKeys = true, keyProperty = "resourceID", keyColumn = "resourceID")
     Long insertResource(Resource resource);
 
     @Select("SELECT Resource FROM resources WHERE courseID = #{courseID} AND resourceID = #{resourceID}")
