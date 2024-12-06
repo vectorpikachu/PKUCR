@@ -17,6 +17,7 @@ public class ResourceService {
     /**
      * 将课程资料插入数据库
      * @param resource
+     * @return
      */
     public String insertResource(PKUCRProject.PKUCR.backend.Entity.Resource resource) {
         resourceMapper.insertResource(resource);
@@ -26,7 +27,7 @@ public class ResourceService {
     /**
      * 根据课程ID获取课程资料
      * @param courseID
-     * @return 获取的课程资料列表
+     * @return 
      */
     /* 
     public List<Resource> getResourcesByCourseID(String courseID) {
@@ -34,12 +35,12 @@ public class ResourceService {
     }*/
 
     /**
-     * 获取文件路径
+     * 根据资料ID获取数据库中资料条目
      * @param courseID 课程ID
      * @param resourceID 资料ID
      * @return resource
      */
-    public Resource getResource(Long courseID, Long resourceID) {
+    public Resource getResource(String courseID, Long resourceID) {
         Resource resource = resourceMapper.selectResource(courseID, resourceID);
         if (resource == null) {
             throw new RuntimeException("Resource not found in the database");

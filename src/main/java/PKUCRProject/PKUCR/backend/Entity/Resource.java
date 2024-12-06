@@ -11,10 +11,10 @@ public class Resource {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Schema(name = "resourceID", required = false, example = "1")
-    private long resourceID;
+    private Long resourceID;
 
     @Schema(name = "courseID", required = true, example = "ics")
-    private Long courseID;
+    private String courseID;
 
     @Schema(name = "userID", required = true, example = "1")
     private Long userID;
@@ -31,7 +31,7 @@ public class Resource {
     @Schema(name = "uploadTime", required = true, example = "2024-11-30T12:34:56")
     private String uploadTime;
 
-    public Resource(Long resourceID, Long courseID, Long userID, String fileName, String filePath, int permission, String uploadTime) {
+    public Resource(Long resourceID, String courseID, Long userID, String fileName, String filePath, int permission, String uploadTime) {
         this.resourceID = resourceID;
         this.courseID = courseID;
         this.userID = userID;
@@ -47,10 +47,10 @@ public class Resource {
         return resourceID;
     }
 
-    public Long getCourseID() {
+    public String getCourseID() {
         return courseID;
     }
-    public void setCourseID(Long courseID) {
+    public void setCourseID(String courseID) {
         this.courseID = courseID;
     }
 

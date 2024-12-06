@@ -18,13 +18,23 @@ import PKUCRProject.PKUCR.backend.Entity.Resource;
 @Mapper
 public interface ResourceMapper {
 
+    /**
+     * 将资料信息插入数据库
+     * @param resource
+     * @return 
+     */
     @Insert("INSERT INTO resources (resourceID, courseID, userID, fileName, uploadTime, filePath) " +
             "VALUES (#{resourceID}, #{courseID}, #{userID}, #{fileName}, #{uploadTime}, #{filePath})")
     @Options(useGeneratedKeys = true, keyProperty = "resourceID", keyColumn = "resourceID")
     Long insertResource(Resource resource);
-
-    @Select("SELECT Resource FROM resources WHERE courseID = #{courseID} AND resourceID = #{resourceID}")
-    Resource selectResource(@Param("courseID") Long courseID, @Param("resourceID") Long resourceID);
+    /**
+     * 根据资料ID在数据库中查找对应资料
+     * @param courseID
+     * @param resourceID
+     * @return 资料类
+     */
+    @Select("SELECT resourceID, courseID, userID, fileName, filePath, uploadTime FROM resources WHERE courseID = #{courseID} AND resourceID = #{resourceID}")
+    Resource selectResource(@Param("courseID") String courseID, @Param("resourceID") Long resourceID);
 
     //@Delete("delete from users where id = #{id}")
     //void delete(int id);

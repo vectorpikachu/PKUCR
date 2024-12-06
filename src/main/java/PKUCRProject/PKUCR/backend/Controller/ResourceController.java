@@ -38,10 +38,17 @@ public class ResourceController {
     @Autowired
     private ResourceService resourceService;
 
+    /**
+     * 上传文件
+     * @param courseID
+     * @param fileName
+     * @param file
+     * @return URL
+     */
     @Operation(summary = "Upload a resource file")
     @PostMapping("/api/resource/material/{courseID}")
     public ResponseEntity<?> uploadResource(
-            @PathVariable("courseID") Long courseID,
+            @PathVariable("courseID") String courseID,
             @RequestParam("fileName") String fileName,
             @RequestParam("file") MultipartFile file) {
 
@@ -65,12 +72,12 @@ public class ResourceController {
         resource.setCourseID(courseID);
         resource.setUserID(userId);
         resource.setFileName(fileName);
-        String filePath = "/data/resources/" + courseID.toString() + "/"; //其实是dir
+        String filePath = "/data/resources/" + courseID + "/"; //其实是dir
         resource.setFilePath(filePath);
         resource.setTime(LocalDateTime.now().toString());
 
         resourceService.insertResource(resource);
-        String fullFilePath = "/data/resources/" + courseID.toString() + "/" + resource.getResourceID() + "_" + resource.getFileName();
+        String fullFilePath = "/data/resources/" + courseID + "/" + resource.getResourceID() + "_" + resource.getFileName();
 
         // 保存文件（文件内容需要在 POST BODY 中提供）
         try {
@@ -91,17 +98,23 @@ public class ResourceController {
         return ResponseEntity.ok(response);
     }
 
+    /**
+     * 下载文件
+     * @param courseID
+     * @param resourceID
+     * @return 文件内容
+     */
     @Operation(summary = "Download a resource")
     @GetMapping("/api/resource/material/{courseID}/{resourceID}")
-    public ResponseEntity<?> downloadResource(@PathVariable("courseID") Long courseID, @PathVariable("resourceID") Long resourceID) {
+    public ResponseEntity<?> downloadResource(@PathVariable("courseID") String courseID, @PathVariable("resourceID") Long resourceID) {
         PKUCRProject.PKUCR.backend.Entity.Resource resource = resourceService.getResource(courseID, resourceID);
         
         // 检查文件是否存在
         String fileDir = resource.getFilePath();
-        String filePath = fileDir + resource.getResourceID().toString()+'_'+resource.getFileName().toString();
+        String filePath = fileDir + resource.getResourceID().toString()+'_'+resource.getFileName();
         File file = new File(filePath);
         if (!file.exists()) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("File not found");
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(filePath);
         }
 
         // 返回文件内容
