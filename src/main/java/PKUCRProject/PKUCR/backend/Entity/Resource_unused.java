@@ -1,3 +1,4 @@
+/*
 package PKUCRProject.PKUCR.backend.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -82,3 +83,4 @@ public class Resource {
         this.uploadTime = uploadTime;
     }
 }
+    */

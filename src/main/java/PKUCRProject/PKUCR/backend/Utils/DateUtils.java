@@ -1,6 +1,11 @@
 package PKUCRProject.PKUCR.backend.Utils;
 
 public class DateUtils {
+    
+    /** 
+     * @param date
+     * @return String
+     */
     /* 接受一个String类型的，给出年、月、日、时、分、秒
      * 形如：2024-05-06 11:11:11
      */

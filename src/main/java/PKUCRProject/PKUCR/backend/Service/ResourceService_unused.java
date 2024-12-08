@@ -1,3 +1,4 @@
+/*
 package PKUCRProject.PKUCR.backend.Service;
 
 import java.util.List;
@@ -18,8 +19,8 @@ public class ResourceService {
      * 将课程资料插入数据库
      * @param resource
      * @return
-     */
-    public String insertResource(PKUCRProject.PKUCR.backend.Entity.Resource resource) {
+     *
+    public String insertResource(Resource resource) {
         resourceMapper.insertResource(resource);
         return "insert success with course " + resource.getCourseID() + "resourse" + resource.getResourceID();
     }
@@ -32,14 +33,14 @@ public class ResourceService {
     /* 
     public List<Resource> getResourcesByCourseID(String courseID) {
         return resourceMapper.selectResourcesByCourseID(courseID);
-    }*/
+    }*
 
-    /**
+    **
      * 根据资料ID获取数据库中资料条目
      * @param courseID 课程ID
      * @param resourceID 资料ID
      * @return resource
-     */
+     *
     public Resource getResource(String courseID, Long resourceID) {
         Resource resource = resourceMapper.selectResource(courseID, resourceID);
         if (resource == null) {
@@ -48,3 +49,4 @@ public class ResourceService {
         return resource;
     }
 }
+*/

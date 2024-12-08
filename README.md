@@ -10,19 +10,46 @@
 
 后端的结构是这样的：
 ```
-Controller
-Entity
-Dao
-Service
-Servlet
-Utils
+src/main/java/PKUCRProject/PKUCR/backend
+├── Auth
+│   ├── CustomAuthenticationProvider.java
+│   └── JwtAuthenticationFilter.java
+├── Config
+│   └── SecurityConfig.java
+├── Controller
+│   ├── CorsController.java
+│   ├── CourseController.java
+│   ├── HelloController.java
+│   ├── TasksController.java
+│   └── UserController.java
+├── Dao
+│   ├── CourseMapper.java
+│   ├── TaskMapper.java
+│   └── UserMapper.java
+├── Entity
+│   ├── Course.java
+│   ├── Task.java
+│   ├── User.java
+│   ├── LoginRequest.java
+│   └── TokenResponse.java
+├── Service
+│   ├── CourseService.java
+│   ├── TaskService.java
+│   └── CustomUserDetailsService.java
+└── Utils
+    ├── Claims.java
+    ├── JwtUtils.java
+    └── DateUtils.java
 ```
 
 ## 使用说明
 
 使用Gradle构建项目。
 
-请先替换Gradle的源为阿里云：在`gradle/wrapper/gradle-wrapper.properties`中修改`distributionUrl`为`hhttps://mirrors.aliyun.com/macports/distfiles/gradle/gradle-8.10.2-bin.zip`。
+请先替换Gradle的源为阿里云：在`gradle/wrapper/gradle-wrapper.properties`中修改`distributionUrl`为`https://mirrors.aliyun.com/macports/distfiles/gradle/gradle-8.10.2-bin.zip`。
+
+ps: 我电脑上有若干种版本的java. 请注意使用正确的java版本. 如果vscode里面可以在
+`.vscode/settings.json`中加入`"java.import.gradle.java.home": "..."`, 不然似乎总是会报错.
 
 然后使用下面的命令构建项目：
 ```shell
@@ -99,7 +126,7 @@ mysql>
 ```
 
 接着我们使用 `Navicat Premium` 来创建连接。
-![](https://raw.githubusercontent.com/vectorpikachu/PKUCR/tree/backend/.assets/Navicat创建连接.bmp)
+![Navicat创建连接](./.assets/Navicat创建连接.bmp)
 
 接下来我们继续在 `application.properties` 中配置数据库连接。
 ```properties
@@ -130,5 +157,37 @@ dependencies {
 
 在`http://localhost:38083/swagger-ui.html`中可以看到API文档。并且可以进行简单的测试。
 
-![](https://raw.githubusercontent.com/vectorpikachu/PKUCR/tree/backend/.assets/swagger.png)
+![API文档](./.assets/swagger.png)
 
+## token
+
+使用基于 Token 的身份验证方法，在服务端不需要存储用户的登录记录。流程是这样的：
+
+1、客户端使用用户名跟密码请求登录
+
+2、服务端收到请求，去验证用户名与密码 ，验证成功后，服务端会签发一个 Token，再把这个 Token 发送给客户端
+
+3、客户端收到 Token 以后可以把它存储起来，比如放在 Cookie 里或者 Local Storage 里
+
+4、客户端每次向服务端请求资源的时候需要带着服务端签发的 Token
+
+5、服务端收到请求，然后去验证客户端请求里面带着的 Token，如果验证成功，就向客户端返回请求的数据
+
+APP登录的时候发送加密的用户名和密码到服务器，服务器验证用户名和密码，如果成功，以某种方式比如随机生成32位的字符串作为token，存储到服务器中，并返回token到APP，以后APP请求时，
+
+凡是需要验证的地方都要带上该token，然后服务器端验证token，成功返回所需要的结果，失败返回错误信息，让他重新登录。其中服务器上token设置一个有效期，每次APP请求的时候都验证token和有效期。
+
+我们使用`nimbus-jose-jwt`来实现token.
+
+TODO: 为了安全，我们应该使用`https`来传输token。
+
+```json
+{
+  "email": "pikachu@126.com",
+  "password": "123456"
+}
+```
+
+## 测试
+
+使用`Postman`进行测试。观察数据库。

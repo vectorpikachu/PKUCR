@@ -12,20 +12,23 @@ import PKUCRProject.PKUCR.backend.Entity.User;
 @Mapper
 public interface UserMapper {
 
-    @Insert("insert into users (username, password, permission) values (#{username}, #{password}, #{permission})")
+    @Insert("insert into users (email, password, permission) values (#{email}, #{password}, #{permission})")
     @Options(useGeneratedKeys = true, keyProperty = "id", keyColumn = "id")
-    int insert(User user);
+    Long insert(User user);
 
-    @Select("select * from users where username = #{username}")
-    User selectByUsername(String username);
+    @Select("select * from users where email = #{email}")
+    User selectByEmail(String email);
+
+    @Select("select * from users where email = #{email} and password = #{password}")
+    User selectByEmailAndPassword(String email, String password);
 
     @Select("select * from users where id = #{id}")
-    User selectById(int id);
+    User selectById(Long id);
 
-    @Update("update users set username = #{username}, password = #{password}, permission = #{permission} where id = #{id}")
+    @Update("update users set email = #{email}, password = #{password}, permission = #{permission} where id = #{id}")
     void update(User user);
 
     @Delete("delete from users where id = #{id}")
-    void delete(int id);
+    void delete(Long id);
     
 }

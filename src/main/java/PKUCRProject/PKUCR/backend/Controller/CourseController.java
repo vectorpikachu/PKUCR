@@ -7,27 +7,27 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RestController;
 
-import PKUCRProject.PKUCR.backend.Entity.Task;
+import PKUCRProject.PKUCR.backend.Entity.Course;
+import PKUCRProject.PKUCR.backend.Service.CourseService;
 import PKUCRProject.PKUCR.backend.Service.CustomUserDetailsService;
-import PKUCRProject.PKUCR.backend.Service.TaskService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 
-@Tag(name = "TaskController")
+@Tag(name = "CourseController")
 @RestController
 @CrossOrigin(origins = "*", maxAge = 3600)
-public class TaskController {
+public class CourseController {
     
     @Autowired
-    private TaskService taskService;
+    private CourseService courseService;
 
     @Autowired
     private CustomUserDetailsService customUserDetailsService;
@@ -36,9 +36,9 @@ public class TaskController {
     /** 
      * @return ResponseEntity<?>
      */
-    @Operation(summary = "Return a user's all tasks")
-    @GetMapping("/task")
-    public ResponseEntity<?> init() {
+    @Operation(summary = "Return a user's all courses")
+    @GetMapping("/course")
+    public ResponseEntity<?> initByUserID() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication == null || !authentication.isAuthenticated()) {
             return ResponseEntity.badRequest().body("Please login first");
@@ -47,48 +47,45 @@ public class TaskController {
         String username = userDetails.getUsername();
 
         Long userId = customUserDetailsService.getUserID(username);
-        return ResponseEntity.ok(taskService.selectByUserID(userId));
+        return ResponseEntity.ok(courseService.selectByUserID(userId));
     }
 
-    @Operation(summary = "Insert a task, return a task id")
-    @PostMapping("/task/insert")
-    public ResponseEntity<?> insert(@Valid @RequestBody Task task) {
+    @Operation(summary = "Insert a course, return a course id")
+    @PostMapping("/course/insert")
+    public ResponseEntity<?> insert(@Valid @RequestBody Course course) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication == null || !authentication.isAuthenticated()) {
             return ResponseEntity.badRequest().body("Please login first");
-        }
-        if (task.getName() == null) {
-            return ResponseEntity.badRequest().body("Please provide the task's name");
         }
         UserDetails userDetails = (UserDetails) authentication.getPrincipal();
         String username = userDetails.getUsername();
 
         Long userId = customUserDetailsService.getUserID(username);
-        task.setUser_id(userId);
-        // System.out.println(task);
-        task = taskService.insert(task);
-        return ResponseEntity.ok(task);
+
+        course.setUser_id(userId);
+        course = courseService.insert(course);
+        return ResponseEntity.ok(course);
     }
 
-    @Operation(summary = "Select a task by id")
-    @GetMapping("/task/selectById")
+    @Operation(summary = "Select a course by id")
+    @GetMapping("/course/selectById")
     public ResponseEntity<?> selectById(@Valid @RequestParam Long id) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication == null || !authentication.isAuthenticated()) {
             return ResponseEntity.badRequest().body("Please login first");
         }
-        Task task = taskService.selectById(id);
-        if (task == null) {
+        Course course = courseService.selectById(id);
+        if (course == null) {
             return ResponseEntity.notFound().build();
         }
         else {
-            return ResponseEntity.ok(task);
+            return ResponseEntity.ok(course);
         }
     }
 
-    @Operation(summary = "Update a task")
-    @PutMapping("/task/update")
-    public ResponseEntity<?> update(@Valid @RequestBody Task task) {
+    @Operation(summary = "Update a course")
+    @PutMapping("/course/update")
+    public ResponseEntity<?> update(@Valid @RequestBody Course course) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication == null || !authentication.isAuthenticated()) {
             return ResponseEntity.badRequest().body("Please login first");
@@ -97,18 +94,17 @@ public class TaskController {
         String username = userDetails.getUsername();
 
         Long userId = customUserDetailsService.getUserID(username);
-        task.setUser_id(userId);
-        return ResponseEntity.ok(taskService.update(task));
+        course.setUser_id(userId);
+        return ResponseEntity.ok(courseService.update(course));
     }
 
-    @Operation(summary = "Delete a task by id")
-    @DeleteMapping("/task/delete")
+    @Operation(summary = "Delete a course by id")
+    @DeleteMapping("/course/delete")
     public ResponseEntity<?> delete(@Valid @RequestParam Long id) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication == null || !authentication.isAuthenticated()) {
             return ResponseEntity.badRequest().body("Please login first");
         }
-        return ResponseEntity.ok(taskService.delete(id));
+        return ResponseEntity.ok(courseService.delete(id));
     }
-
 }
