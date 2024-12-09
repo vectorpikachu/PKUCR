@@ -6,6 +6,7 @@ public class Material {
     private Long userID;
     private String courseID;
     private String filename;
+    private String filedir;
     private String url;
     private String time;
 
@@ -19,10 +20,15 @@ public class Material {
         this.time = time;
     }
 
-    
-    /** 
-     * @return Long
-     */
+    public Material(Long id, Long userID, String courseID, String filename, String filedir, String url, String time) {
+        this.id = id;
+        this.courseID = courseID;
+        this.userID = userID;
+        this.filename = filename;
+        this.filedir = filedir;
+        this.time = time;
+    }
+
     public Long getID() {
         return id;
     }
@@ -46,6 +52,12 @@ public class Material {
     }
     public void setFilename(String filename) {
         this.filename = filename;
+    }
+    public String getFiledir() {
+        return filedir;
+    }
+    public void setFiledir(String filedir) {
+        this.filedir = filedir;
     }
     public String getUrl() {
         return url;
