@@ -20,7 +20,7 @@ public class Material {
         this.time = time;
     }
 
-    public Material(Long id,Long userID, String courseID, String filename, String filedir, String url, String time) {
+    public Material(Long id, Long userID, String courseID, String filename, String filedir, String url, String time) {
         this.id = id;
         this.courseID = courseID;
         this.userID = userID;
@@ -29,10 +29,6 @@ public class Material {
         this.time = time;
     }
 
-    
-    /** 
-     * @return Long
-     */
     public Long getID() {
         return id;
     }

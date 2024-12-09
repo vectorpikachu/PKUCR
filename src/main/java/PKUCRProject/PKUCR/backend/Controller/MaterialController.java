@@ -8,6 +8,9 @@ import java.nio.file.Paths;
 import java.time.LocalDateTime;
 import java.util.Map;
 
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RestController;
@@ -30,6 +33,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import PKUCRProject.PKUCR.backend.Service.MaterialService;
 import PKUCRProject.PKUCR.backend.Entity.Material;
 import PKUCRProject.PKUCR.backend.Entity.User;
+import PKUCRProject.PKUCR.backend.Service.CustomUserDetailsService;
 
 @Tag(name = "MaterialController")
 @RestController
@@ -37,6 +41,9 @@ import PKUCRProject.PKUCR.backend.Entity.User;
 public class MaterialController {
     @Autowired
     private MaterialService materialService;
+
+    @Autowired
+    private CustomUserDetailsService customUserDetailsService;
 
     /**
      * 上传文件
@@ -52,17 +59,17 @@ public class MaterialController {
             @RequestParam("fileName") String filename,
             @RequestParam("file") MultipartFile file) {
 
-        /*// 确认上传用户登录状态
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication == null || !authentication.isAuthenticated()) {
             return ResponseEntity.badRequest().body("Please login first");
         }
-        //保存上传用户信息
+        if (authentication.getPrincipal() instanceof String){
+            return ResponseEntity.badRequest().body("AuthenticationError: fail to get authentication token. Do you log in first?");
+        }
         UserDetails userDetails = (UserDetails) authentication.getPrincipal();
-        String userEmail = userDetails.getUsername();
-        Long userId = userService.getUserID(userEmail);
-        */
-        Long userID = 0L; //暂时不考虑作者信息
+        String username = userDetails.getUsername();
+        
+        Long userID = customUserDetailsService.getUserID(username);
 
         if (file.isEmpty()) {
             return ResponseEntity.badRequest().body("No file uploaded");
@@ -75,6 +82,7 @@ public class MaterialController {
         String filedir = "/data/materials/" + courseID + "/"; 
         material.setFiledir(filedir);
         material.setTime(LocalDateTime.now().toString());
+        material.setUrl("tempUrl"); //暂时不需要保存URL
 
         materialService.insertMaterial(material);
         String fullFilePath = "/data/materials/" + courseID + "/" + material.getID() + "_" + material.getFilename();
@@ -108,13 +116,15 @@ public class MaterialController {
     @GetMapping("/api/resource/material/{courseID}/{id}")
     public ResponseEntity<?> downloadMaterial(@PathVariable("courseID") String courseID, @PathVariable("id") Long id) {
         Material material = materialService.selectByID(id);
-        
+        if (material == null) {
+            return ResponseEntity.badRequest().body("Material not found in the database");
+        }
         // 检查文件是否存在
         String fileDir = material.getFiledir();
         String filePath = fileDir + material.getID().toString()+'_'+material.getFilename();
         File file = new File(filePath);
         if (!file.exists()) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(filePath);
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("file not found");
         }
 
         // 返回文件内容
@@ -126,6 +136,50 @@ public class MaterialController {
                     .body(fileContent);
         } catch (IOException e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error reading file");
+        }
+    }
+    /**
+     * 删除文件
+     * @param id
+     * @return 
+     */
+    @Operation(summary = "Delete a material file")
+    @DeleteMapping("/api/resource/material/{id}")
+    public ResponseEntity<?> deleteMaterial(
+            @PathVariable("id") Long id) {
+        //获取用户信息
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication == null || !authentication.isAuthenticated()) {
+            return ResponseEntity.badRequest().body("Please login first");
+        }
+        if (authentication.getPrincipal() instanceof String){
+            return ResponseEntity.badRequest().body("AuthenticationError: fail to get authentication token. Do you log in first?");
+        }
+        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+        String username = userDetails.getUsername();
+        Long userID = customUserDetailsService.getUserID(username);
+
+        Material material = materialService.selectByID(id);
+        if (material == null) {
+            return ResponseEntity.badRequest().body("Material not found in the database");
+        }
+        Long fileuserID = material.getUserID();
+        if(userID!=fileuserID){
+            return ResponseEntity.badRequest().body("Permission denied, users can only delete files they uploaded themselves.");
+        }
+
+        String fileDir = material.getFiledir();
+        String filePath = fileDir + material.getID().toString()+'_'+material.getFilename();
+        File file = new File(filePath);
+        if (!file.exists()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("file not found");
+        }
+        
+        if (file.delete()) {
+            materialService.deleteMaterial(id);
+            return ResponseEntity.ok("Material deleted successfully");
+        } else {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to delete material file");
         }
     }
 }

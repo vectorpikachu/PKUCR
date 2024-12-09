@@ -14,6 +14,11 @@ public class MaterialService {
     @Autowired
     private MaterialMapper materialMapper;
 
+    /**
+     * 根据课程ID获取数据库中资料列表
+     * @param courseID
+     * @return
+     */
     public List<Material> selectByCourseID(String courseID) {
         return materialMapper.selectByCourseID(courseID);
     }
@@ -25,14 +30,28 @@ public class MaterialService {
      */
     public Material selectByID(Long id) {
         Material material = materialMapper.selectByID(id);
+        /* 
         if (material == null) {
             throw new RuntimeException("Material not found in the database");
         }
+        */
         return material;
     }
 
+    /**
+     * 将资料信息保存进数据库
+     * @param material
+     */
     public void insertMaterial(Material material) {
         materialMapper.insertMaterial(material);
+    }
+
+    /**
+     * 删除数据库中指定的资料条目
+     * @param material
+     */
+    public void deleteMaterial(Long id) {
+        materialMapper.deleteMaterial(id);
     }
 
 }
