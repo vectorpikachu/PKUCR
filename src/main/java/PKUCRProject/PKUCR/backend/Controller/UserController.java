@@ -43,7 +43,7 @@ public class UserController {
      * @return ResponseEntity<?>
      */
     @Operation(summary = "A user loging in, return the user's token")
-    @PostMapping("/auth/login")
+    @PostMapping("/api/auth/login")
     public ResponseEntity<?> login(@RequestBody LoginRequest loginRequest) {
         try {
             // 验证用户凭证
@@ -65,7 +65,7 @@ public class UserController {
     }
 
     @Operation(summary = "A user register, return the user's token")
-    @PostMapping("/auth/register")
+    @PostMapping("/api/auth/register")
     public ResponseEntity<?> register(@RequestBody LoginRequest loginRequest) {
         // 验证用户是否存在
         try {

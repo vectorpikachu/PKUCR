@@ -34,6 +34,9 @@ public class CourseController {
 
     
     /** 
+     * 返回一个用户的所有课程, 在 Clendar里面比较有用
+     * 格式为: {"name": "SE", "teacher":"Sun", "classroom":"EJ-315",
+     * "time": {"date": }}
      * @return ResponseEntity<?>
      */
     @Operation(summary = "Return a user's all courses")
@@ -47,6 +50,12 @@ public class CourseController {
         String username = userDetails.getUsername();
 
         Long userId = customUserDetailsService.getUserID(username);
+
+        // TODO: Format the course as needed
+        for (var course : courseService.selectByUserID(userId)) {
+            
+        }
+
         return ResponseEntity.ok(courseService.selectByUserID(userId));
     }
 
