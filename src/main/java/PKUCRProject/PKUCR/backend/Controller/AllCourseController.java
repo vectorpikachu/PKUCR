@@ -151,7 +151,7 @@ public class AllCourseController {
         jsonObject.put("status", "success");
         return ResponseEntity.ok(jsonObject);
     }
-
+    /*
     // 上传资料
     @Operation(summary = "Upload a material")
     @PostMapping("/api/resource/material/{courseId}")
@@ -171,6 +171,7 @@ public class AllCourseController {
         materialService.insertMaterial(material);
         return ResponseEntity.ok("ok");
     }
+    */
 }
 
 

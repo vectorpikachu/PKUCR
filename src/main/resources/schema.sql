@@ -45,10 +45,11 @@ CREATE TABLE IF NOT EXISTS comments (
 
 CREATE TABLE IF NOT EXISTS materials (
     id BIGINT AUTO_INCREMENT PRIMARY KEY,
-    user_id BIGINT,
-    course_id VARCHAR(255),
+    userID BIGINT,
+    courseID VARCHAR(255),
     filename VARCHAR(255) NOT NULL,
-    url VARCHAR(255) NOT NULL,
+    filedir VARCHAR(255) NOT NULL,
+    url VARCHAR(255),
     time DATETIME,
-    FOREIGN KEY (user_id) REFERENCES users(id)
+    FOREIGN KEY (userID) REFERENCES users(id)
 );
