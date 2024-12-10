@@ -1,21 +1,13 @@
 CREATE DATABASE IF NOT EXISTS pkucr_database;
 USE pkucr_database;
 
-CREATE TABLE IF NOT EXISTS resources (
-    resourceID BIGINT AUTO_INCREMENT PRIMARY KEY,
-    courseID BIGINT NOT NULL,
-    userID BIGINT NOT NULL,
-    fileName VARCHAR(255) NOT NULL,
-    filePath VARCHAR(255) NOT NULL,
-    uploadTime DATETIME NOT NULL
-);
-
 
 CREATE TABLE IF NOT EXISTS users (
     id BIGINT NOT NULL AUTO_INCREMENT PRIMARY KEY,
     email VARCHAR(255) NOT NULL UNIQUE,
     password VARCHAR(255) NOT NULL,
-    permission INT
+    permission INT,
+    username VARCHAR(255)
 );
 
 CREATE TABLE IF NOT EXISTS courses (
@@ -25,6 +17,9 @@ CREATE TABLE IF NOT EXISTS courses (
     courseName VARCHAR(255),
     teacher VARCHAR(255),
     credit INT,
+    classroom VARCHAR(255),
+    time VARCHAR(255),
+    week VARCHAR(255),
     FOREIGN KEY (user_id) REFERENCES users(id)
 );
 
@@ -34,7 +29,10 @@ CREATE TABLE IF NOT EXISTS all_courses (
     courseName VARCHAR(255),
     category VARCHAR(255),
     teacher VARCHAR(255),
-    credit INT
+    credit INT,
+    classroom VARCHAR(255),
+    time VARCHAR(255),
+    week VARCHAR(255)
 );
 
 CREATE TABLE IF NOT EXISTS tasks (

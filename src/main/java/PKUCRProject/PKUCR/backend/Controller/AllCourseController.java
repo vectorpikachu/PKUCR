@@ -47,7 +47,6 @@ public class AllCourseController {
     private CustomUserDetailsService userService;
 
 
-    
     /** 
      * @return ResponseEntity<?>
      */
@@ -150,27 +149,7 @@ public class AllCourseController {
         jsonObject.put("status", "success");
         return ResponseEntity.ok(jsonObject);
     }
-    /*
-    // 上传资料
-    @Operation(summary = "Upload a material")
-    @PostMapping("/api/resource/material/{courseId}")
-    public ResponseEntity<?> uploadMaterial(@PathVariable("courseId") String courseId, @Valid @RequestBody Material material) {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        if (authentication == null || !authentication.isAuthenticated()) {
-            return ResponseEntity.badRequest().body("Please login first");
-        }
-        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
-        String userEmail = userDetails.getUsername();
-        Long userId = userService.getUserID(userEmail);
-        material.setCourseID(courseId);
-        material.setUserID(userId);
-        // Date date = new Date(System.currentTimeMillis());
-        LocalDateTime date = LocalDateTime.now();
-        material.setTime(date.toString());
-        materialService.insertMaterial(material);
-        return ResponseEntity.ok("ok");
-    }
-    */
+    
 }
 
 

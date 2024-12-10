@@ -192,12 +192,8 @@ TODO: 为了安全，我们应该使用`https`来传输token。
 
 使用`Postman`进行测试。观察数据库。
 
-```json
-{
-  "time": {
-    "date": [2,4],
-    "period": ["5-6","3-4"],
-    "frequency": ["1-16周", "双周"],
-  }
-}
+实现文件上传的命令, 不太好在Postman里直接打出来.
+
+```shell
+curl -X POST "http://localhost:38083/api/resource/material/04834220" -H "Content-Type: multipart/form-data" -H "Authorization: eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJpbWFAc3R1LnBrdS5lZHUuY24iLCJpYXQiOiJUdWUgRGVjIDEwIDIwOjE5OjI3IEhLVCAyMDI0IiwiZXhwIjoiVHVlIERlYyAxMCAyMToxOToyNyBIS1QgMjAyNCIsImp0aSI6IjQyZDVlNzhjLWY3ODctNDUyZS1hNWQxLTVhOTNmMzY1Y2Y4YSJ9.73_4n2JYrg-aSpClhEwS0kVtGgmXSyCTrdp9AA2uDdU" -F "fileName= SE-HW3.pdf" -F "file=@D:/HW/SE-hw3.pdf"
 ```

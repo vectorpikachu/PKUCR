@@ -27,16 +27,20 @@ public class User implements UserDetails {
     @Schema(name = "token", required = false, example = "eyJhbGciOiJIUzI1NiJ9.SGVsbG8sIHdvcmxkIQ.onO9Ihudz3WkiauDO2Uhyuz0Y18UASXlSc1eS0NkWyA")
     private String token;
 
+    private String username;
+
     public User() {
         this.email = "pikachu@126.com";
         this.password = "22222";
+        this.username = "Veccccccc";
     }
 
-    public User(Long id, String email, String password, int permission) {
+    public User(Long id, String email, String password, int permission, String username) {
         this.id = id;
         this.password = password;
         this.email = email;
         this.permission = permission;
+        this.username = username;
     }
 
     public User(String email, String password) {
@@ -68,6 +72,14 @@ public class User implements UserDetails {
         return token;
     }
 
+    /**
+     * 这是一个真的获取用户名的方法
+     * @return 真的用户名
+     */
+    public String getUsernameReal() {
+        return username;
+    }
+
     public void setId(Long id) {
         this.id = id;
     }
@@ -88,6 +100,10 @@ public class User implements UserDetails {
         this.token = token;
     }
 
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         Collection<GrantedAuthority> authorities = new ArrayList<>();
@@ -97,6 +113,9 @@ public class User implements UserDetails {
         return authorities;
     }
 
+    /**
+     * 获取实际上是email
+     */
     @Override
     public String getUsername() {
         return email;

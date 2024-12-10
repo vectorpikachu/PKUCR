@@ -14,6 +14,10 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+
 import PKUCRProject.PKUCR.backend.Entity.Course;
 import PKUCRProject.PKUCR.backend.Service.CourseService;
 import PKUCRProject.PKUCR.backend.Service.CustomUserDetailsService;
@@ -51,12 +55,20 @@ public class CourseController {
 
         Long userId = customUserDetailsService.getUserID(username);
 
-        // TODO: Format the course as needed
+        ObjectMapper mapper = new ObjectMapper();
+        ArrayNode courseList = mapper.createArrayNode();
         for (var course : courseService.selectByUserID(userId)) {
-            
+            ObjectNode courseObject = mapper.createObjectNode();
+            courseObject.put("name", course.getCourseName());
+            courseObject.put("teacher", course.getTeacher());
+            courseObject.put("classroom", course.getClassroom());
+            courseObject.put("time", course.getTime());
+            courseObject.put("week", course.getWeek());
+            String link = "/api/resource/material/" + course.getCourseID();
+            courseObject.put("link", link);
+            courseList.add(courseObject);
         }
-
-        return ResponseEntity.ok(courseService.selectByUserID(userId));
+        return ResponseEntity.ok(courseList);
     }
 
     @Operation(summary = "Insert a course, return a course id")
