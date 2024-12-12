@@ -1,6 +1,8 @@
 package PKUCRProject.PKUCR.backend.Controller;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -26,6 +28,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.HttpHeaders;
+import org.springframework.core.io.InputStreamResource;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -122,21 +125,18 @@ public class MaterialController {
         // 检查文件是否存在
         String fileDir = material.getFiledir();
         String filePath = fileDir + material.getID().toString()+'_'+material.getFilename();
-        File file = new File(filePath);
-        if (!file.exists()) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("file not found");
-        }
-
-        // 返回文件内容
+        FileInputStream fileInputStream;
         try {
-            byte[] fileContent = Files.readAllBytes(file.toPath());
-            return ResponseEntity.ok()
-                    .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; id=\"" + id.toString() + "\"")
-                    .contentType(MediaType.APPLICATION_OCTET_STREAM)
-                    .body(fileContent);
-        } catch (IOException e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error reading file");
+            fileInputStream = new FileInputStream(filePath);
+        } catch (FileNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Error reading filefile not found");
         }
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Content-Disposition", "attachment; filename=" + material.getFilename());
+
+        return ResponseEntity.ok()
+                .headers(headers)
+                .body(new InputStreamResource(fileInputStream));
     }
     /**
      * 删除文件
