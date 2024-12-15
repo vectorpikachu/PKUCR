@@ -419,17 +419,12 @@ const handleSort = {
 // Update data into localstorage
 function tableDataUpdateLocal() {
   let data = JSON.stringify(tableData.value)
-  localStorage.setItem('tableData', data)
+  localStorage.setItem('task', data)
 }
 
 // Fetch initial data from server
 function tableDataFetchLocal() {
-  let task_table_local: Task[] = [defaultTask]
-  let tableDataCached = localStorage.getItem('tableData')
-  if (tableDataCached) {
-    task_table_local = JSON.parse(tableDataCached)
-  }
-  return task_table_local
+  return JSON.parse(localStorage.getItem('task'))
 }
 
 // Submite task form to server and update local data

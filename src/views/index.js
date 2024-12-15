@@ -17,11 +17,11 @@ const routes = [
   {
     path: '/',
     component: MainContainer, // MainContainer 是父组件
-    redirect: '/schedule',
+    redirect: '/home',
     children: [
       {
-        path: '/schedule',
-        component: () => import('./schedule.vue')
+        path: '/home',
+        component: () => import('./home.vue')
       },
       {
         path: '/setting',

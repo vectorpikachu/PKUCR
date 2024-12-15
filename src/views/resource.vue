@@ -333,7 +333,7 @@ const addCourse = () => {
 }
 
 const handleExit = () => {
-    router.push('/taskTable')
+    router.push('/')
 }
 </script>
 

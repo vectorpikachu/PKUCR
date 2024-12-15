@@ -1,10 +1,10 @@
 <template>
   <el-menu class="el-menu-vertical" :default-active="this.$route.path" router>
 
-    <router-link to="/schedule">
-      <el-menu-item index="/schedule">
+    <router-link to="/home">
+      <el-menu-item index="/home">
         <el-icon><icon-menu /></el-icon>
-        Schedule
+        Home
       </el-menu-item>
     </router-link>
 
