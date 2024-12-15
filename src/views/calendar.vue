@@ -1,8 +1,8 @@
 <template>
   <el-calendar ref="calendar" class="customCalendar" v-if="calendarMode">
     <template #header="{ date }">
-      <span>Private Helper</span>
-      <span>{{ date }}</span>
+      <el-text size="large" style="font-weight: bold;">Private Helper</el-text>
+      <el-text size="large" style="font-weight: bold;">{{ date }}</el-text>
       <el-button-group>
         <el-button size="small" @click="selectDate('prev-year')">
           Previous Year
@@ -119,7 +119,7 @@
 <script lang="ts" setup>
 import { ref } from 'vue'
 import { type CalendarDateType, type CalendarInstance } from 'element-plus'
-import dayjs, { Dayjs } from 'dayjs';
+import dayjs, { Dayjs } from 'dayjs'
 
 // definitions
 enum ScheduleType { RESERVED, COURSE, TASK }
@@ -152,10 +152,6 @@ interface Course {
     time: string[],
   },
   link: string,
-}
-
-interface TaskData {
-  data: Task[],
 }
 
 interface CourseData {
@@ -309,7 +305,6 @@ function parseSchedules() {
     })
   }
 
-  localStorage.setItem('schedule', JSON.stringify(schedulesRecord))
   return schedulesRecord
 }
 

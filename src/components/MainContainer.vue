@@ -2,7 +2,7 @@
 import SideBar from './SideBar.vue'
 import PageHeader from './PageHeader.vue'
 import { onUnmounted } from 'vue'
-import axios from '../axios';
+import axios from '../axios'
 
 let headerHeightVh = 10
 let menuWidthVw = 15
@@ -109,6 +109,30 @@ const defaultTask: Task[] = [
     date: '2024-12-15',
     time: '23:59:59',
     memo: 'help me...'
+  },
+  {
+    id: 2,
+    priority: 0,
+    name: 'Software Engineering (test)',
+    date: '2024-12-17',
+    time: '10:10:01',
+    memo: '4.1st Presentation'
+  }, 
+  {
+    id: 3,
+    priority: 0,
+    name: 'Software Class (ttest)',
+    date: '2024-12-17',
+    time: '10:10:02',
+    memo: '4.2nd Presentation'
+  },
+  {
+    id: 0,
+    priority: 0,
+    name: 'Engineering Class (tttest)',
+    date: '2024-12-17',
+    time: '10:10:03',
+    memo: '4.3rd Presentation'
   }
 ]
 

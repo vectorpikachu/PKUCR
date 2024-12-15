@@ -1,27 +1,172 @@
 <template>
+    <el-text class="dynamicGradient">Welcome to PKUCR, your private time management helper!</el-text>
+    <div><span>To be filled</span></div>
+    <div><span>To be filled</span></div>
+    <div><span>To be filled</span></div>
+    <div><span>To be filled</span></div>
+    <div><span>To be filled</span></div>
+    <div><span>To be filled</span></div>
+    <div><span>To be filled</span></div>
+    <div><span>To be filled</span></div>
+    <div><span>To be filled</span></div>
+    <div><span>To be filled</span></div>
+    <div><span>To be filled</span></div>
+    <div><span>To be filled</span></div>
+    <div><span>To be filled</span></div>
+    <div><span>To be filled</span></div>
+    <div><span>To be filled</span></div>
+    <div><span>To be filled</span></div>
+    <div><span>To be filled</span></div>
+    <div><span>To be filled</span></div>
+    <div><span>To be filled</span></div>
+    <div><span>To be filled</span></div>
+    <div><span>To be filled</span></div>
+    <div><span>To be filled</span></div>
+    <div><span>To be filled</span></div>
+    <div><span>To be filled</span></div>
     <div>
-        Hello from home!
+        <el-carousel :interval="4000" type="card" class="customCarousel">
+            <el-carousel-item v-for="item in displayDayNum" :key="item" class="carouselCard">
+                <el-text class="carouselTimestamp">{{ today.add(item - 1, 'day').format('YYYY-MM-DD') }}</el-text>
+                <el-scrollbar style="max-height: 45%;">
+                    <h3 v-for="schedule in displaySchedules[today.add(item - 1, 'day').format('YYYY-MM-DD')]" text="2xl"
+                        justify="center" :key="schedule">{{ schedule }}</h3>
+                </el-scrollbar>
+            </el-carousel-item>
+        </el-carousel>
+        <el-text type="primary" class="carouselExplanation">[ Recent {{ displayDayNum }} days' schedules ({{
+            today.format('YYYY-MM-DD') }} ---- {{ today.add(displayDayNum, 'day').format('YYYY-MM-DD') }}) ]</el-text>
     </div>
-    <el-carousel :interval="4000" type="card" height="200px">
-        <el-carousel-item v-for="item in 6" :key="item">
-            <h3 text="2xl" justify="center">{{ item }}</h3>
-        </el-carousel-item>
-    </el-carousel>
 </template>
 
 <script lang="ts" setup>
+import { ref } from 'vue'
+import dayjs from 'dayjs'
 
+interface Task {
+    id: number,
+    priority: number,
+    name: string,
+    date: string,
+    time: string,
+    memo: string,
+}
 
+interface Course {
+    name: string,
+    teacher: string,
+    classroom: string,
+    time: {
+        week: string,
+        time: string[],
+    },
+    link: string,
+}
+
+interface CourseData {
+    start: string,
+    data: Course[],
+}
+
+const displayDayNum = ref(4)
+const today = ref(dayjs())
+
+const weekZh2Num = {
+    '星期一': 0,
+    '星期二': 1,
+    '星期三': 2,
+    '星期四': 3,
+    '星期五': 4,
+    '星期六': 5,
+    '星期日': 6,
+}
+
+const displayData = getSchedules()
+const displaySchedules = ref(displayData)
+
+function getSchedules() {
+    let schedules = {}
+    let taskData: Task[] = JSON.parse(localStorage.getItem('task'))
+    let courseData: CourseData = JSON.parse(localStorage.getItem('course'))
+
+    for (let task of taskData) {
+        let taskDay = dayjs(task.date, 'YYYY-MM-DD')
+        if (taskDay.diff(today.value, 'day') < 0) {
+            continue
+        }
+        if (taskDay.diff(today.value, 'day') >= displayDayNum.value) {
+            continue
+        }
+        if (schedules[taskDay.format('YYYY-MM-DD')]) {
+            schedules[taskDay.format('YYYY-MM-DD')].push(task.name)
+        } else {
+            schedules[taskDay.format('YYYY-MM-DD')] = [task.name]
+        }
+
+    }
+
+    for (let course of courseData.data) {
+        let teachWeek = course.time.week.split('-')
+        for (let weekNum = +teachWeek[0] - 1; weekNum < +teachWeek[1]; weekNum++) {
+            for (let teachTime of course.time.time) {
+                let teachTimeSplit = teachTime.split('(')[0]
+                let teachDay = dayjs(courseData.start).add(weekNum, 'week')
+                teachDay = teachDay.add(weekZh2Num[teachTimeSplit], 'day')
+                if (teachDay.diff(today.value, 'day') < 0) {
+                    continue
+                }
+                if (teachDay.diff(today.value, 'day') >= displayDayNum.value) {
+                    continue
+                }
+                if (schedules[teachDay.format('YYYY-MM-DD')]) {
+                    schedules[teachDay.format('YYYY-MM-DD')].push(course.name)
+                } else {
+                    schedules[teachDay.format('YYYY-MM-DD')] = [course.name]
+                }
+            }
+        }
+    }
+
+    localStorage.setItem('display', JSON.stringify(schedules))
+    return schedules
+}
 
 </script>
 
 <style scoped>
+.customCarousel {
+    height: 200px;
+}
+
+.carouselExplanation {  
+    font-size: x-large;
+    font-weight: bold;
+}
+
+.carouselCard {
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    height: 100%;
+}
+
+.carouselTimestamp {
+    flex: 0 0 auto;
+    color: orange;
+    font-style: italic;
+    font-size: x-large;
+    font-weight: bolder;
+}
+
 .el-carousel__item h3 {
     color: #475669;
+    font-style: italic;
+    font-weight: bold;
     opacity: 0.75;
-    line-height: 200px;
     margin: 0;
     text-align: center;
+    line-height: normal;
+    padding: 7px 0;
 }
 
 .el-carousel__item:nth-child(2n) {
@@ -30,5 +175,25 @@
 
 .el-carousel__item:nth-child(2n + 1) {
     background-color: #d3dce6;
+}
+
+.dynamicGradient {
+    font-size: xx-large;
+    font-weight: bolder;
+    background: linear-gradient(90deg, #ff0080, #8000ff, #00c0ff);
+    background-clip: text;
+    -webkit-background-clip: text;
+    color: transparent;
+    animation: gradientAnimation 3s infinite alternate;
+}
+
+@keyframes gradientAnimation {
+    0% {
+        background-position: 0% 50%;
+    }
+
+    100% {
+        background-position: 100% 50%;
+    }
 }
 </style>

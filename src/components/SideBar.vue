@@ -4,28 +4,28 @@
     <router-link to="/home">
       <el-menu-item index="/home">
         <el-icon><icon-menu /></el-icon>
-        Home
+        <el-text size="large" class="sidebarText">Home</el-text>
       </el-menu-item>
     </router-link>
 
     <router-link to="/taskTable">
       <el-menu-item index="/taskTable">
         <el-icon><icon-menu /></el-icon>
-        Task
+        <el-text size="large" class="sidebarText">Task</el-text>
       </el-menu-item>
     </router-link>
 
     <router-link to="/calendar">
       <el-menu-item index="/calendar">
         <el-icon><icon-menu /></el-icon>
-        Calendar
+        <el-text size="large" class="sidebarText">Calendar</el-text>
       </el-menu-item>
     </router-link>
 
     <router-link to="/resource">
       <el-menu-item index="/resource">
         <el-icon><icon-menu /></el-icon>
-        Resources
+        <el-text size="large" class="sidebarText">Resources</el-text>
       </el-menu-item>
     </router-link>
 
@@ -34,7 +34,7 @@
         <el-icon>
           <setting />
         </el-icon>
-        Setting
+        <el-text size="large" class="sidebarText">Setting</el-text>
       </el-menu-item>
     </router-link>
 
@@ -49,5 +49,9 @@ import { Document, Menu as IconMenu, Location, Setting } from '@element-plus/ico
 .el-menu-vertical {
   width: 100%;
   height: 100%;
+}
+
+.sidebarText {
+  font-weight: bold;
 }
 </style>
