@@ -401,7 +401,7 @@ const addCourse = async () => {
 }
 
 const handleExit = () => {
-    router.push('/taskTable')
+    router.push('/')
 }
 </script>
 
