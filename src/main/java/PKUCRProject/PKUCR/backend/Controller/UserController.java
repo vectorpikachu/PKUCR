@@ -37,10 +37,10 @@ public class UserController {
         this.authenticationManager = authenticationManager;
     }
 
-    
-    /** 
-     * @param loginRequest
-     * @return ResponseEntity<?>
+
+    /**
+     * @param loginRequest 用户登录请求
+     * @return ResponseEntity<?> 返回用户的 token
      */
     @Operation(summary = "A user loging in, return the user's token")
     @PostMapping("/api/auth/login")

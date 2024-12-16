@@ -34,7 +34,7 @@ public class CustomUserDetailsService implements UserDetailsService{
 
     public User registerUser(User user) {
         if (userMapper.selectByEmail(user.getEmail()) != null) {
-            throw new RuntimeException("Username already exists");
+            throw new RuntimeException("User email already exists");
         }
 
         if (user.getPermission() == null) {
