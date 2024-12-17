@@ -42,20 +42,10 @@
 <script lang="ts" setup>
 import { ref } from 'vue'
 import dayjs from 'dayjs'
-import { storage, Task, CourseData } from '@/store/storage'
+import { storage, Task, CourseData, weekZh2Num } from '@/store/storage'
 
 const displayDayNum = ref(4)
 const today = ref(dayjs())
-
-const weekZh2Num = {
-    '星期一': 0,
-    '星期二': 1,
-    '星期三': 2,
-    '星期四': 3,
-    '星期五': 4,
-    '星期六': 5,
-    '星期日': 6,
-}
 
 const displayData = getSchedules()
 const displaySchedules = ref(displayData)
@@ -64,7 +54,6 @@ function getSchedules() {
     let schedules = {}
     let taskData: Task[] = JSON.parse(storage.getItem('task'))
     let courseData: CourseData = JSON.parse(storage.getItem('course'))
-
 
     if (taskData) {
         for (let task of taskData) {
@@ -109,7 +98,6 @@ function getSchedules() {
 
     return schedules
 }
-
 </script>
 
 <style scoped>

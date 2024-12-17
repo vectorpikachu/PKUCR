@@ -121,7 +121,7 @@
 import { ref } from 'vue'
 import { type CalendarDateType, type CalendarInstance } from 'element-plus'
 import dayjs, { Dayjs } from 'dayjs'
-import { Task, CourseData, storage } from '@/store/storage'
+import { Task, CourseData, storage, timeEndZh2Num, timeStartZh2Num, weekZh2Num } from '@/store/storage'
 
 // definitions
 enum ScheduleType { RESERVED, COURSE, TASK }
@@ -145,44 +145,6 @@ let scheduleBuffer = {
   classroom: '',
   deadline: '',
   appendix: '',
-}
-
-const weekZh2Num = {
-  '星期一': 0,
-  '星期二': 1,
-  '星期三': 2,
-  '星期四': 3,
-  '星期五': 4,
-  '星期六': 5,
-  '星期日': 6,
-}
-const timeStartZh2Num = {
-  '第一节': '8:00',
-  '第二节': '9:00',
-  '第三节': '10:10',
-  '第四节': '11:10',
-  '第五节': '13:00',
-  '第六节': '14:00',
-  '第七节': '15:10',
-  '第八节': '16:10',
-  '第九节': '17:10',
-  '第十节': '18:40',
-  '第十一节': '19:40',
-  '第十二节': '20:40',
-}
-const timeEndZh2Num = {
-  '第一节': '8:50',
-  '第二节': '9:50',
-  '第三节': '11:00',
-  '第四节': '12:00',
-  '第五节': '13:50',
-  '第六节': '14:50',
-  '第七节': '16:00',
-  '第八节': '17:00',
-  '第九节': '18:00',
-  '第十节': '19:30',
-  '第十一节': '20:30',
-  '第十二节': '21:30',
 }
 
 const MAX_SCHEDULE_NUM = ref(4)
