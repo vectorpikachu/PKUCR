@@ -89,45 +89,48 @@ function getSchedules() {
     let taskData: Task[] = JSON.parse(localStorage.getItem('task'))
     let courseData: CourseData = JSON.parse(localStorage.getItem('course'))
 
-    for (let task of taskData) {
-        let taskDay = dayjs(task.date, 'YYYY-MM-DD')
-        if (taskDay.diff(today.value, 'day') < 0) {
-            continue
-        }
-        if (taskDay.diff(today.value, 'day') >= displayDayNum.value) {
-            continue
-        }
-        if (schedules[taskDay.format('YYYY-MM-DD')]) {
-            schedules[taskDay.format('YYYY-MM-DD')].push(task.name)
-        } else {
-            schedules[taskDay.format('YYYY-MM-DD')] = [task.name]
-        }
 
+    if (taskData) {
+        for (let task of taskData) {
+            let taskDay = dayjs(task.date, 'YYYY-MM-DD')
+            if (taskDay.diff(today.value, 'day') < 0) {
+                continue
+            }
+            if (taskDay.diff(today.value, 'day') >= displayDayNum.value) {
+                continue
+            }
+            if (schedules[taskDay.format('YYYY-MM-DD')]) {
+                schedules[taskDay.format('YYYY-MM-DD')].push(task.name)
+            } else {
+                schedules[taskDay.format('YYYY-MM-DD')] = [task.name]
+            }
+        }
     }
 
-    for (let course of courseData.data) {
-        let teachWeek = course.time.week.split('-')
-        for (let weekNum = +teachWeek[0] - 1; weekNum < +teachWeek[1]; weekNum++) {
-            for (let teachTime of course.time.time) {
-                let teachTimeSplit = teachTime.split('(')[0]
-                let teachDay = dayjs(courseData.start).add(weekNum, 'week')
-                teachDay = teachDay.add(weekZh2Num[teachTimeSplit], 'day')
-                if (teachDay.diff(today.value, 'day') < 0) {
-                    continue
-                }
-                if (teachDay.diff(today.value, 'day') >= displayDayNum.value) {
-                    continue
-                }
-                if (schedules[teachDay.format('YYYY-MM-DD')]) {
-                    schedules[teachDay.format('YYYY-MM-DD')].push(course.name)
-                } else {
-                    schedules[teachDay.format('YYYY-MM-DD')] = [course.name]
+    if (courseData) {
+        for (let course of courseData.data) {
+            let teachWeek = course.time.week.split('-')
+            for (let weekNum = +teachWeek[0] - 1; weekNum < +teachWeek[1]; weekNum++) {
+                for (let teachTime of course.time.time) {
+                    let teachTimeSplit = teachTime.split('(')[0]
+                    let teachDay = dayjs(courseData.start).add(weekNum, 'week')
+                    teachDay = teachDay.add(weekZh2Num[teachTimeSplit], 'day')
+                    if (teachDay.diff(today.value, 'day') < 0) {
+                        continue
+                    }
+                    if (teachDay.diff(today.value, 'day') >= displayDayNum.value) {
+                        continue
+                    }
+                    if (schedules[teachDay.format('YYYY-MM-DD')]) {
+                        schedules[teachDay.format('YYYY-MM-DD')].push(course.name)
+                    } else {
+                        schedules[teachDay.format('YYYY-MM-DD')] = [course.name]
+                    }
                 }
             }
         }
     }
 
-    localStorage.setItem('display', JSON.stringify(schedules))
     return schedules
 }
 
@@ -138,7 +141,7 @@ function getSchedules() {
     height: 200px;
 }
 
-.carouselExplanation {  
+.carouselExplanation {
     font-size: x-large;
     font-weight: bold;
 }

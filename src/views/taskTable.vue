@@ -344,7 +344,7 @@ const handleSort = {
     }
     tableData.value.sort(compTask)
   },
-  
+
   date: () => {
     config.sortStatus.date.value = (config.sortStatus.date.value + 1) % 3
     let val = config.sortStatus.date.value
@@ -424,7 +424,11 @@ function tableDataUpdateLocal() {
 
 // Fetch initial data from server
 function tableDataFetchLocal() {
-  return JSON.parse(localStorage.getItem('task'))
+  let taskData = JSON.parse(localStorage.getItem('task'))
+  if (taskData) {
+    return taskData
+  }
+  return []
 }
 
 // Submite task form to server and update local data

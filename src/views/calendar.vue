@@ -103,7 +103,8 @@
             @click=" handleScheduleClick(schedule)">
             <h3>{{ schedule.name }}</h3>
           </div>
-          <p class="detailAppendix" v-if="schedule.type === ScheduleType.COURSE">{{ schedule.teacher }} {{ schedule.classroom }}</p>
+          <p class="detailAppendix" v-if="schedule.type === ScheduleType.COURSE">{{ schedule.teacher }} {{
+            schedule.classroom }}</p>
           <p class="detailAppendix" v-else>{{ schedule.appendix }}</p>
         </el-card>
       </el-timeline-item>
@@ -233,48 +234,52 @@ function parseSchedules() {
   let taskData: Task[] = JSON.parse(localStorage.getItem('task'))
   let courseData: CourseData = JSON.parse(localStorage.getItem('course'))
 
-  for (let task of taskData) {
-    let scheduleFromTask: Schedule = {
-      type: ScheduleType.TASK,
-      name: task.name,
-      time: '',
-      teacher: '',
-      classroom: '',
-      deadline: task.time,
-      appendix: task.memo
-    }
-    if (schedulesRecord[task.date]) {
-      schedulesRecord[task.date].push(scheduleFromTask)
-    } else {
-      schedulesRecord[task.date] = [scheduleFromTask]
+  if (taskData) {
+    for (let task of taskData) {
+      let scheduleFromTask: Schedule = {
+        type: ScheduleType.TASK,
+        name: task.name,
+        time: '',
+        teacher: '',
+        classroom: '',
+        deadline: task.time,
+        appendix: task.memo
+      }
+      if (schedulesRecord[task.date]) {
+        schedulesRecord[task.date].push(scheduleFromTask)
+      } else {
+        schedulesRecord[task.date] = [scheduleFromTask]
+      }
     }
   }
 
-  for (let course of courseData.data) {
-    let teachWeek = course.time.week.split('-')
-    for (let weekNum = +teachWeek[0] - 1; weekNum < +teachWeek[1]; weekNum++) {
-      for (let teachTime of course.time.time) {
-        let scheduleFromCourse: Schedule = {
-          type: ScheduleType.COURSE,
-          name: course.name,
-          time: '',
-          teacher: course.teacher,
-          classroom: course.classroom,
-          deadline: '',
-          appendix: course.link
-        }
-        let teachTimeSplit = teachTime.split(')')[0].split('(')
-        let teachDay: Dayjs = dayjs(courseData.start).add(weekNum, 'week')
-        teachDay = teachDay.add(weekZh2Num[teachTimeSplit[0]], 'day')
-        teachTimeSplit = teachTimeSplit[1].split('-')
-        teachTimeSplit[0] = timeStartZh2Num[teachTimeSplit[0]]
-        teachTimeSplit[1] = timeEndZh2Num[teachTimeSplit[1]]
-        scheduleFromCourse.time = teachTimeSplit.join('-')
-        if (schedulesRecord[teachDay.format('YYYY-MM-DD')]) {
-          schedulesRecord[teachDay.format('YYYY-MM-DD')].push(scheduleFromCourse)
-        }
-        else {
-          schedulesRecord[teachDay.format('YYYY-MM-DD')] = [scheduleFromCourse]
+  if (courseData) {
+    for (let course of courseData.data) {
+      let teachWeek = course.time.week.split('-')
+      for (let weekNum = +teachWeek[0] - 1; weekNum < +teachWeek[1]; weekNum++) {
+        for (let teachTime of course.time.time) {
+          let scheduleFromCourse: Schedule = {
+            type: ScheduleType.COURSE,
+            name: course.name,
+            time: '',
+            teacher: course.teacher,
+            classroom: course.classroom,
+            deadline: '',
+            appendix: course.link
+          }
+          let teachTimeSplit = teachTime.split(')')[0].split('(')
+          let teachDay: Dayjs = dayjs(courseData.start).add(weekNum, 'week')
+          teachDay = teachDay.add(weekZh2Num[teachTimeSplit[0]], 'day')
+          teachTimeSplit = teachTimeSplit[1].split('-')
+          teachTimeSplit[0] = timeStartZh2Num[teachTimeSplit[0]]
+          teachTimeSplit[1] = timeEndZh2Num[teachTimeSplit[1]]
+          scheduleFromCourse.time = teachTimeSplit.join('-')
+          if (schedulesRecord[teachDay.format('YYYY-MM-DD')]) {
+            schedulesRecord[teachDay.format('YYYY-MM-DD')].push(scheduleFromCourse)
+          }
+          else {
+            schedulesRecord[teachDay.format('YYYY-MM-DD')] = [scheduleFromCourse]
+          }
         }
       }
     }
@@ -358,10 +363,10 @@ function getScheduleColor(schedule: Schedule) {
 }
 
 function getScheduleName(name: string) {
-    if (name.length > MAX_SCHEDULE_NAME_LEN.value) {
-      return name.slice(0, MAX_SCHEDULE_NAME_LEN.value - 3) + '...'
-    }
-    return name
+  if (name.length > MAX_SCHEDULE_NAME_LEN.value) {
+    return name.slice(0, MAX_SCHEDULE_NAME_LEN.value - 3) + '...'
+  }
+  return name
 }
 </script>
 

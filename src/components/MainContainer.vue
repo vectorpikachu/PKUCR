@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import SideBar from './SideBar.vue'
 import PageHeader from './PageHeader.vue'
-import { onUnmounted } from 'vue'
+import { ref, onUnmounted } from 'vue'
 import axios from '../axios'
 
 let headerHeightVh = 10
@@ -9,7 +9,7 @@ let menuWidthVw = 15
 let menuHeightVh = 100 - headerHeightVh
 let mainWidthVw = 100 - menuWidthVw
 
-const RELEASE = false
+const RELEASE = ref(false)
 
 interface Task {
   id: number,
@@ -152,7 +152,7 @@ const sendSignal = {
 }
 
 function initializeStorage() {
-  if (RELEASE) {
+  if (RELEASE.value) {
     let responseTask = sendSignal.fetchTask()
     responseTask.then((res) => {
       let taskData = JSON.parse(res.data) as Task[]
@@ -186,6 +186,10 @@ onUnmounted(() => {
     dataFetcher.postMessage('stop')
     dataFetcher.terminate()
     dataFetcher = null
+  }
+  if (RELEASE.value) {
+    localStorage.removeItem('task')
+    localStorage.removeItem('course')
   }
 })
 
