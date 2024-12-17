@@ -95,7 +95,7 @@
   </el-dialog>
 
   <el-dialog v-model="schedulesVisible" title="Schedules Detail" class="customDialog">
-    <el-timeline style="max-width: 600px">
+    <el-timeline style="max-width: 600px;">
       <el-timeline-item v-for="schedule in schedules[currentSchedules]" placement="top"
         :timestamp="getScheduleTime(schedule)" :color="getScheduleColor(schedule)" style="text-align: left;">
         <el-card>
@@ -121,6 +121,7 @@
 import { ref } from 'vue'
 import { type CalendarDateType, type CalendarInstance } from 'element-plus'
 import dayjs, { Dayjs } from 'dayjs'
+import { Task, CourseData, storage } from '@/store/storage'
 
 // definitions
 enum ScheduleType { RESERVED, COURSE, TASK }
@@ -133,31 +134,6 @@ interface Schedule {
   classroom: string,
   deadline: string,
   appendix: string,
-}
-
-interface Task {
-  id: number,
-  priority: number,
-  name: string,
-  date: string,
-  time: string,
-  memo: string,
-}
-
-interface Course {
-  name: string,
-  teacher: string,
-  classroom: string,
-  time: {
-    week: string,
-    time: string[],
-  },
-  link: string,
-}
-
-interface CourseData {
-  start: string,
-  data: Course[],
 }
 
 // variables
@@ -231,8 +207,8 @@ function selectDate(val: CalendarDateType) {
 
 function parseSchedules() {
   let schedulesRecord = {}
-  let taskData: Task[] = JSON.parse(localStorage.getItem('task'))
-  let courseData: CourseData = JSON.parse(localStorage.getItem('course'))
+  let taskData: Task[] = JSON.parse(storage.getItem('task'))
+  let courseData: CourseData = JSON.parse(storage.getItem('course'))
 
   if (taskData) {
     for (let task of taskData) {

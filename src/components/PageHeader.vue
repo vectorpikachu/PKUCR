@@ -19,6 +19,7 @@
 import { onMounted, ref, computed } from 'vue'
 import { useRouter } from 'vue-router'
 import { useAuthStore } from '@/store/auth'
+import { storage } from '@/store/storage'
 //import {logo} from '../assets/PKUCR-logo2.svg'
 
 //const logoUrl = logo
@@ -26,14 +27,14 @@ const router = useRouter()
 const authStore = useAuthStore()
 
 const username = computed(() => {
-  return localStorage.getItem('username');
-});
+    return storage.getItem('username')
+})
 
 const state = ref('')
 
 interface LinkItem {
-    value: string
-    link: string
+    value: string,
+    link: string,
 }
 
 const links = ref<LinkItem[]>([])

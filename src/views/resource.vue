@@ -4,7 +4,7 @@
         <div class="header">
             <h1>课程列表</h1>
             <div class="actions">
-                <el-input v-model="searchQuery" placeholder="搜索课程" prefix-icon="el-icon-search" style="width: 300px;"
+                <el-input v-model="searchQuery" placeholder="搜索课程" prefix-icon="el-icon-search" style="width: 300px"
                     @input="searchCourses" />
                 <el-button type="primary" @click="openAddCourseDialog">添加新课程</el-button>
                 <el-button type="warning" @click="handleExit" class="logout-button">返回主页</el-button>
@@ -27,7 +27,7 @@
 
         <!-- 详情对话框 -->
         <el-dialog v-model="dialogVisible" title="课程详情" @close="resetDialog" width="80%"
-            style="max-height: 70vh; overflow-y: auto;">
+            style="max-height: 70vh overflow-y: auto">
             <div v-if="selectedObject">
                 <p><strong>课程号:</strong> {{ selectedObject.course_id }}</p>
                 <p><strong>课程名:</strong> {{ selectedObject.name }}</p>
@@ -101,7 +101,8 @@
 import { ref, reactive, onMounted } from 'vue'
 import axios from '../axios'
 import { useRouter } from 'vue-router'
-import { ElMessage } from 'element-plus';
+import { ElMessage } from 'element-plus'
+import { storage } from '@/store/storage'
 
 const router = useRouter()
 
@@ -224,7 +225,7 @@ const addComment = async () => {
     if (newComment.value.trim()) {
         // 上传后端
         const commentData = {
-            user: localStorage.getItem('username'),  // TODO: 用户名, 阶段三先不管了
+            user: storage.getItem('username'),  // TODO: 用户名, 阶段三先不管了
             comment: newComment.value.trim()
         }
         try {
@@ -264,11 +265,11 @@ const deleteComment = async (comment) => {
         const response = await axios.delete(`/api/resource/comment/${comment.id}`)
 
         if (response.status === 200) {
-            const course = courseDetails.get(selectedObject.value.course_id);
+            const course = courseDetails.get(selectedObject.value.course_id)
             if (course) {
-                const index = course.comments.findIndex(c => c.id === comment.id);
+                const index = course.comments.findIndex(c => c.id === comment.id)
                 if (index !== -1) {
-                    course.comments.splice(index, 1);
+                    course.comments.splice(index, 1)
                 }
             }
             ElMessage.info('删除成功')
@@ -306,12 +307,12 @@ const deleteResource = async (resource) => {
         const response = await axios.delete(`/api/resource/material/${resource.id}`)
 
         if (response.status === 200) {
-            const course = courseDetails.get(selectedObject.value.course_id);
+            const course = courseDetails.get(selectedObject.value.course_id)
             if (course) {
                 // 找到 materials 数组并删除相应的 material
-                const index = course.materials.findIndex(material => material.id === resource.id);
+                const index = course.materials.findIndex(material => material.id === resource.id)
                 if (index !== -1) {
-                    course.materials.splice(index, 1);  // 删除指定的 material
+                    course.materials.splice(index, 1)  // 删除指定的 material
                 }
             }
             ElMessage.info('删除成功')

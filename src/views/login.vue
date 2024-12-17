@@ -22,11 +22,11 @@ import { ref } from 'vue'
 import { ElForm, ElMessage } from 'element-plus'
 // import axios from 'axios'
 
-import { useRouter } from 'vue-router';
-import { useAuthStore } from '../store/auth';
+import { useRouter } from 'vue-router'
+import { useAuthStore } from '../store/auth'
 
-const router = useRouter(); // 获取路由实例
-const authStore = useAuthStore();
+const router = useRouter() // 获取路由实例
+const authStore = useAuthStore()
 const formRef = ref<InstanceType<typeof ElForm>>(null)
 
 const form = ref({
@@ -65,15 +65,15 @@ const handleSubmit = () => {
         // const response = await axios.post('/api/login', {
         //   email: form.value.email,
         //   password: form.value.password
-        // });
+        // })
 
-        await authStore.login(form.value.email, form.value.password);
-        // console.log('Login successful:', response.data);
+        await authStore.login(form.value.email, form.value.password)
+        // console.log('Login successful:', response.data)
         // 跳转到首页
-        router.push('/taskTable');
+        router.push('/taskTable')
       } catch {
-        form.value.password = '';
-        ElMessage.error('Login failed, please check your email or password.');
+        form.value.password = ''
+        ElMessage.error('Login failed, please check your email or password.')
       }
     } else {
       console.error('Error in form submission')
@@ -82,7 +82,7 @@ const handleSubmit = () => {
 }
 
 const handleExit = () => {
-  router.push('/taskTable');
+  router.push('/')
 }
 </script>
 

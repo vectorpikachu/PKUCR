@@ -19,11 +19,11 @@
               </el-button>
             </template>
             <template #default="scope">
-              <div style="display: flex; align-items: center">
+              <div style="display: flex; align-items: center;">
                 <el-icon>
                   <timer />
                 </el-icon>
-                <span style="margin-left: 10px">{{ scope.row.date }}</span>
+                <span style="margin-left: 10px;">{{ scope.row.date }}</span>
               </div>
             </template>
           </el-table-column>
@@ -90,7 +90,7 @@
                           A 15 15, 0, 0, 1, 15 30
                           A 15 15, 0, 1, 1, 27.99 7.5
                           L 15 15
-                          " style="stroke-width: 4px; fill: rgba(0, 0, 0, 0)" />
+                          " style="stroke-width: 4px; fill: rgba(0, 0, 0, 0);" />
                     </svg>
                   </div>
                 </template>
@@ -113,20 +113,20 @@
 
   <!-- Dialog of adding task -->
   <el-dialog v-model="config.taskFormVisible.value" title="Add New Task" width="500">
-    <el-form :model="config.taskForm" label-width="auto" style="max-width: 600px">
+    <el-form :model="config.taskForm" label-width="auto" style="max-width: 600px;">
       <el-form-item label="Task name">
         <el-input v-model="config.taskForm.name" />
       </el-form-item>
       <el-form-item label="Task date">
         <el-col :span="11">
-          <el-date-picker v-model="config.taskForm.date" type="date" placeholder="Pick a date" style="width: 100%"
+          <el-date-picker v-model="config.taskForm.date" type="date" placeholder="Pick a date" style="width: 100%;"
             value-format="YYYY-MM-DD" />
         </el-col>
         <el-col :span="2" class="text-center">
           <span class="text-gray-500">-</span>
         </el-col>
         <el-col :span="11">
-          <el-time-picker v-model="config.taskForm.time" placeholder="Pick a time" style="width: 100%"
+          <el-time-picker v-model="config.taskForm.time" placeholder="Pick a time" style="width: 100%;"
             value-format="HH:mm:ss" />
         </el-col>
       </el-form-item>
@@ -148,6 +148,7 @@
 import { ref, reactive } from 'vue'
 import { Sort, Loading, Timer, SortDown, SortUp } from '@element-plus/icons-vue'
 import axios from '../axios'
+import { Task, storage } from '@/store/storage'
 
 // Backend axios address
 const AXIOS_ADDRESS = {
@@ -299,15 +300,6 @@ function compTask(lhs, rhs) {
   return 0
 }
 
-interface Task {
-  id: number
-  priority: number
-  name: string
-  date: string
-  time: string
-  memo: string
-}
-
 // Different types of sort function
 const handleSort = {
   name: () => {
@@ -416,15 +408,15 @@ const handleSort = {
   }
 }
 
-// Update data into localstorage
+// Update data into storage
 function tableDataUpdateLocal() {
   let data = JSON.stringify(tableData.value)
-  localStorage.setItem('task', data)
+  storage.setItem('task', data)
 }
 
 // Fetch initial data from server
 function tableDataFetchLocal() {
-  let taskData = JSON.parse(localStorage.getItem('task'))
+  let taskData: Task[] = JSON.parse(storage.getItem('task'))
   if (taskData) {
     return taskData
   }

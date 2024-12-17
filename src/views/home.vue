@@ -42,31 +42,7 @@
 <script lang="ts" setup>
 import { ref } from 'vue'
 import dayjs from 'dayjs'
-
-interface Task {
-    id: number,
-    priority: number,
-    name: string,
-    date: string,
-    time: string,
-    memo: string,
-}
-
-interface Course {
-    name: string,
-    teacher: string,
-    classroom: string,
-    time: {
-        week: string,
-        time: string[],
-    },
-    link: string,
-}
-
-interface CourseData {
-    start: string,
-    data: Course[],
-}
+import { storage, Task, CourseData } from '@/store/storage'
 
 const displayDayNum = ref(4)
 const today = ref(dayjs())
@@ -86,8 +62,8 @@ const displaySchedules = ref(displayData)
 
 function getSchedules() {
     let schedules = {}
-    let taskData: Task[] = JSON.parse(localStorage.getItem('task'))
-    let courseData: CourseData = JSON.parse(localStorage.getItem('course'))
+    let taskData: Task[] = JSON.parse(storage.getItem('task'))
+    let courseData: CourseData = JSON.parse(storage.getItem('course'))
 
 
     if (taskData) {
