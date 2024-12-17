@@ -50,7 +50,7 @@ PKUCR
 └── package-lock.json
 ```   
 重要文件介绍：
-- `src/components/MainContainer.vue`为项目界面的主体结构，分为`sidebar`，`header`以及`main`三个部分，其中`main`负责主题功能界面的呈现，`sidebar`负责`main`的路由，`header`负责账号相关功能以及资源搜索
+- `src/components/MainContainer.vue`为项目界面的主体结构，分为`sidebar`，`header`以及`main`三个部分，其中`main`负责主体功能界面的呈现，`sidebar`负责`main`的路由，`header`负责账号相关功能以及资源搜索
 - `src/components/SideBar.vue`为项目`sidebar`的实现
 - `src/components/PageHeader.vue`为项目`header`的实现
 - `src/views/*.vue`为项目`main`各功能页面的实现
@@ -63,13 +63,13 @@ PKUCR
 - `index.html`项目web文件
 
 ## 项目环境配置
-项目项目使用Vue3框架，Vue3脚手架以及ElementPlus配套工具，使用npm进行环境管理。
+项目使用Vue3框架，Vue3脚手架以及ElementPlus配套工具，使用npm进行环境管理。
 本地安装有npm的情况下，在项目根目录下运行如下命令即可配置完环境：
 ```sh
 npm install
 ```
 
-### 项目运行
+## 项目运行
 项目环境配置完后，在项目根目录下运行如下命令：
 ```sh
 npm run dev
