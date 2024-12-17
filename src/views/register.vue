@@ -3,8 +3,8 @@
     <div class="logo"><img src="@/assets/PKUCR-logo.svg" alt="Logo" /></div>
     <h1>Register</h1>
     <el-form :model="form" ref="formRef" label-width="80px">
-      <el-form-item label="Name" prop="name">
-        <el-input v-model="form.email" placeholder="Enter your name" />
+      <el-form-item label="Name" prop="name" :rules="nameRules">
+        <el-input v-model="form.name" placeholder="Enter your name" />
       </el-form-item>
       <el-form-item label="Email" prop="email" :rules="emailRules">
         <el-input v-model="form.email" placeholder="Enter your email" />
@@ -37,6 +37,11 @@ const form = ref({
   email: '',
   password: ''
 })
+
+const nameRules = [
+  { required: true, message: 'Please input your name', trigger: 'blur' },
+  { min: 4, message: 'Password length should be at least 4', trigger: 'blur' }
+]
 
 const emailSuffix = 'pku.edu.cn'
 const emailRules = [
