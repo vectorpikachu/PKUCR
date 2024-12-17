@@ -26,7 +26,7 @@
           <div v-if="index < MAX_SCHEDULE_NUM"
             :class="schedule.type === ScheduleType.COURSE ? 'cellCourse' : 'cellTask'"
             @click="handleScheduleClick(schedule)">
-            <span>{{ schedule.name }}</span>
+            <span>{{ getScheduleName(schedule.name) }}</span>
           </div>
         </div>
         <div class="cellTrunc" @click="handleCellClick(data.day)">
@@ -209,6 +209,7 @@ const timeEndZh2Num = {
 }
 
 const MAX_SCHEDULE_NUM = ref(4)
+const MAX_SCHEDULE_NAME_LEN = ref(25)
 
 let scheduleCourseVisible = ref(false)
 let scheduleTaskVisible = ref(false)
@@ -354,6 +355,13 @@ function getScheduleColor(schedule: Schedule) {
   } else {
     return 'green';
   }
+}
+
+function getScheduleName(name: string) {
+    if (name.length > MAX_SCHEDULE_NAME_LEN.value) {
+      return name.slice(0, MAX_SCHEDULE_NAME_LEN.value - 3) + '...'
+    }
+    return name
 }
 </script>
 

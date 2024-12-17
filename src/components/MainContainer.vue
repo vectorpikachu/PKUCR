@@ -31,18 +31,14 @@ interface Course {
   link: string,
 }
 
-interface TaskData {
-  data: Task[],
-}
-
 interface CourseData {
   start: string,
   data: Course[],
 }
 
 const AXIOS_ADDRESS = {
-  COURSE: '/course/get',
-  TASK: '/task/get',
+  COURSE: '/course',
+  TASK: '/task',
 }
 const workerCode = `
   let intervalId
@@ -50,6 +46,11 @@ const workerCode = `
   onmessage = function (e) {
     if (e.data === 'start') {
       postMessage('initialize data')
+      intervalId = setInterval(() => {
+        postMessage('initialize data')
+      }, refreshSecs * 1000)
+    } else if (e.data === 'stop') {
+      clearInterval(intervalId)
     }
   }
 `
@@ -101,7 +102,7 @@ const defaultTask: Task[] = [
     date: '2024-12-17',
     time: '10:10:00',
     memo: '4th Presentation'
-  }, 
+  },
   {
     id: 1,
     priority: 100,
@@ -113,15 +114,15 @@ const defaultTask: Task[] = [
   {
     id: 2,
     priority: 0,
-    name: 'Software Engineering (test)',
+    name: 'Software Engineering Class (test)',
     date: '2024-12-17',
     time: '10:10:01',
     memo: '4.1st Presentation'
-  }, 
+  },
   {
     id: 3,
     priority: 0,
-    name: 'Software Class (ttest)',
+    name: 'Software Engineering Class (ttest)',
     date: '2024-12-17',
     time: '10:10:02',
     memo: '4.2nd Presentation'
@@ -129,7 +130,7 @@ const defaultTask: Task[] = [
   {
     id: 0,
     priority: 0,
-    name: 'Engineering Class (tttest)',
+    name: 'Software Engineering Class (tttest)',
     date: '2024-12-17',
     time: '10:10:03',
     memo: '4.3rd Presentation'
@@ -154,8 +155,8 @@ function initializeStorage() {
   if (RELEASE) {
     let responseTask = sendSignal.fetchTask()
     responseTask.then((res) => {
-      let taskData = JSON.parse(res.data) as TaskData
-      localStorage.setItem('task', JSON.stringify(taskData.data))
+      let taskData = JSON.parse(res.data) as Task[]
+      localStorage.setItem('task', JSON.stringify(taskData))
     })
 
     let responseCourse = sendSignal.fetchCourse()
@@ -182,6 +183,7 @@ dataFetcher.postMessage('start')
 
 onUnmounted(() => {
   if (dataFetcher) {
+    dataFetcher.postMessage('stop')
     dataFetcher.terminate()
     dataFetcher = null
   }

@@ -183,8 +183,9 @@ function getSchedules() {
     background: linear-gradient(90deg, #ff0080, #8000ff, #00c0ff);
     background-clip: text;
     -webkit-background-clip: text;
+    background-size: 300% 1000%;
     color: transparent;
-    animation: gradientAnimation 3s infinite alternate;
+    animation: gradientAnimation 2s infinite alternate;
 }
 
 @keyframes gradientAnimation {
