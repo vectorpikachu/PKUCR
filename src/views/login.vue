@@ -72,6 +72,7 @@ const handleSubmit = () => {
         // 跳转到首页
         router.push('/taskTable');
       } catch {
+        form.value.password = '';
         ElMessage.error('Login failed, please check your email or password.');
       }
     } else {
