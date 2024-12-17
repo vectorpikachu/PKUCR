@@ -27,7 +27,7 @@
 
         <!-- 详情对话框 -->
         <el-dialog v-model="dialogVisible" title="课程详情" @close="resetDialog" width="80%"
-            style="max-height: 70vh overflow-y: auto">
+            style="max-height: 70vh; overflow-y: auto;">
             <div v-if="selectedObject">
                 <p><strong>课程号:</strong> {{ selectedObject.course_id }}</p>
                 <p><strong>课程名:</strong> {{ selectedObject.name }}</p>
