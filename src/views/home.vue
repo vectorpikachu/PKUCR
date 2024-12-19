@@ -8,7 +8,7 @@
             <el-text class="progressOverTitle">[ Today Finished ]</el-text>
             <el-scrollbar style="margin-left: 15%; max-height: 80%;">
                 <div v-for="schedule in schedulesData[today.format('YYYY-MM-DD')]">
-                    <el-text v-if="dayjs(schedule.end, 'HH:mm:ss').diff(today) <= 0" class="progressText">
+                    <el-text v-if="dayjs(schedule.end, 'HH:mm').diff(today) <= 0" class="progressText">
                         <strong>{{ schedule.name }}</strong>
                     </el-text>
                 </div>
@@ -37,7 +37,7 @@
             <el-text class="progressReadyTitle">[ Today's TODO List ]</el-text>
             <el-scrollbar style="margin-right: 15%; max-height: 80%">
                 <div v-for="schedule in schedulesData[today.format('YYYY-MM-DD')]">
-                    <el-text v-if="dayjs(schedule.end, 'HH:mm:ss').diff(today) > 0" class="progressText">
+                    <el-text v-if="dayjs(schedule.end, 'HH:mm').diff(today) > 0" class="progressText">
                         <strong>{{ schedule.name }}</strong>
                     </el-text>
                 </div>
@@ -66,7 +66,7 @@
                         </el-text>
                     </div>
                     <el-card class="timelineItemDetail">
-                        <el-text v-if="dayjs(schedule.end, 'HH:mm:ss').diff(today) <= 0" class="timelineItemTextOver">
+                        <el-text v-if="dayjs(schedule.end, 'HH:mm').diff(today) <= 0" class="timelineItemTextOver">
                             {{ schedule.name }}
                         </el-text>
                         <el-text v-else class="timelineItemTextReady">
@@ -104,7 +104,7 @@
 <script lang="ts" setup>
 import { computed, onMounted, ref, reactive } from 'vue'
 import dayjs, { Dayjs } from 'dayjs'
-import { storage, Task, CourseData, weekZh2Num, timeEndZh2Num, timeStartZh2Num } from '@/store/storage'
+import { storage, Task, Course } from '@/store/storage'
 
 enum ScheduleType { RESERVED, COURSE, TASK }
 
@@ -141,22 +141,22 @@ const percentages = reactive([0, 0, 0])
 function getSchedules() {
     let schedules = {}
     let taskData: Task[] = JSON.parse(storage.getItem('task'))
-    let courseData: CourseData = JSON.parse(storage.getItem('course'))
+    let courseData: Course[] = JSON.parse(storage.getItem('course'))
 
     if (taskData) {
         for (let task of taskData) {
-            let schedule: Schedule = {
-                name: task.name,
-                type: ScheduleType.TASK,
-                start: task.time,
-                end: task.time,
-            }
             let taskDay = dayjs(task.date, 'YYYY-MM-DD')
             if (taskDay.diff(today.value, 'day') < 0) {
                 continue
             }
             if (taskDay.diff(today.value, 'day') >= displayDayNum.value) {
                 continue
+            }
+            let schedule: Schedule = {
+                name: task.name,
+                type: ScheduleType.TASK,
+                start: task.time,
+                end: task.time,
             }
             if (schedules[taskDay.format('YYYY-MM-DD')]) {
                 schedules[taskDay.format('YYYY-MM-DD')].push(schedule)
@@ -167,25 +167,24 @@ function getSchedules() {
     }
 
     if (courseData) {
-        for (let course of courseData.data) {
-            let teachWeek = course.time.week.split('-')
-            for (let weekNum = +teachWeek[0] - 1; weekNum < +teachWeek[1]; weekNum++) {
-                for (let teachTime of course.time.time) {
-                    let teachTimeSplit = teachTime.split(')')[0].split('(')
-                    let teachDay = dayjs(courseData.start).add(weekNum, 'week')
-                    teachDay = teachDay.add(weekZh2Num[teachTimeSplit[0]], 'day')
-                    teachTimeSplit = teachTimeSplit[1].split('-')
-                    let schedule: Schedule = {
-                        name: course.name,
-                        type: ScheduleType.COURSE,
-                        start: timeStartZh2Num[teachTimeSplit[0]] + ':00',
-                        end: timeEndZh2Num[teachTimeSplit[1]] + ':00',
-                    }
+        for (let course of courseData) {
+            console.log(course.name)
+            for (let teachTime of course.time) {
+                let endDay: Dayjs = dayjs(teachTime.endDate, 'YYYY-MM-DD')
+                for (let teachDay = dayjs(teachTime.startDate, 'YYYY-MM-DD');
+                    teachDay.diff(endDay) <= 0;
+                    teachDay = teachDay.add(teachTime.frequency, 'day')) {
                     if (teachDay.diff(today.value, 'day') < 0) {
                         continue
                     }
                     if (teachDay.diff(today.value, 'day') >= displayDayNum.value) {
                         continue
+                    }
+                    let schedule: Schedule = {
+                        name: course.name,
+                        type: ScheduleType.COURSE,
+                        start: teachTime.startTime,
+                        end: teachTime.endTime,
                     }
                     if (schedules[teachDay.format('YYYY-MM-DD')]) {
                         schedules[teachDay.format('YYYY-MM-DD')].push(schedule)
@@ -200,8 +199,8 @@ function getSchedules() {
     let schedule: Schedule[] = schedules[today.value.format('YYYY-MM-DD')]
     if (schedule) {
         schedule.sort((a, b) => {
-            let timeA = dayjs(a.start, 'HH:mm:ss')
-            let timeB = dayjs(b.start, 'HH:mm:ss')
+            let timeA = dayjs(a.start, 'HH:mm')
+            let timeB = dayjs(b.start, 'HH:mm')
             let diff = timeA.diff(timeB)
             if (diff) {
                 return diff
@@ -223,7 +222,7 @@ function getProgressData(schedules: Schedule[]) {
     if (schedules) {
         for (let schedule of schedules) {
             if (schedule.type !== ScheduleType.RESERVED) {
-                let time: Dayjs = dayjs(schedule.end, 'HH:mm:ss')
+                let time: Dayjs = dayjs(schedule.end, 'HH:mm')
                 total[ScheduleType.RESERVED]++
                 total[schedule.type]++
                 if (today.value.diff(time, 'second') >= 0) {

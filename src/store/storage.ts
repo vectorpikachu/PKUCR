@@ -15,15 +15,13 @@ export interface Course {
     teacher: string,
     classroom: string,
     time: {
-        week: string,
-        time: string[],
-    },
+        startDate: string,
+        endDate: string,
+        startTime: string,
+        endTime: string,
+        frequency: number,
+    }[],
     link: string,
-}
-
-export interface CourseData {
-    start: string,
-    data: Course[],
 }
 
 // variables
@@ -43,44 +41,52 @@ const sendSignal = {
     }
 }
 
-const defaultCourse: CourseData = {
-    start: '2024-09-09',
-    data: [
-        {
-            name: '软件工程',
-            teacher: '孙艳春',
-            classroom: '二教',
-            time:
+const defaultCourse: Course[] = [
+    {
+        name: '软件工程',
+        teacher: '孙艳春',
+        classroom: '二教',
+        time: [
             {
-                week: '1-16',
-                time: ['星期二(第三节-第四节)', '星期四(第五节-第六节)']
+                startDate: '2024-09-10',
+                endDate: '2024-12-31',
+                startTime: '10:10',
+                endTime: '12:00',
+                frequency: 7,
             },
-            link: 'None'
-        },
-        {
-            name: '计算机网络',
-            teacher: '黄群',
-            classroom: '理教',
-            time:
             {
-                week: '1-16',
-                time: ['星期一(第五节-第六节)', '星期三(第一节-第二节)']
+                startDate: '2024-09-12',
+                endDate: '2024-12-31',
+                startTime: '13:00',
+                endTime: '14:50',
+                frequency: 7,
             },
-            link: 'None'
-        },
-        {
-            name: '自然语言处理',
-            teacher: '孙栩',
-            classroom: '理教',
-            time:
+        ],
+        link: 'None'
+    },
+    {
+        name: '计算机网络',
+        teacher: '黄群',
+        classroom: '理教',
+        time: [
             {
-                week: '1-16',
-                time: ['星期二(第五节-第六节)', '星期四(第三节-第四节)']
+                startDate: '2024-09-09',
+                endDate: '2024-12-31',
+                startTime: '13:00',
+                endTime: '14:50',
+                frequency: 7,
             },
-            link: 'None'
-        }
-    ]
-}
+            {
+                startDate: '2024-09-11',
+                endDate: '2024-12-31',
+                startTime: '08:00',
+                endTime: '09:50',
+                frequency: 7,
+            },
+        ],
+        link: 'None'
+    }
+]
 
 const defaultTask: Task[] = [
     {
@@ -88,7 +94,7 @@ const defaultTask: Task[] = [
         priority: 0,
         name: 'Software Engineering Class',
         date: '2024-12-17',
-        time: '10:10:00',
+        time: '10:10',
         memo: '4th Presentation'
     },
     {
@@ -96,7 +102,7 @@ const defaultTask: Task[] = [
         priority: 100,
         name: 'SE DDDDDDDDDDDDDL',
         date: '2024-12-15',
-        time: '23:59:59',
+        time: '23:59',
         memo: 'help me...'
     },
     {
@@ -104,7 +110,7 @@ const defaultTask: Task[] = [
         priority: 0,
         name: 'Software Engineering Class (test)',
         date: '2024-12-17',
-        time: '10:10:01',
+        time: '10:10',
         memo: '4.1st Presentation'
     },
     {
@@ -112,7 +118,7 @@ const defaultTask: Task[] = [
         priority: 0,
         name: 'Software Engineering Class (ttest)',
         date: '2024-12-17',
-        time: '10:10:02',
+        time: '10:10',
         memo: '4.2nd Presentation'
     },
     {
@@ -120,7 +126,7 @@ const defaultTask: Task[] = [
         priority: 0,
         name: 'Software Engineering Class (tttest)',
         date: '2024-12-17',
-        time: '10:10:03',
+        time: '10:10',
         memo: '4.3rd Presentation'
     },
     {
@@ -128,7 +134,7 @@ const defaultTask: Task[] = [
         priority: 0,
         name: 'get up',
         date: '2024-12-19',
-        time: '07:30:00',
+        time: '07:30',
         memo: ''
     },
     {
@@ -136,7 +142,7 @@ const defaultTask: Task[] = [
         priority: 0,
         name: 'breakfast',
         date: '2024-12-19',
-        time: '08:30:00',
+        time: '08:30',
         memo: ''
     },
     {
@@ -144,7 +150,7 @@ const defaultTask: Task[] = [
         priority: 0,
         name: 'sleep',
         date: '2024-12-19',
-        time: '00:00:00',
+        time: '00:00',
         memo: ''
     },
     {
@@ -152,7 +158,7 @@ const defaultTask: Task[] = [
         priority: 0,
         name: 'walk',
         date: '2024-12-19',
-        time: '08:00:00',
+        time: '08:00',
         memo: ''
     },
     {
@@ -160,7 +166,7 @@ const defaultTask: Task[] = [
         priority: 0,
         name: 'meeting',
         date: '2024-12-19',
-        time: '20:30:00',
+        time: '20:30',
         memo: ''
     },
     {
@@ -168,50 +174,12 @@ const defaultTask: Task[] = [
         priority: 0,
         name: 'lunch',
         date: '2024-12-19',
-        time: '12:30:00',
+        time: '12:30',
         memo: ''
     }
 ]
 
 let dataFetcher: Worker
-
-export const weekZh2Num = {
-    '星期一': 0,
-    '星期二': 1,
-    '星期三': 2,
-    '星期四': 3,
-    '星期五': 4,
-    '星期六': 5,
-    '星期日': 6,
-}
-export const timeStartZh2Num = {
-    '第一节': '8:00',
-    '第二节': '9:00',
-    '第三节': '10:10',
-    '第四节': '11:10',
-    '第五节': '13:00',
-    '第六节': '14:00',
-    '第七节': '15:10',
-    '第八节': '16:10',
-    '第九节': '17:10',
-    '第十节': '18:40',
-    '第十一节': '19:40',
-    '第十二节': '20:40',
-}
-export const timeEndZh2Num = {
-    '第一节': '8:50',
-    '第二节': '9:50',
-    '第三节': '11:00',
-    '第四节': '12:00',
-    '第五节': '13:50',
-    '第六节': '14:50',
-    '第七节': '16:00',
-    '第八节': '17:00',
-    '第九节': '18:00',
-    '第十节': '19:30',
-    '第十一节': '20:30',
-    '第十二节': '21:30',
-}
 
 export const storage = localStorage
 
@@ -226,7 +194,7 @@ function initializeStorage() {
 
         let responseCourse = sendSignal.fetchCourse()
         responseCourse.then((res) => {
-            let courseData = JSON.parse(res.data) as CourseData
+            let courseData = JSON.parse(res.data) as Course[]
             storage.setItem('course', JSON.stringify(courseData))
         })
     }
