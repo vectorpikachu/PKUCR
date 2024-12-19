@@ -23,14 +23,14 @@
       <div class="cellTime"><span>{{ data.day.slice(-2) }}</span></div>
       <div v-if="schedules[data.day]">
         <div v-for="(schedule, index) in schedules[data.day]">
-          <div v-if="index < MAX_SCHEDULE_NUM"
-            :class="schedule.type === ScheduleType.COURSE ? 'cellCourse' : 'cellTask'"
-            @click="handleScheduleClick(schedule)">
-            <span>{{ getScheduleName(schedule.name) }}</span>
+          <div v-if="index < MAX_SCHEDULE_NUM" @click="handleScheduleClick(schedule)">
+            <el-text line-clamp="1" :class="schedule.type === ScheduleType.COURSE ? 'cellCourse' : 'cellTask'">
+              {{ schedule.name }}
+            </el-text>
           </div>
         </div>
-        <div class="cellTrunc" @click="handleCellClick(data.day)">
-          <span>(show more)</span>
+        <div @click="handleCellClick(data.day)">
+          <el-text class="cellTrunc" line-clamp="1">(show more)</el-text>
         </div>
       </div>
     </template>
@@ -298,13 +298,6 @@ function getScheduleColor(schedule: Schedule) {
   } else {
     return 'green';
   }
-}
-
-function getScheduleName(name: string) {
-  if (name.length > MAX_SCHEDULE_NAME_LEN.value) {
-    return name.slice(0, MAX_SCHEDULE_NAME_LEN.value - 3) + '...'
-  }
-  return name
 }
 </script>
 

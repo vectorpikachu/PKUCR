@@ -88,7 +88,7 @@ const goToRegister = () => {
 
 const goToLogout = () => {
     authStore.logout()
-    router.push('/taskTable')
+    router.push('/')
 }
 
 </script>
