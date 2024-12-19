@@ -116,12 +116,60 @@ const defaultTask: Task[] = [
         memo: '4.2nd Presentation'
     },
     {
-        id: 0,
+        id: 4,
         priority: 0,
         name: 'Software Engineering Class (tttest)',
         date: '2024-12-17',
         time: '10:10:03',
         memo: '4.3rd Presentation'
+    },
+    {
+        id: 5,
+        priority: 0,
+        name: 'get up',
+        date: '2024-12-19',
+        time: '07:30:00',
+        memo: ''
+    },
+    {
+        id: 6,
+        priority: 0,
+        name: 'breakfast',
+        date: '2024-12-19',
+        time: '08:30:00',
+        memo: ''
+    },
+    {
+        id: 7,
+        priority: 0,
+        name: 'sleep',
+        date: '2024-12-19',
+        time: '00:00:00',
+        memo: ''
+    },
+    {
+        id: 9,
+        priority: 0,
+        name: 'walk',
+        date: '2024-12-19',
+        time: '08:00:00',
+        memo: ''
+    },
+    {
+        id: 10,
+        priority: 0,
+        name: 'meeting',
+        date: '2024-12-19',
+        time: '20:30:00',
+        memo: ''
+    },
+    {
+        id: 11,
+        priority: 0,
+        name: 'lunch',
+        date: '2024-12-19',
+        time: '12:30:00',
+        memo: ''
     }
 ]
 
