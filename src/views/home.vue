@@ -46,7 +46,9 @@
     </el-card>
     <el-card class="homeSection">
         <el-text class="timelineTitle">Today's Timeline</el-text>
-        <!-- <vue-horizontal-timeline /> -->
+        <div class="timeline">
+
+        </div>
     </el-card>
     <el-card class="homeSection">
         <div><span>To be filled</span></div>
@@ -251,6 +253,7 @@ onMounted(() => {
     margin-top: 5px;
 }
 
+/* Progress */
 .progressLeft {
     flex: 1;
     text-align: left
@@ -282,11 +285,6 @@ onMounted(() => {
     flex-direction: column;
     margin-left: 5%;
     margin-right: 5%;
-
-}
-
-@keyframes progressCircleAnimation {
-    0% {}
 }
 
 .progressGraphTitle {
@@ -326,6 +324,19 @@ onMounted(() => {
     font-style: italic;
 }
 
+/* Timeline */
+.timeline {
+    overflow-x: auto;
+    gap: 20px;
+    position: relative;
+    margin-top: 20px;
+    margin-bottom: 20px;
+    height: 0;
+    display: flex;
+    border-top: 2px solid var(--el-border-color);
+    border-bottom: 2px solid var(--el-border-color);
+}
+
 .timelineTitle {
     font-size: xx-large;
     font-weight: bolder;
@@ -333,6 +344,7 @@ onMounted(() => {
     color: coral;
 }
 
+/* Carousel */
 .customCarousel {
     height: 200px;
 }
