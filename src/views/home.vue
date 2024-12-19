@@ -1,10 +1,13 @@
 <template>
+    <!-- Title -->
     <el-text class="dynamicGradient">Welcome to PKUCR, your Course & Resource helper!</el-text>
+
+    <!-- Progress -->
     <el-card class="homeSection" :body-style="{ display: 'flex' }">
         <div class="progressLeft">
             <el-text class="progressOverTitle">[ Today Finished ]</el-text>
-            <el-scrollbar style="margin-left: 10%; max-height: 80%;">
-                <div v-for="schedule in displaySchedules[today.format('YYYY-MM-DD')]">
+            <el-scrollbar style="margin-left: 15%; max-height: 80%;">
+                <div v-for="schedule in schedulesData[today.format('YYYY-MM-DD')]">
                     <el-text v-if="dayjs(schedule.end, 'HH:mm:ss').diff(today) <= 0" class="progressText">
                         <strong>{{ schedule.name }}</strong>
                     </el-text>
@@ -32,8 +35,8 @@
         </div>
         <div class="progressRight">
             <el-text class="progressReadyTitle">[ Today's TODO List ]</el-text>
-            <el-scrollbar style="margin-right: 10%; max-height: 80%">
-                <div v-for="schedule in displaySchedules[today.format('YYYY-MM-DD')]">
+            <el-scrollbar style="margin-right: 15%; max-height: 80%">
+                <div v-for="schedule in schedulesData[today.format('YYYY-MM-DD')]">
                     <el-text v-if="dayjs(schedule.end, 'HH:mm:ss').diff(today) > 0" class="progressText">
                         <strong>{{ schedule.name }}</strong>
                     </el-text>
@@ -44,21 +47,43 @@
             </el-scrollbar>
         </div>
     </el-card>
+
+    <!-- Timeline -->
     <el-card class="homeSection">
         <el-text class="timelineTitle">Today's Timeline</el-text>
-        <div class="timeline">
-
+        <el-scrollbar v-if="schedulesData[today.format('YYYY-MM-DD')]">
+            <div class="timeline"
+                :style="{ width: `${Math.max(100, schedulesData[today.format('YYYY-MM-DD')].length * 15)}%` }">
+                <div v-for="(schedule, index) in schedulesData[today.format('YYYY-MM-DD')]" :key="index"
+                    class="timelineItem"
+                    :style="{ width: `${100 / schedulesData[today.format('YYYY-MM-DD')].length}%` }">
+                    <div class="timelineTime">
+                        <el-text v-if="schedule.type === ScheduleType.COURSE">
+                            {{ schedule.start }} - {{ schedule.end }}
+                        </el-text>
+                        <el-text v-else>
+                            {{ schedule.start }}
+                        </el-text>
+                    </div>
+                    <el-card class="timelineItemDetail">
+                        <el-text v-if="dayjs(schedule.end, 'HH:mm:ss').diff(today) <= 0" class="timelineItemTextOver">
+                            {{ schedule.name }}
+                        </el-text>
+                        <el-text v-else class="timelineItemTextReady">
+                            {{ schedule.name }}
+                        </el-text>
+                    </el-card>
+                </div>
+            </div>
+        </el-scrollbar>
+        <div v-else>
+            <el-text class="timelineEmptyMessage">
+                Today's schedule is empty. Enjoy your day!
+            </el-text>
         </div>
     </el-card>
-    <el-card class="homeSection">
-        <div><span>To be filled</span></div>
-        <div><span>To be filled</span></div>
-        <div><span>To be filled</span></div>
-        <div><span>To be filled</span></div>
-        <div><span>To be filled</span></div>
-        <div><span>To be filled</span></div>
-        <div><span>To be filled</span></div>
-    </el-card>
+
+    <!-- Carousel -->
     <el-card class="homeSection">
         <el-text type="primary" class="carouselExplanation">
             Recent {{ displayDayNum }} days' schedules ({{ today.format('YYYY-MM-DD') }} ----
@@ -68,7 +93,7 @@
             <el-carousel-item v-for="item in displayDayNum" :key="item" class="carouselCard">
                 <el-text class="carouselTimestamp">{{ today.add(item - 1, 'day').format('YYYY-MM-DD') }}</el-text>
                 <el-scrollbar style="max-height: 45%;">
-                    <h3 v-for="(schedule, index) in displaySchedules[today.add(item - 1, 'day').format('YYYY-MM-DD')]"
+                    <h3 v-for="(schedule, index) in schedulesData[today.add(item - 1, 'day').format('YYYY-MM-DD')]"
                         text="2xl" justify="center" :key="index">{{ schedule.name }}</h3>
                 </el-scrollbar>
             </el-carousel-item>
@@ -109,8 +134,8 @@ const customColors = [
 const displayDayNum = ref(4)
 const today = ref(dayjs())
 
-const displaySchedules = reactive(getSchedules())
-const progressData = computed(() => getProgressData(displaySchedules[today.value.format('YYYY-MM-DD')]))
+const schedulesData = reactive(getSchedules())
+const progressData = computed(() => getProgressData(schedulesData[today.value.format('YYYY-MM-DD')]))
 const percentages = reactive([0, 0, 0])
 
 function getSchedules() {
@@ -257,17 +282,40 @@ onMounted(() => {
 <style scoped>
 .homeSection {
     margin-top: 5px;
+    font-style: italic;
+}
+
+/* Title */
+.dynamicGradient {
+    font-size: xx-large;
+    font-weight: bolder;
+    background: linear-gradient(90deg, #ff0080, #8000ff, #00c0ff);
+    background-clip: text;
+    -webkit-background-clip: text;
+    background-size: 300% 1000%;
+    color: transparent;
+    animation: gradientAnimation 1.5s infinite alternate;
+}
+
+@keyframes gradientAnimation {
+    0% {
+        background-position: 0% 50%;
+    }
+
+    100% {
+        background-position: 100% 50%;
+    }
 }
 
 /* Progress */
 .progressLeft {
     flex: 1;
-    text-align: left
+    text-align: left;
 }
 
 .progressRight {
     flex: 1;
-    text-align: right
+    text-align: right;
 }
 
 .progressCenter {
@@ -296,58 +344,112 @@ onMounted(() => {
 .progressGraphTitle {
     font-size: xx-large;
     font-weight: bolder;
-    font-style: italic;
     color: #8000ff;
 }
 
 .progressOverTitle {
     font-size: x-large;
     font-weight: bolder;
-    font-style: italic;
     color: green;
 }
 
 .progressReadyTitle {
     font-size: x-large;
     font-weight: bolder;
-    font-style: italic;
     color: red;
 }
 
 .progressText {
-    font-size: x-large;
-    font-weight: bold;
-    font-style: italic;
+    font-size: larger;
+    font-weight: bolder;
 }
 
 .progressLabel {
     font-weight: bolder;
     font-size: x-large;
-    font-style: italic;
 }
 
 .progressNumber {
-    font-style: italic;
+    font-size: large;
 }
 
 /* Timeline */
 .timeline {
-    overflow-x: auto;
-    gap: 20px;
-    position: relative;
-    margin-top: 20px;
-    margin-bottom: 20px;
+    margin-top: 5%;
+    margin-bottom: 10%;
     height: 0;
     display: flex;
     border-top: 2px solid var(--el-border-color);
     border-bottom: 2px solid var(--el-border-color);
+    justify-content: space-between;
+    align-items: center;
+}
+
+.timelineItem {
+    flex-shrink: 0;
+    text-align: center;
+    position: relative;
+    height: 50px;
+    transform: translateY(50%);
+}
+
+.timelineItem::before {
+    content: "";
+    border-radius: 50%;
+    position: absolute;
+    width: 16px;
+    height: 16px;
+    transform: translate(-8px, -8px);
+    border: 2px solid #fff;
+    background-color: #99a9bf;
+}
+
+.timelineTime {
+    transform: translateY(-150%);
+}
+
+.timelineItemDetail {
+    width: 90%;
+    transform: translate(5%, 20%);
+}
+
+.timelineItemTextOver {
+    font-size: large;
+    font-weight: bold;
+    color: green;
+}
+
+.timelineItemTextReady {
+    font-size: large;
+    font-weight: bold;
+    color: red;
 }
 
 .timelineTitle {
     font-size: xx-large;
     font-weight: bolder;
-    font-style: italic;
     color: coral;
+}
+
+.timelineEmptyMessage {
+    font-size: x-large;
+    font-weight: bolder;
+    background: linear-gradient(90deg, #ff0000, #ff7f00, #ffff00, #00ff00, #0000ff, #4b0082, #9400d3);
+    background-clip: text;
+    -webkit-background-clip: text;
+    background-size: 300% 1000%;
+    color: transparent;
+    animation: emptyScheduleAnimation 3s infinite alternate;
+}
+
+@keyframes emptyScheduleAnimation {
+    0% {
+        background-position: 0% 50%;
+    }
+
+    100% {
+        background-position: 100% 50%;
+    }
 }
 
 /* Carousel */
@@ -358,7 +460,6 @@ onMounted(() => {
 .carouselExplanation {
     font-size: xx-large;
     font-weight: bolder;
-    font-style: italic;
 }
 
 .carouselCard {
@@ -371,14 +472,12 @@ onMounted(() => {
 .carouselTimestamp {
     flex: 0 0 auto;
     color: orange;
-    font-style: italic;
     font-size: x-large;
     font-weight: bolder;
 }
 
 .el-carousel__item h3 {
     color: #475669;
-    font-style: italic;
     font-weight: bold;
     opacity: 0.75;
     margin: 0;
@@ -393,26 +492,5 @@ onMounted(() => {
 
 .el-carousel__item:nth-child(2n + 1) {
     background-color: #d3dce6;
-}
-
-.dynamicGradient {
-    font-size: xx-large;
-    font-weight: bolder;
-    background: linear-gradient(90deg, #ff0080, #8000ff, #00c0ff);
-    background-clip: text;
-    -webkit-background-clip: text;
-    background-size: 300% 1000%;
-    color: transparent;
-    animation: gradientAnimation 1.5s infinite alternate;
-}
-
-@keyframes gradientAnimation {
-    0% {
-        background-position: 0% 50%;
-    }
-
-    100% {
-        background-position: 100% 50%;
-    }
 }
 </style>
