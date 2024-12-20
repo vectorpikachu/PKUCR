@@ -20,11 +20,11 @@ public interface MaterialMapper {
      * @param courseID
      * @return 资料列表
      */
-    @Select("select * from materials where course_id = #{courseID}")
+    @Select("select * from materials where courseId = #{courseID}")
     @Results({
         @Result(property = "id", column = "id"),
-        @Result(property = "userID", column = "user_id"),
-        @Result(property = "courseID", column = "course_id"),
+        @Result(property = "userID", column = "userId"),
+        @Result(property = "courseID", column = "courseId"),
         @Result(property = "filename", column = "filename"),
         @Result(property = "filedir", column = "filedir"),
         @Result(property = "url", column = "url"),

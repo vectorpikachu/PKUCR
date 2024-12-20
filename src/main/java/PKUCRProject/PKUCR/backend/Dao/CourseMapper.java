@@ -21,14 +21,14 @@ public interface CourseMapper {
     })
     void createTable();
 
-    @Insert("insert into courses (user_id, courseID, courseName, teacher, credit, classroom, time, week) values (#{user_id}, #{courseID}, #{courseName}, #{teacher}, #{credit}, #{classroom}, #{time}, #{week})")
+    @Insert("insert into courses (user_id, courseID, courseName, teacher, credit, classroom, link) values (#{user_id}, #{courseID}, #{courseName}, #{teacher}, #{credit}, #{classroom}, #{link})")
     @Options(useGeneratedKeys = true, keyProperty = "id", keyColumn = "id")
     Long insert(Course course);
 
     @Select("select * from courses where id = #{id}")
     Course selectById(@Param("id") Long id);
 
-    @Update("update courses set user_id = #{user_id}, courseID = #{courseID}, courseName = #{courseName}, teacher = #{teacher}, credit = #{credit}, classroom = #{classroom}, time = #{time}, week = #{week} where id = #{id}")
+    @Update("update courses set user_id = #{user_id}, courseID = #{courseID}, courseName = #{courseName}, teacher = #{teacher}, credit = #{credit}, classroom = #{classroom}, link = #{link} where id = #{id}")
     void update(Course course);
 
     @Delete("delete from courses where id = #{id}")

@@ -5,6 +5,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -29,7 +30,7 @@ import jakarta.validation.Valid;
 import java.time.LocalDateTime;
 import java.util.List;
 
-@Tag(name = "CourseController")
+@Tag(name = "AllCourseController")
 @RestController
 @CrossOrigin(origins = "*", maxAge = 3600)
 public class AllCourseController {
@@ -47,7 +48,7 @@ public class AllCourseController {
     private CustomUserDetailsService userService;
 
 
-    /** 
+    /** 返回所有课程 + 相关信息 (评论, 资料)
      * @return ResponseEntity<?>
      */
     @Operation(summary = "Return all courses")
@@ -87,8 +88,8 @@ public class AllCourseController {
         /*
          * {
          *  "comments": [
-         * {"user": "Alice", "comment": "Good course!"},
-         * {"user": "Bob", "comment": "Bad course!"}
+         * {"user": "Alice", "comment": "Good course!", "ID": 1},
+         * {"user": "Bob", "comment": "Bad course!", "ID": 2}
          * ],
          * "materials": [
          * {"filename": "PPT", "url": "/api/resource/material/{courseId}/{filename}"},
@@ -106,6 +107,7 @@ public class AllCourseController {
             String userEmail = userService.getUserById(userId).getEmail();
             commentObject.put("user", userEmail);
             commentObject.put("comment", comment.getContent());
+            commentObject.put("ID", comment.getID());
             commentsArray.add(commentObject);
         });
         jsonObject.set("comments", commentsArray);
@@ -123,7 +125,12 @@ public class AllCourseController {
         return ResponseEntity.ok(jsonObject);
     }
 
-    // 添加评价
+    /**
+     * 添加评价
+     * @param courseId 一个路径变量 courseId = 课程的 ID
+     * @param commentRequest 一个请求体 CommentRequest
+     * @return
+     */
     @Operation(summary = "Add a comment")
     @PostMapping("/api/resource/comment/{courseId}")
     public ResponseEntity<?> addComment(@PathVariable("courseId") String courseId, @Valid @RequestBody CommentRequest commentRequest) {
@@ -138,8 +145,6 @@ public class AllCourseController {
         Comment comment = new Comment();
         comment.setCourseID(courseId);
         comment.setContent(commentRequest.getComment());
-        System.out.println(commentRequest.getUser());
-        System.out.println(commentRequest.getComment());
         comment.setUserID(userService.getUserID(commentRequest.getUser()));
         
         LocalDateTime date = LocalDateTime.now();
@@ -147,9 +152,28 @@ public class AllCourseController {
 
         commentService.insertComment(comment);
         jsonObject.put("status", "success");
+        // 返回一个 ID of Comment
+        jsonObject.put("ID", comment.getID());
         return ResponseEntity.ok(jsonObject);
     }
     
+    /**
+     * 删除评论
+     * @param id 一个路径变量 ID = 评论的 ID
+     */
+    @Operation(summary = "Delete a comment")
+    @DeleteMapping("/api/resource/comment/{id}")
+    public ResponseEntity<?> deleteComment(@PathVariable("id") Long id) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication == null || !authentication.isAuthenticated()) {
+            return ResponseEntity.badRequest().body("Please login first");
+        }
+        ObjectMapper mapper = new ObjectMapper();
+        ObjectNode jsonObject = mapper.createObjectNode();
+        commentService.deleteComment(id);
+        jsonObject.put("status", "delete success");
+        return ResponseEntity.ok(jsonObject);
+    }
 }
 
 

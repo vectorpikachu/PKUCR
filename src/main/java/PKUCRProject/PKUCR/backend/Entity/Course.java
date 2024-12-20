@@ -1,5 +1,7 @@
 package PKUCRProject.PKUCR.backend.Entity;
 
+import java.util.List;
+
 import io.swagger.v3.oas.annotations.media.Schema;
 
 @Schema(name = "Course")
@@ -10,8 +12,8 @@ public class Course extends BasicCourse {
 
     // 这里还要加入课程资源等信息
     public Course(String courseID, String courseName, String category,
-            String teacher, int credit, String classroom, String time, String week) {
-        super(courseID, courseName, category, teacher, credit, classroom, time, week);
+            String teacher, int credit, String classroom, List<CourseTime> time, String link) {
+        super(courseID, courseName, category, teacher, credit, classroom, time, link);
     }
 
     public Course() {

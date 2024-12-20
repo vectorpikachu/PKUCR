@@ -28,6 +28,9 @@ public interface UserMapper {
     @Update("update users set email = #{email}, password = #{password}, permission = #{permission}, username = #{username} where id = #{id}")
     void update(User user);
 
+    @Update("update users set username = #{username} where id = #{id}")
+    void updateUsername(Long id, String username);
+
     @Delete("delete from users where id = #{id}")
     void delete(Long id);
     

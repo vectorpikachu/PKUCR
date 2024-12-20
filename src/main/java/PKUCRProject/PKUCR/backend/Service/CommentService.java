@@ -33,4 +33,12 @@ public class CommentService {
         commentMapper.insertComment(comment);
     }
 
+    /**
+     * 删除评论
+     * @param id 评论ID
+     */
+    public void deleteComment(Long id){
+        commentMapper.deleteComment(id);
+    }
+
 }

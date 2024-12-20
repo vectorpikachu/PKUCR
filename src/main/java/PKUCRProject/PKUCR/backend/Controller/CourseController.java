@@ -62,8 +62,18 @@ public class CourseController {
             courseObject.put("name", course.getCourseName());
             courseObject.put("teacher", course.getTeacher());
             courseObject.put("classroom", course.getClassroom());
-            courseObject.put("time", course.getTime());
-            courseObject.put("week", course.getWeek());
+            ArrayNode timeArray = mapper.createArrayNode();
+            for (var time : course.getTime()) {
+                ObjectNode timeObject = mapper.createObjectNode();
+                timeObject.put("startDate", time.getStartDate());
+                timeObject.put("endDate", time.getEndDate());
+                timeObject.put("startTime", time.getStartTime());
+                timeObject.put("endTime", time.getEndTime());
+                timeObject.put("frequency", time.getFrequency());
+                timeArray.add(timeObject);
+            }
+            courseObject.set("time", timeArray);
+            courseObject.put("link", course.getLink());
             String link = "/api/resource/material/" + course.getCourseID();
             courseObject.put("link", link);
             courseList.add(courseObject);
@@ -84,6 +94,7 @@ public class CourseController {
         Long userId = customUserDetailsService.getUserID(username);
 
         course.setUser_id(userId);
+        course.setLink("api/resource/" + course.getCourseID());
         course = courseService.insert(course);
         return ResponseEntity.ok(course);
     }

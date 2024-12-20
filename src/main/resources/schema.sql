@@ -18,8 +18,7 @@ CREATE TABLE IF NOT EXISTS courses (
     teacher VARCHAR(255),
     credit INT,
     classroom VARCHAR(255),
-    time VARCHAR(255),
-    week VARCHAR(255),
+    link VARCHAR(255),
     FOREIGN KEY (user_id) REFERENCES users(id)
 );
 
@@ -31,8 +30,29 @@ CREATE TABLE IF NOT EXISTS all_courses (
     teacher VARCHAR(255),
     credit INT,
     classroom VARCHAR(255),
-    time VARCHAR(255),
-    week VARCHAR(255)
+    link VARCHAR(255)
+);
+
+CREATE TABLE IF NOT EXISTS all_course_times (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    courseID BIGINT,
+    startDate DATE,
+    endDate DATE,
+    startTime TIME,
+    endTime TIME,
+    frequency INT,
+    FOREIGN KEY (courseID) REFERENCES courses(id)
+);
+
+CREATE TABLE IF NOT EXISTS course_times (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    courseID BIGINT,
+    startDate DATE,
+    endDate DATE,
+    startTime TIME,
+    endTime TIME,
+    frequency INT,
+    FOREIGN KEY (courseID) REFERENCES courses(id)
 );
 
 CREATE TABLE IF NOT EXISTS tasks (

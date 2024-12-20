@@ -1,5 +1,6 @@
 package PKUCRProject.PKUCR.backend.Dao;
 
+import org.apache.ibatis.annotations.Delete;
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Options;
@@ -26,5 +27,8 @@ public interface CommentMapper {
     @Insert("insert into comments (user_id, course_id, content, time) values (#{userID}, #{courseID}, #{content}, #{time})")
     @Options(useGeneratedKeys = true, keyProperty = "id", keyColumn = "id")
     void insertComment(Comment comment);
+
+    @Delete("delete from comments where id = #{id}")
+    void deleteComment(Long id);
 
 }

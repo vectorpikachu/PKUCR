@@ -195,5 +195,13 @@ TODO: 为了安全，我们应该使用`https`来传输token。
 实现文件上传的命令, 不太好在Postman里直接打出来.
 
 ```shell
-curl -X POST "http://localhost:38083/api/resource/material/04834220" -H "Content-Type: multipart/form-data" -H "Authorization: eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJpbWFAc3R1LnBrdS5lZHUuY24iLCJpYXQiOiJUdWUgRGVjIDEwIDIwOjE5OjI3IEhLVCAyMDI0IiwiZXhwIjoiVHVlIERlYyAxMCAyMToxOToyNyBIS1QgMjAyNCIsImp0aSI6IjQyZDVlNzhjLWY3ODctNDUyZS1hNWQxLTVhOTNmMzY1Y2Y4YSJ9.73_4n2JYrg-aSpClhEwS0kVtGgmXSyCTrdp9AA2uDdU" -F "fileName= SE-HW3.pdf" -F "file=@D:/HW/SE-hw3.pdf"
+curl -X POST "http://localhost:38083/api/resource/material/04834220" -H "Content-Type: multipart/form-data" -H "Authorization: eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJpbWFAc3R1LnBrdS5lZHUuY24iLCJpYXQiOiJUdWUgRGVjIDE3IDA5OjQxOjIyIEhLVCAyMDI0IiwiZXhwIjoiVHVlIERlYyAxNyAxMDo0MToyMiBIS1QgMjAyNCIsImp0aSI6IjRiYzkxNjMzLWMyNmItNDA1Zi1hNzA0LTdlNzNhOGMxZDkyYiJ9.wpKY2jGbmdHaJQH-7seB7G7kzWlb7q1BF-ZO8pKofaM" -F "fileName= SE-HW3.pdf" -F "file=@D:/HW/SE-hw3.pdf"
+
+curl -X GET "http://localhost:38083/api/resource/material/04834220/15" -H "Authorization: eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJpbWFAc3R1LnBrdS5lZHUuY24iLCJpYXQiOiJUdWUgRGVjIDE3IDA5OjQxOjIyIEhLVCAyMDI0IiwiZXhwIjoiVHVlIERlYyAxNyAxMDo0MToyMiBIS1QgMjAyNCIsImp0aSI6IjRiYzkxNjMzLWMyNmItNDA1Zi1hNzA0LTdlNzNhOGMxZDkyYiJ9.wpKY2jGbmdHaJQH-7seB7G7kzWlb7q1BF-ZO8pKofaM" --output test.pdf
+
 ```
+
+### 课程和时间
+
+现在有个问题在于, 一个课程要面对的是一个时间的组.
+分成两个表来实现.

@@ -1,7 +1,6 @@
 package PKUCRProject.PKUCR.backend.Service;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
@@ -18,11 +17,11 @@ public class CustomUserDetailsService implements UserDetailsService{
     
     /** 
      * @param username = email of the user.
-     * @return UserDetails
+     * @return User
      * @throws UsernameNotFoundException
      */
     @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+    public User loadUserByUsername(String username) throws UsernameNotFoundException {
         // 查询数据库获得User信息
         // 我们这里的username = email !
         User userInDB = userMapper.selectByEmail(username);
@@ -41,8 +40,11 @@ public class CustomUserDetailsService implements UserDetailsService{
             user.setPermission(0);
         }
 
+        System.err.println("Username: " + user.getUsernameReal());
+
         // 将用户信息保存到数据库
         userMapper.insert(user);
+        userMapper.updateUsername(user.getId(), user.getUsernameReal());
 
         // 返回新创建的用户对象
         return userMapper.selectByEmail(user.getEmail());
