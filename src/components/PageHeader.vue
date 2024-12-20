@@ -1,12 +1,12 @@
 <template>
-    <div class="header-container">
+    <div class="headerContainer">
         <div class="logo"><img src="@/assets/PKUCR-logo.svg" alt="Logo" /></div>
         <div class="blank"></div>
         <div class="input">
             <el-autocomplete v-model="state" :fetch-suggestions="querySearchAsync" placeholder="Search for resources"
                 @select="handleSelect" style="width: 30vw;" />
         </div>
-        <div class="button-group">
+        <div class="buttonGroup">
             <el-button v-if="!authStore.isAuthenticated" type="primary" @click="goToLogin">登录</el-button>
             <el-button v-if="!authStore.isAuthenticated" type="success" @click="goToRegister">注册</el-button>
             <span>{{ username }}</span>
@@ -94,7 +94,7 @@ const goToLogout = () => {
 </script>
 
 <style scoped>
-.header-container {
+.headerContainer {
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -102,7 +102,7 @@ const goToLogout = () => {
     height: 100%;
 }
 
-.button-group {
+.buttonGroup {
     display: flex;
     gap: 10px;
 }

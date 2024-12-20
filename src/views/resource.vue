@@ -1,5 +1,5 @@
 <template>
-    <div class="list-page">
+    <div class="listPage">
         <!-- 固定在页面顶部的部分 -->
         <div class="header">
             <h1>课程列表</h1>
@@ -12,9 +12,9 @@
         </div>
 
         <!-- 可滚动的课程表 -->
-        <div class="table-container">
+        <div class="tableContainer">
             <el-table :data="filteredObjects" v-loading="loading">
-                <el-table-column prop="course_id" label="课程号" width="180" />
+                <el-table-column prop="courseId" label="课程号" width="180" />
                 <el-table-column prop="name" label="课程名" width="200" />
                 <el-table-column prop="category" label="类别" width="120" />
                 <el-table-column label="操作" width="180">
@@ -29,7 +29,7 @@
         <el-dialog v-model="dialogVisible" title="课程详情" @close="resetDialog" width="80%"
             style="max-height: 70vh; overflow-y: auto;">
             <div v-if="selectedObject">
-                <p><strong>课程号:</strong> {{ selectedObject.course_id }}</p>
+                <p><strong>课程号:</strong> {{ selectedObject.courseId }}</p>
                 <p><strong>课程名:</strong> {{ selectedObject.name }}</p>
                 <p><strong>类别:</strong> {{ selectedObject.category }}</p>
 
@@ -64,7 +64,7 @@
                             </el-table-column>
                         </el-table>
                         <!--这里后端接口-->
-                        <el-upload action="`/api/upload/${selectedObject.course_id}`" :on-success="handleUploadSuccess"
+                        <el-upload action="`/api/upload/${selectedObject.courseId}`" :on-success="handleUploadSuccess"
                             :on-error="handleUploadError" show-file-list="false">
                             <el-button type="primary">上传资料</el-button>
                         </el-upload>
@@ -80,7 +80,7 @@
         <el-dialog v-model="addCourseDialogVisible" title="添加新课程" @close="resetAddCourseDialog">
             <el-form :model="newCourse" ref="form" label-width="100px">
                 <el-form-item label="课程号">
-                    <el-input v-model="newCourse.course_id" type="number" placeholder="请输入课程号" />
+                    <el-input v-model="newCourse.courseId" type="number" placeholder="请输入课程号" />
                 </el-form-item>
                 <el-form-item label="课程名">
                     <el-input v-model="newCourse.name" placeholder="请输入课程名" />
@@ -109,12 +109,12 @@ const router = useRouter()
 // 课程元信息
 const objects = ref([
     {
-        course_id: '1',
+        courseId: '1',
         name: 'Class 1',
         category: '专业课',
     },
     {
-        course_id: '2',
+        courseId: '2',
         name: 'Class 2',
         category: '政治课',
     },
@@ -142,7 +142,7 @@ const activeTab = ref('comments') // 用来控制默认打开的 tab
 const newComment = ref('') // 用于存储新评论内容
 const searchQuery = ref('') // 用于存储搜索关键词
 const filteredObjects = ref(objects.value) // 用于存储筛选后的课程数据
-const newCourse = reactive({ course_id: '', name: '', category: '' }) // 用于存储新课程数据
+const newCourse = reactive({ courseId: '', name: '', category: '' }) // 用于存储新课程数据
 
 const loading = ref(false)
 
@@ -154,7 +154,7 @@ const fetchCourses = async () => {
         const data = response.data
         const formattedData = Object.keys(data).map(key => {
             return {
-                course_id: key,
+                courseId: key,
                 ...data[key]
             }
         })
@@ -177,7 +177,7 @@ onMounted(() => {
 
 // 查看详情的处理函数
 const viewDetails = async (row) => {
-    const courseInfo = courseDetails.get(row.course_id)
+    const courseInfo = courseDetails.get(row.courseId)
 
     if (courseInfo) {
         selectedObject.value = {
@@ -191,10 +191,10 @@ const viewDetails = async (row) => {
         console.log('Course not found!')
         // 本地没有, 请求后端
         try {
-            const response = await axios.get(`/api/resource/${row.course_id}`)
+            const response = await axios.get(`/api/resource/${row.courseId}`)
             const data = response.data
 
-            courseDetails.set(row.course_id, {
+            courseDetails.set(row.courseId, {
                 comments: data.comments,
                 materials: data.materials
             })
@@ -230,7 +230,7 @@ const addComment = async () => {
         }
         try {
             // 发起 POST 请求
-            const response = await axios.post(`/api/resource/comment/${selectedObject.value.course_id}`, commentData)
+            const response = await axios.post(`/api/resource/comment/${selectedObject.value.courseId}`, commentData)
 
             // 如果请求成功，更新本地评论数据
             if (response.status === 200) {
@@ -239,7 +239,7 @@ const addComment = async () => {
                     comment: commentData.comment
                 })
 
-                const courseId = selectedObject.value.course_id
+                const courseId = selectedObject.value.courseId
                 if (courseDetails.has(courseId)) {
                     courseDetails.get(courseId).comments.push({
                         user: commentData.user,
@@ -265,7 +265,7 @@ const deleteComment = async (comment) => {
         const response = await axios.delete(`/api/resource/comment/${comment.id}`)
 
         if (response.status === 200) {
-            const course = courseDetails.get(selectedObject.value.course_id)
+            const course = courseDetails.get(selectedObject.value.courseId)
             if (course) {
                 const index = course.comments.findIndex(c => c.id === comment.id)
                 if (index !== -1) {
@@ -307,7 +307,7 @@ const deleteResource = async (resource) => {
         const response = await axios.delete(`/api/resource/material/${resource.id}`)
 
         if (response.status === 200) {
-            const course = courseDetails.get(selectedObject.value.course_id)
+            const course = courseDetails.get(selectedObject.value.courseId)
             if (course) {
                 // 找到 materials 数组并删除相应的 material
                 const index = course.materials.findIndex(material => material.id === resource.id)
@@ -327,7 +327,7 @@ const deleteResource = async (resource) => {
 // 上传资料成功的回调
 const handleUploadSuccess = (response, file) => {
     selectedObject.value.materials.push({ name: response.filename, url: response.url })
-    const courseId = selectedObject.value.course_id
+    const courseId = selectedObject.value.courseId
     if (courseDetails.has(courseId)) {
         courseDetails.get(courseId).materials.push({
             filename: response.filename,
@@ -354,7 +354,7 @@ const searchCourses = () => {
     if (searchQuery.value.trim()) {
         filteredObjects.value = objects.value.filter(course =>
             course.name.toLowerCase().includes(searchQuery.value.toLowerCase()) ||
-            course.course_id.toString().includes(searchQuery.value)
+            course.courseId.toString().includes(searchQuery.value)
         )
     } else {
         filteredObjects.value = objects.value
@@ -368,22 +368,22 @@ const openAddCourseDialog = () => {
 
 // 重置添加新课程对话框
 const resetAddCourseDialog = () => {
-    newCourse.course_id = ''
+    newCourse.courseId = ''
     newCourse.name = ''
     newCourse.category = ''
 }
 
 // 添加新课程的处理函数
 const addCourse = async () => {
-    if (newCourse.course_id && newCourse.name && newCourse.category) {
+    if (newCourse.courseId && newCourse.name && newCourse.category) {
         try {
             // 发起 POST 请求
             const courseData = {
-                course_id: newCourse.course_id,
+                courseId: newCourse.courseId,
                 name: newCourse.name,
                 category: newCourse.category
             }
-            const response = await axios.post(`/api/resource/${newCourse.course_id}`, courseData)
+            const response = await axios.post(`/api/resource/${newCourse.courseId}`, courseData)
 
             // 如果请求成功，更新本地评论数据
             if (response.status === 200) {
@@ -407,7 +407,7 @@ const handleExit = () => {
 </script>
 
 <style scoped>
-.list-page {
+.listPage {
     display: flex;
     flex-direction: column;
     /* 子元素按垂直方向排列 */
@@ -435,7 +435,7 @@ const handleExit = () => {
     /* 垂直方向居中 */
 }
 
-.table-container {
+.tableContainer {
     flex: 1 0 75%;
     /* 占据3/4高度 */
     overflow: auto;

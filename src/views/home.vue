@@ -168,7 +168,6 @@ function getSchedules() {
 
     if (courseData) {
         for (let course of courseData) {
-            console.log(course.name)
             for (let teachTime of course.time) {
                 let endDay: Dayjs = dayjs(teachTime.endDate, 'YYYY-MM-DD')
                 for (let teachDay = dayjs(teachTime.startDate, 'YYYY-MM-DD');
