@@ -156,7 +156,7 @@ let scheduleBuffer = {
 	appendix: '',
 }
 
-const MAX_SCHEDULE_NUM = ref(4)
+const MAX_SCHEDULE_NUM = ref(3)
 
 let scheduleCourseVisible = ref(false)
 let scheduleTaskVisible = ref(false)
@@ -202,8 +202,8 @@ function parseSchedules() {
 	if (courseData) {
 		for (let course of courseData) {
 			for (let teachTime of course.time) {
-				let endDay: Dayjs = dayjs(teachTime.endDate)
-				for (let teachDay = dayjs(teachTime.startDate);
+				let endDay: Dayjs = dayjs(teachTime.endDate, 'YYYY-MM-DD')
+				for (let teachDay = dayjs(teachTime.startDate, 'YYYY-MM-DD');
 					teachDay.diff(endDay) <= 0;
 					teachDay = teachDay.add(teachTime.frequency, 'day')) {
 					let scheduleFromCourse: Schedule = {
