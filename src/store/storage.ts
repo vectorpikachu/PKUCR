@@ -185,6 +185,7 @@ export const storage = localStorage
 
 // functions
 function initializeStorage() {
+    console.log('run initializeStorage')
     if (RELEASE) {
         let responseTask = sendSignal.fetchTask()
         responseTask.then((res) => {
@@ -199,27 +200,52 @@ function initializeStorage() {
         })
     }
     else {
-        storage.setItem('task', JSON.stringify(defaultTask))
-        storage.setItem('course', JSON.stringify(defaultCourse))
+        if (storage.getItem('task') === null) {
+            storage.setItem('task', JSON.stringify(defaultTask))
+        }
+        if (storage.getItem('course') === null) {
+            storage.setItem('course', JSON.stringify(defaultCourse))
+        }
     }
+    console.log('finish initializeStorage')
+}
+
+function updateStorage() {
+    console.log('run updateStorage')
+    if (RELEASE) {
+        let responseTask = sendSignal.fetchTask()
+        responseTask.then((res) => {
+            let taskData = JSON.parse(res.data) as Task[]
+            storage.setItem('task', JSON.stringify(taskData))
+        })
+
+        let responseCourse = sendSignal.fetchCourse()
+        responseCourse.then((res) => {
+            let courseData = JSON.parse(res.data) as Course[]
+            storage.setItem('course', JSON.stringify(courseData))
+        })
+    }
+    console.log('finish updateStorage')
 }
 
 function clearStorage() {
+    console.log('run clearStorage')
     if (RELEASE) {
         storage.removeItem('task')
         storage.removeItem('course')
     }
+    console.log('finish clearStorage')
 }
 
 const createDataFetcher = () => {
     const workerCode = `
         let intervalId
-        const refreshSecs = 60
+        const refreshSecs = 10
         onmessage = (e) => {
             if (e.data === 'start') {
                 postMessage('initialize storage')
                 intervalId = setInterval(() => {
-                    postMessage('initialize storage')
+                    postMessage('update storage')
                 }, refreshSecs * 1000)
             } else if (e.data === 'stop') {
                 clearInterval(intervalId)
@@ -235,9 +261,9 @@ const createDataFetcher = () => {
 
     worker.onmessage = (e) => {
         if (e.data === 'initialize storage') {
-            console.log('run initializeStorage')
             initializeStorage()
-            console.log('finish initializeStorage')
+        } else if (e.data === 'update storage') {
+            updateStorage()
         }
     }
 
