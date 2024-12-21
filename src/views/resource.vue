@@ -64,10 +64,16 @@
                             </el-table-column>
                         </el-table>
                         <!--这里后端接口-->
-                        <el-upload action="`/api/upload/${selectedObject.course_id}`" :on-success="handleUploadSuccess"
-                            :on-error="handleUploadError" show-file-list="false">
-                            <el-button type="primary">上传资料</el-button>
-                        </el-upload>
+                        <!-- 上传文件按钮 -->
+                        <input
+                          type="file"
+                          ref="fileInput"
+                          style="display: none"
+                          @change="handleFileChange"
+                        />
+                        <el-button type="primary" icon="el-icon-upload2" @click="triggerFileInput">
+                            上传文件
+                        </el-button>
                     </el-tab-pane>
                 </el-tabs>
             </div>
@@ -128,8 +134,8 @@ courseDetails.set('1', {
         { id: 2, user: 'Bob', comment: 'Very informative.' }
     ],
     materials: [
-        { id: 1, filename: 'Lecture1.pdf', url: '/files/lecture1.pdf' },
-        { id: 2, filename: 'Lecture2.pdf', url: '/files/lecture2.pdf' }
+        { id: 1, filename: 'Lecture1.pdf' },
+        { id: 2, filename: 'Lecture2.pdf' }
     ]
 })
 
@@ -161,6 +167,8 @@ const fetchCourses = async () => {
 
         // 将格式化后的数据赋值给 objects
         courseMetaInfo.value = formattedData
+        objects.value = []
+        courseDetails.clear()
         objects.value.push(...formattedData)
     } catch (error) {
         console.error('获取数据失败:', error)
@@ -218,6 +226,47 @@ const viewDetails = async (row) => {
 const resetDialog = () => {
     selectedObject.value = null
     newComment.value = ''
+}
+
+// 上传文件：触发文件选择框
+const triggerFileInput = () => {
+    // 触发隐藏的文件选择框
+    const input = document.querySelector('input[type="file"]') as HTMLInputElement
+    if (input) {
+        input.click()
+    }
+}
+
+// 处理文件选择
+const handleFileChange = async (event) => {
+    const file = event.target.files[0]
+    if (file && selectedObject.value) {
+        const formData = new FormData()
+        formData.append('file', file)
+        formData.append('fileName', file.name)
+
+        try {
+            // 发送上传请求
+            const courseID = selectedObject.value.course_id
+            const response = await axios.post(`/api/resource/material/${courseID}`, formData, {
+                headers: {
+                    'Content-Type': 'multipart/form-data',
+                    // 'Authorization': `Bearer ${storage.get('user').token}`
+                }
+            })
+
+            const data = response.data
+            if (data.success) {
+                ElMessage.success('文件上传成功！')
+                // 更新文件列表
+                selectedObject.value.materials.push({ filename: data.filename, id: data.id })
+            } else {
+                ElMessage.error('文件上传失败')
+            }
+        } catch (error) {
+            ElMessage.error('上传失败，请重试')
+        }
+    }
 }
 
 // 添加评论的处理函数
@@ -284,7 +333,9 @@ const deleteComment = async (comment) => {
 // 下载资料
 const downloadResource = async (resource) => {
     try {
-        const response = await axios.get(resource.url, {
+        const courseID = selectedObject.value.course_id; // 获取课程 ID
+        const resourceID = resource.id; // 获取文件的 ID
+        const response = await axios.get(`/api/resource/material/${courseID}/${resourceID}`, {
             responseType: 'blob', // 重要，返回二进制数据
         })
 
@@ -295,9 +346,21 @@ const downloadResource = async (resource) => {
         link.download = resource.name
         link.click()
         window.URL.revokeObjectURL(url)
+        ElMessage.success('文件下载成功！');
     } catch (error) {
-        console.error('Error downloading resource:', error)
-        alert('Error downloading resource: ' + error.message)
+        if (error.response) {
+            const { status, data } = error.response;
+            if (status === 400) {
+                ElMessage.error('文件未在数据库中找到');
+            } else if (status === 404) {
+                ElMessage.error('文件未在服务器目录中找到');
+            } else {
+                ElMessage.error('下载失败，请重试');
+            }
+        } else {
+            ElMessage.error('下载失败，请检查网络连接');
+        }
+        console.error('Error downloading resource:', error);
     }
 }
 
@@ -320,7 +383,28 @@ const deleteResource = async (resource) => {
             alert('删除资料失败, 服务端错误: ' + response.status)
         }
     } catch (error) {
-        alert('删除资料失败 ' + error.message)
+        if (error.response) {
+            const { status, data } = error.response;
+
+            // 根据不同的错误状态码进行处理
+            if (status === 400) {
+                if (data === "Permission denied, users can only delete files they uploaded themselves.") {
+                    ElMessage.error('无权限删除该文件');
+                } else if (data === "Material not found in the database") {
+                    ElMessage.error('文件未在数据库中找到');
+                }
+            } else if (status === 404) {
+                ElMessage.error('文件未在服务器目录中找到');
+            } else if (status === 500) {
+                ElMessage.error('文件删除失败，请稍后重试');
+            } else {
+                ElMessage.error('删除失败，请重试');
+            }
+        } else {
+            ElMessage.error('删除失败，请检查网络连接');
+        }
+
+        console.error('Error deleting resource:', error);
     }
 }
 
