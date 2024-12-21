@@ -492,6 +492,7 @@ const handleExit = () => {
 
 <style scoped>
 .list-page {
+    background-color: white;
     display: flex;
     flex-direction: column;
     /* 子元素按垂直方向排列 */
