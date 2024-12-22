@@ -25,7 +25,7 @@ export const useAuthStore = defineStore('auth', () => {
 	const register = async (email: string, password: string, name: string) => {
 		try {
 			// 此处是后端api
-			const response = await axios.post('/api/auth/register', { email, password, name })
+			const response = await axios.post('/api/auth/register', { email, password, 'username': name })
 			token.value = response.data.token
 			username.value = response.data.username  // 获取并保存用户名
 			storage.setItem('token', token.value || '')

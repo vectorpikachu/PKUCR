@@ -284,6 +284,7 @@ const addComment = async () => {
             // 如果请求成功，更新本地评论数据
             if (response.status === 200) {
                 selectedObject.value.comments.push({
+                    id: response.data.id,
                     user: commentData.user,
                     comment: commentData.comment
                 })
