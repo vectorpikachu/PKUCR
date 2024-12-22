@@ -2,12 +2,16 @@
 import SideBar from './SideBar.vue'
 import PageHeader from './PageHeader.vue'
 import { startDataFetcher, stopDataFetcher } from '@/store/storage'
-import { onMounted, onUnmounted } from 'vue'
+import { computed, onMounted, onUnmounted } from 'vue'
+import { useThemeStore } from '@/store/theme'
 
 let headerHeightVh = 10
 let menuWidthVw = 15
 let menuHeightVh = 100 - headerHeightVh
 let mainWidthVw = 100 - menuWidthVw
+
+const theme = useThemeStore()
+const darkMode = computed(() => theme.darkMode)
 
 onMounted(() => { startDataFetcher() })
 onUnmounted(() => { stopDataFetcher() })
@@ -16,15 +20,17 @@ onUnmounted(() => { stopDataFetcher() })
 <template>
 	<div id="main_container">
 		<el-container :style="{ width: `100vw`, height: `${headerHeightVh}vh` }">
-			<el-header style="width: 100%; height: 100%;" class="background">
+			<el-header style="width: 100%; height: 100%;" :class="{ backgroundDark: darkMode, background: !darkMode }">
 				<PageHeader />
 			</el-header>
 		</el-container>
 		<el-container :style="{ width: `100vw`, height: `${menuHeightVh}vh` }">
-			<el-aside :style="{ width: `${menuWidthVw}vw`, height: `100%` }" class="background">
+			<el-aside :style="{ width: `${menuWidthVw}vw`, height: `100%` }"
+				:class="{ backgroundDark: darkMode, background: !darkMode }">
 				<SideBar />
 			</el-aside>
-			<el-main :style="{ width: `${mainWidthVw}vw`, height: `100%` }" class="background">
+			<el-main :style="{ width: `${mainWidthVw}vw`, height: `100%` }"
+				:class="{ backgroundDark: darkMode, background: !darkMode }">
 				<router-view></router-view>
 			</el-main>
 		</el-container>
@@ -49,8 +55,15 @@ onUnmounted(() => { stopDataFetcher() })
 	border: 1px solid silver;
 }
 
+.backgroundDark {
+	background-color: white;
+	position: relative;
+	box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+	border: 1px solid silver;
+}
+
 @media (prefers-color-scheme: dark) {
-	.background {
+	.backgroundDark {
 		filter: invert(90%);
 		-webkit-filter: invert(90%);
 	}
