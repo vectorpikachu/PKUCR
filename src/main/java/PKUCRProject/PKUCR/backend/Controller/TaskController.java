@@ -71,7 +71,7 @@ public class TaskController {
     }
 
     @Operation(summary = "Select a task by id")
-    @GetMapping("/task/selectById")
+    @GetMapping("/task/select")
     public ResponseEntity<?> selectById(@Valid @RequestParam Long id) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication == null || !authentication.isAuthenticated()) {

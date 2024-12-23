@@ -22,7 +22,8 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
      * 自定义验证方式
      */
     @Override
-    public Authentication authenticate(Authentication authentication) throws AuthenticationException {
+    public Authentication authenticate(Authentication authentication) 
+        throws AuthenticationException {
         String username = authentication.getName();
         String password = authentication.getCredentials().toString();
 
@@ -33,7 +34,10 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
             throw new BadCredentialsException("Invalid password");
         }
 
-        return new UsernamePasswordAuthenticationToken(userDetails, password, userDetails.getAuthorities());
+        return new UsernamePasswordAuthenticationToken(
+            userDetails, 
+            password, 
+            userDetails.getAuthorities());
     }
 
     
