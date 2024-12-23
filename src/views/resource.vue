@@ -4,8 +4,7 @@
         <div class="header">
             <h1>课程列表</h1>
             <div class="actions">
-                <el-input v-model="searchQuery" placeholder="搜索课程" prefix-icon="el-icon-search" style="width: 300px"
-                    @input="searchCourses" />
+                <el-input v-model="searchQuery" placeholder="搜索课程" prefix-icon="el-icon-search" style="width: 300px"/>
                 <el-button type="primary" @click="openAddCourseDialog">添加新课程</el-button>
                 <el-button type="warning" @click="handleExit" class="logout-button">返回主页</el-button>
             </div>
@@ -104,7 +103,7 @@
 </template>
 
 <script lang="ts" setup>
-import { ref, reactive, onMounted } from 'vue'
+import { ref, reactive, onMounted, computed } from 'vue'
 import axios from '../axios'
 import { useRouter } from 'vue-router'
 import { ElMessage } from 'element-plus'
@@ -113,18 +112,7 @@ import { storage } from '@/store/storage'
 const router = useRouter()
 
 // 课程元信息
-const objects = ref([
-    {
-        course_id: '1',
-        name: 'Class 1',
-        category: '专业课',
-    },
-    {
-        course_id: '2',
-        name: 'Class 2',
-        category: '政治课',
-    },
-])
+const objects = ref()
 
 // 课程详情
 const courseDetails = new Map()
@@ -147,7 +135,17 @@ const selectedObject = ref(null)
 const activeTab = ref('comments') // 用来控制默认打开的 tab
 const newComment = ref('') // 用于存储新评论内容
 const searchQuery = ref('') // 用于存储搜索关键词
-const filteredObjects = ref(objects.value) // 用于存储筛选后的课程数据
+// const filteredObjects = ref(objects.value) // 用于存储筛选后的课程数据
+const filteredObjects = computed(() => {
+      if (searchQuery.value.trim()) {
+        return objects.value.filter(course =>
+          course.name.toLowerCase().includes(searchQuery.value.toLowerCase()) ||
+          course.course_id.toString().includes(searchQuery.value)
+        );
+      } else {
+        return objects.value;
+      }
+    });
 const newCourse = reactive({ course_id: '', name: '', category: '' }) // 用于存储新课程数据
 
 const loading = ref(false)
@@ -170,8 +168,23 @@ const fetchCourses = async () => {
         objects.value = []
         courseDetails.clear()
         objects.value.push(...formattedData)
+        // searchCourses()
     } catch (error) {
         console.error('获取数据失败:', error)
+        objects.value = [
+            {
+                course_id: '1',
+                name: 'Class 1',
+                category: '专业课',
+            },
+            {
+                course_id: '2',
+                name: 'Class 2',
+                category: '政治课',
+            },
+        ]
+        console.log(objects.value)
+        // searchCourses()
         alert("获取数据失败: " + error.message)
     } finally {
         loading.value = false
@@ -435,16 +448,16 @@ const handleTabClick = (tab) => {
 }
 
 // 搜索课程的处理函数
-const searchCourses = () => {
-    if (searchQuery.value.trim()) {
-        filteredObjects.value = objects.value.filter(course =>
-            course.name.toLowerCase().includes(searchQuery.value.toLowerCase()) ||
-            course.course_id.toString().includes(searchQuery.value)
-        )
-    } else {
-        filteredObjects.value = objects.value
-    }
-}
+// const searchCourses = () => {
+//     if (searchQuery.value.trim()) {
+//         filteredObjects.value = objects.value.filter(course =>
+//             course.name.toLowerCase().includes(searchQuery.value.toLowerCase()) ||
+//             course.course_id.toString().includes(searchQuery.value)
+//         )
+//     } else {
+//         filteredObjects.value = objects.value
+//     }
+// }
 
 // 打开添加新课程对话框
 const openAddCourseDialog = () => {
