@@ -26,9 +26,6 @@ public class CustomUserDetailsService implements UserDetailsService{
         // 查询数据库获得User信息
         // 我们这里的username = email !
         User userInDB = userMapper.selectByEmail(username);
-        if (userInDB == null) {
-            throw new UsernameNotFoundException("User not found with email: " + username);
-        }
         return userInDB;
     }
 

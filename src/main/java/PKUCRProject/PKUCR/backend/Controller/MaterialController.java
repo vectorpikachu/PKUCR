@@ -82,7 +82,6 @@ public class MaterialController {
         String filedir = "/data/materials/" + courseID + "/"; 
         material.setFiledir(filedir);
         material.setTime(LocalDateTime.now().toString());
-        material.setUrl("tempUrl"); //暂时不需要保存URL
 
         materialService.insertMaterial(material);
         String fullFilePath = "/data/materials/" + courseID + "/" + material.getID() + "_" + material.getFilename();
@@ -100,7 +99,7 @@ public class MaterialController {
         String fileUrl = "/api/resource/material/"+material.getCourseID()+"/"+material.getID().toString();
         Map<String, String> response = Map.of(
             "filename", material.getFilename(),
-            "url", fileUrl
+            "id", material.getID().toString()
         );
 
         return ResponseEntity.ok(response);
@@ -117,7 +116,7 @@ public class MaterialController {
     public ResponseEntity<?> downloadMaterial(@PathVariable("courseID") String courseID, @PathVariable("id") Long id) {
         Material material = materialService.selectByID(id);
         if (material == null) {
-            return ResponseEntity.badRequest().body("Material not found in the database");
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Material not found in the database");
         }
         // 检查文件是否存在
         String fileDir = material.getFiledir();
@@ -158,7 +157,7 @@ public class MaterialController {
 
         Material material = materialService.selectByID(id);
         if (material == null) {
-            return ResponseEntity.badRequest().body("Material not found in the database");
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Material not found in the database");
         }
         Long fileuserID = material.getUserID();
         if(userID!=fileuserID){

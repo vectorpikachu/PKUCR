@@ -53,7 +53,9 @@ public class UserController {
 
             // 获取用户详细信息
             final UserDetails userDetails = customUserDetailsService.loadUserByUsername(loginRequest.getEmail());
-
+            if(userDetails == null){
+                return ResponseEntity.badRequest().body("User not found with email: " + loginRequest.getEmail());
+            }
             // 生成 JWT 令牌
             final String token = jwtUtils.getToken(userDetails.getUsername());
             // 返回包含令牌的响应, 包装一下

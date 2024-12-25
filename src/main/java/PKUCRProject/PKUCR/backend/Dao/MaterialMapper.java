@@ -27,7 +27,6 @@ public interface MaterialMapper {
         @Result(property = "courseID", column = "course_id"),
         @Result(property = "filename", column = "filename"),
         @Result(property = "filedir", column = "filedir"),
-        @Result(property = "url", column = "url"),
         @Result(property = "time", column = "time")
     })
     List<Material> selectByCourseID(String courseID);
@@ -51,7 +50,7 @@ public interface MaterialMapper {
      * 将资料信息插入数据库
      * @param material
      */
-    @Insert("insert into materials (userID, courseID, filename, filedir, url, time) values (#{userID}, #{courseID}, #{filename}, #{filedir}, #{url}, #{time})")
+    @Insert("insert into materials (userID, courseID, filename, filedir, time) values (#{userID}, #{courseID}, #{filename}, #{filedir}, #{time})")
     @Options(useGeneratedKeys = true, keyProperty = "id", keyColumn = "id")
     void insertMaterial(Material material);
 }

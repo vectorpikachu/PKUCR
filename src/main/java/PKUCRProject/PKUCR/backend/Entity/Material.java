@@ -13,14 +13,15 @@ public class Material {
     public Material() {
     }
 
-    public Material(String courseID, String filename, String url, String time) {
+    public Material(Long userID, String courseID, String filename, String filedir, String time) {
         this.courseID = courseID;
+        this.userID = userID;
         this.filename = filename;
-        this.url = url;
+        this.filedir = filedir;
         this.time = time;
     }
 
-    public Material(Long id, Long userID, String courseID, String filename, String filedir, String url, String time) {
+    public Material(Long id, Long userID, String courseID, String filename, String filedir, String time) {
         this.id = id;
         this.courseID = courseID;
         this.userID = userID;
