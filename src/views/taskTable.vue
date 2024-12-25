@@ -529,13 +529,6 @@ let config = {
         startTime: '',
         endTime: '',
         frequency: 7
-      },
-      {
-        startDate: '',
-        endDate: '',
-        startTime: '',
-        endTime: '',
-        frequency: 7
       }
     ],
     link: ''
@@ -779,13 +772,6 @@ function courseInfoClose() {
         startTime: '',
         endTime: '',
         frequency: 7
-      },
-      {
-        startDate: '',
-        endDate: '',
-        startTime: '',
-        endTime: '',
-        frequency: 7
       }
     ],
     link: ''
@@ -806,13 +792,6 @@ async function courseFormSubmit() {
     teacher: '',
     classroom: '',
     time: [
-      {
-        startDate: '',
-        endDate: '',
-        startTime: '',
-        endTime: '',
-        frequency: 7
-      },
       {
         startDate: '',
         endDate: '',
@@ -848,13 +827,6 @@ function courseFormCancel() {
     teacher: '',
     classroom: '',
     time: [
-      {
-        startDate: '',
-        endDate: '',
-        startTime: '',
-        endTime: '',
-        frequency: 7
-      },
       {
         startDate: '',
         endDate: '',
