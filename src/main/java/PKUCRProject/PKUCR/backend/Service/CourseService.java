@@ -27,6 +27,7 @@ public class CourseService {
         Course courseInDB = courseMapper.selectById(course.getId());
         for (var time : course.getTime()) {
             time.setCourseID(course.getId());
+            System.out.println(time.getStartDate());
             courseTimeMapper.insert(time);
         }
         

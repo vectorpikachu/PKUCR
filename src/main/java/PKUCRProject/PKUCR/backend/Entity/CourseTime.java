@@ -77,4 +77,16 @@ public class CourseTime {
     public void setId(Long id) {
         this.id = id;
     }
+
+    public String toString() {
+        return "CourseTime{" +
+                "startDate='" + startDate + '\'' +
+                ", endDate='" + endDate + '\'' +
+                ", startTime='" + startTime + '\'' +
+                ", endTime='" + endTime + '\'' +
+                ", frequency=" + frequency +
+                ", courseID=" + courseID +
+                ", id=" + id +
+                '}';
+    }
 }

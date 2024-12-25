@@ -59,6 +59,7 @@ public class CourseController {
         ArrayNode courseList = mapper.createArrayNode();
         for (var course : courseService.selectByUserID(userId)) {
             ObjectNode courseObject = mapper.createObjectNode();
+            courseObject.put("id", course.getId());
             courseObject.put("name", course.getCourseName());
             courseObject.put("teacher", course.getTeacher());
             courseObject.put("classroom", course.getClassroom());
@@ -92,6 +93,8 @@ public class CourseController {
         String username = userDetails.getUsername();
 
         Long userId = customUserDetailsService.getUserID(username);
+
+        // System.out.println(course.toString());
 
         course.setUser_id(userId);
         course.setLink("api/resource/" + course.getCourseID());

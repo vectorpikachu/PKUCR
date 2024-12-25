@@ -12,7 +12,7 @@ import PKUCRProject.PKUCR.backend.Entity.BasicCourse;
 
 @Mapper
 public interface AllCoursesMapper {
-    @Insert("insert into all_courses (courseID, courseName, category, teacher, credit, classroom, link) values (#{courseID}, #{courseName}, #{category}, #{teacher}, #{credit}, #{classroom}, #{link}})")
+    @Insert("insert into all_courses (courseID, courseName, category, teacher, credit, classroom, link) values (#{courseID}, #{courseName}, #{category}, #{teacher}, #{credit}, #{classroom}, #{link})")
     @Options(useGeneratedKeys = true, keyProperty = "id", keyColumn = "id")
     Long insert(BasicCourse course);
     

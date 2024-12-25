@@ -117,4 +117,18 @@ public class BasicCourse {
     public void setLink(String link) {
         this.link = link;
     }
+
+    public String toString() {
+        return "BasicCourse{" +
+                "id=" + id +
+                ", courseID='" + courseID + '\'' +
+                ", courseName='" + courseName + '\'' +
+                ", category='" + category + '\'' +
+                ", teacher='" + teacher + '\'' +
+                ", credit=" + credit +
+                ", classroom='" +classroom + '\'' +
+                ", time=" + time.toString() +
+                ", link='" + link + '\'' +
+                '}';
+    }
 }

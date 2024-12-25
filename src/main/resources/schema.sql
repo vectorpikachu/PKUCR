@@ -41,7 +41,7 @@ CREATE TABLE IF NOT EXISTS all_course_times (
     startTime TIME,
     endTime TIME,
     frequency INT,
-    FOREIGN KEY (courseID) REFERENCES courses(id)
+    FOREIGN KEY (courseID) REFERENCES all_courses(id)
 );
 
 CREATE TABLE IF NOT EXISTS course_times (
