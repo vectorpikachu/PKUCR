@@ -402,7 +402,8 @@ const AXIOS_ADDRESS = {
 }
 
 const COURSE_AXIOS_ADDRESS = {
-  INSERT: '/task/insert'
+  INSERT: '/course/insert',
+  DELETE: '/course/delete'
 }
 
 // Message exchanging functinos with server
@@ -437,6 +438,11 @@ const sendSignal = {
   },
   coursePost: async (t) => {
     return await axios.post(COURSE_AXIOS_ADDRESS.INSERT, courseFrom(t))
+  },
+  courseDelete: (id) => {
+    axios.delete(COURSE_AXIOS_ADDRESS.DELETE, id).then((res) => {
+      console.log(res)
+    })
   }
 }
 
@@ -788,7 +794,7 @@ function courseInfoClose() {
 }
 
 async function courseFormSubmit() {
-  let response = sendSignal.post(config.courseForm)
+  let response = sendSignal.coursePost(config.courseForm)
   await response.then((res) => {
     config.courseForm.id = res.data.id
   })
@@ -881,7 +887,7 @@ function handleDelete(index, row) {
 
 function handleCourseDelete(index, row) {
   let course = courseData.value.splice(index, 1)[0]
-  sendSignal.delete(course.id)
+  sendSignal.courseDelete(course.id)
   courseDataUpdateLocal()
 }
 
