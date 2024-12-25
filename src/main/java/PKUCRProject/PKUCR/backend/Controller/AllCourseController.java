@@ -16,9 +16,12 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
+import PKUCRProject.PKUCR.backend.Entity.BasicCourse;
+import PKUCRProject.PKUCR.backend.Entity.BasicCourseRequest;
 import PKUCRProject.PKUCR.backend.Entity.Comment;
 import PKUCRProject.PKUCR.backend.Entity.CommentRequest;
 import PKUCRProject.PKUCR.backend.Entity.Material;
+import PKUCRProject.PKUCR.backend.Entity.User;
 import PKUCRProject.PKUCR.backend.Service.AllCourseService;
 import PKUCRProject.PKUCR.backend.Service.CommentService;
 import PKUCRProject.PKUCR.backend.Service.CustomUserDetailsService;
@@ -123,6 +126,28 @@ public class AllCourseController {
         });
         jsonObject.set("materials", materialsArray);
         return ResponseEntity.ok(jsonObject);
+    }
+
+    @Operation(summary = "Add a basic course")
+    @PostMapping("/api/resource/{courseId}")
+    public ResponseEntity<?> insert(@PathVariable String courseId, @Valid @RequestBody BasicCourseRequest basicCourseRequest) {
+        
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication == null || !authentication.isAuthenticated()) {
+            return ResponseEntity.badRequest().body("Please login first");
+        }
+
+        User user = (User) authentication.getPrincipal();
+        if (user.getPermission() != 1) {
+            return ResponseEntity.badRequest().body("You are not a teacher");
+        }
+        
+        BasicCourse course = new BasicCourse();
+        course.setCourseID(courseId);
+        course.setCourseName(basicCourseRequest.getCourseName());
+        course.setCategory(basicCourseRequest.getCategory());
+        allCourseService.insert(course);
+        return ResponseEntity.ok(course);
     }
 
     /**
