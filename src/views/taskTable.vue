@@ -233,7 +233,13 @@
             </template>
             <template #default="scope">
               <el-button size="small"> Edit </el-button>
-              <el-button size="small" type="danger"> Delete </el-button>
+              <el-button
+                size="small"
+                type="danger"
+                @click="handleCourseDelete(scope.$index, scope.row)"
+              >
+                Delete
+              </el-button>
             </template>
           </el-table-column>
         </el-table>
@@ -506,6 +512,7 @@ let config = {
     memo: ''
   }),
   courseForm: reactive({
+    id: 0,
     name: '',
     teacher: '',
     classroom: '',
@@ -565,6 +572,7 @@ function taskFrom(form) {
 
 function courseFrom(course) {
   return {
+    id: course.id,
     name: course.name,
     teacher: course.teacher,
     classroom: course.classroom,
@@ -720,14 +728,13 @@ function courseDataFetchLocal() {
 }
 
 // Submite task form to server and update local data
-function taskFormSubmit() {
-  config.taskFormVisible.value = false
+async function taskFormSubmit() {
   if (config.isEdit.value) {
     config.isEdit.value = false
     let id = tableData.value[config.recentTask.value].id
     config.taskForm.id = id
     let response = sendSignal.put(config.taskForm)
-    response.then((res) => {
+    await response.then((res) => {
       if (res.data === 'update success') {
         tableData.value[config.recentTask.value] = config.taskForm
         tableDataUpdateLocal()
@@ -735,7 +742,7 @@ function taskFormSubmit() {
     })
   } else {
     let response = sendSignal.post(config.taskForm)
-    response.then((res) => {
+    await response.then((res) => {
       config.taskForm.id = res.data.id
     })
     tableData.value.push(taskFrom(config.taskForm))
@@ -750,11 +757,12 @@ function taskFormSubmit() {
     time: '',
     memo: ''
   })
+  config.taskFormVisible.value = false
 }
 
 function courseInfoClose() {
-  config.courseInfoVisible.value = false
   config.courseForm = reactive({
+    id: 0,
     name: '',
     teacher: '',
     classroom: '',
@@ -776,17 +784,18 @@ function courseInfoClose() {
     ],
     link: ''
   })
+  config.courseInfoVisible.value = false
 }
 
-function courseFormSubmit() {
-  config.courseFormVisible.value = false
+async function courseFormSubmit() {
   let response = sendSignal.post(config.courseForm)
-  response.then((res) => {
-    config.taskForm.id = res.data.id
+  await response.then((res) => {
+    config.courseForm.id = res.data.id
   })
   courseData.value.push(courseFrom(config.courseForm))
-  tableDataUpdateLocal()
+  courseDataUpdateLocal()
   config.courseForm = reactive({
+    id: 0,
     name: '',
     teacher: '',
     classroom: '',
@@ -808,10 +817,10 @@ function courseFormSubmit() {
     ],
     link: ''
   })
+  config.courseFormVisible.value = false
 }
 
 function taskFormCancel() {
-  config.taskFormVisible.value = false
   if (config.isEdit.value) {
     config.isEdit.value = false
     config.taskForm = reactive({
@@ -823,11 +832,12 @@ function taskFormCancel() {
       memo: ''
     })
   }
+  config.taskFormVisible.value = false
 }
 
 function courseFormCancel() {
-  config.courseFormVisible.value = false
   config.courseForm = reactive({
+    id: 0,
     name: '',
     teacher: '',
     classroom: '',
@@ -849,6 +859,7 @@ function courseFormCancel() {
     ],
     link: ''
   })
+  config.courseFormVisible.value = false
 }
 
 function handleAddCourse() {
@@ -866,6 +877,12 @@ function handleDelete(index, row) {
   let task = tableData.value.splice(index, 1)[0]
   sendSignal.delete(task.id)
   tableDataUpdateLocal()
+}
+
+function handleCourseDelete(index, row) {
+  let course = courseData.value.splice(index, 1)[0]
+  sendSignal.delete(course.id)
+  courseDataUpdateLocal()
 }
 
 function presentInfo(index, row) {
