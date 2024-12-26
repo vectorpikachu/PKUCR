@@ -36,6 +36,8 @@ PKUCR
 │   │   ├── main.css
 │   │   └── PKUCR-logo.svg
 │   ├── store
+│   │   ├── storage.ts
+│   │   ├── theme.ts
 │   │   └── auth.ts
 │   ├── axios.ts
 │   ├── main.js
@@ -56,6 +58,8 @@ PKUCR
 - `src/views/*.vue`为项目`main`各功能页面的实现
 - `src/views/index.js`创建并记录了项目的路由数组
 - `src/store/auth.ts`实现了注册登陆以及`token`的存储
+- `src/store/storage.ts`实现了部分数据结构的统一定义和对存储的同一管理
+- `src/store/theme.ts`实现了web界面暗黑模式的管理
 - `src/axios.ts`实现了附带`token`的`axios`封装
 - `src/App.vue`为项目软件及根路由
 - `src/main.js`为项目软件的初始化
