@@ -65,6 +65,7 @@ public class AllCourseController {
          * "courseId": {
          *   "name": "courseName",
          *   "category": "courseCategory",
+         *   "id": 1
          * },
          *  "04834220": {
          *   "name": "软件工程",
@@ -76,7 +77,7 @@ public class AllCourseController {
             ObjectNode courseObject = mapper.createObjectNode();
             courseObject.put("name", course.getCourseName());
             courseObject.put("category", course.getCategory());
-            courseObject.put("ID", course.getId());
+            courseObject.put("id", course.getId());
             jsonObject.set(course.getCourseID(), courseObject);
         });
         return ResponseEntity.ok(jsonObject);
@@ -111,7 +112,7 @@ public class AllCourseController {
             String userEmail = userService.getUserById(userId).getEmail();
             commentObject.put("user", userEmail);
             commentObject.put("comment", comment.getContent());
-            commentObject.put("ID", comment.getID());
+            commentObject.put("id", comment.getID());
             commentsArray.add(commentObject);
         });
         jsonObject.set("comments", commentsArray);
@@ -123,7 +124,7 @@ public class AllCourseController {
             ObjectNode materialObject = mapper.createObjectNode();
             materialObject.put("filename", material.getFilename());
             materialObject.put("url", "/api/resource/material/" + courseId + "/" + material.getFilename());
-            materialObject.put("ID", material.getID());
+            materialObject.put("id", material.getID());
             materialsArray.add(materialObject);
         });
         jsonObject.set("materials", materialsArray);
@@ -180,7 +181,7 @@ public class AllCourseController {
         commentService.insertComment(comment);
         jsonObject.put("status", "success");
         // 返回一个 ID of Comment
-        jsonObject.put("ID", comment.getID());
+        jsonObject.put("id", comment.getID());
         return ResponseEntity.ok(jsonObject);
     }
     

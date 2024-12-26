@@ -24,6 +24,7 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.HttpHeaders;
 import org.springframework.core.io.InputStreamResource;
 
@@ -78,13 +79,13 @@ public class MaterialController {
         material.setCourseID(courseID);
         material.setUserID(userID);
         material.setFilename(filename);
-        String filedir = "/data/materials/" + courseID + "/"; 
+        String filedir = "D:/data/materials/" + courseID + "/"; 
         material.setFiledir(filedir);
         material.setTime(LocalDateTime.now().toString());
         material.setUrl("tempUrl"); //暂时不需要保存URL
 
         materialService.insertMaterial(material);
-        String fullFilePath = "/data/materials/" + courseID + "/" + material.getID() + "_" + material.getFilename();
+        String fullFilePath = "D:/data/materials/" + courseID + "/" + material.getID() + "_" + material.getFilename();
 
         // 保存文件（文件内容需要在 POST BODY 中提供）
         try {
@@ -100,7 +101,7 @@ public class MaterialController {
         Map<String, String> response = Map.of(
             "filename", material.getFilename(),
             "url", fileUrl,
-            "ID", material.getID().toString()
+            "id", material.getID().toString()
         );
 
         return ResponseEntity.ok(response);
@@ -130,10 +131,20 @@ public class MaterialController {
         }
         HttpHeaders headers = new HttpHeaders();
         headers.add("Content-Disposition", "attachment; filename=" + material.getFilename());
-
-        return ResponseEntity.ok()
+        
+        try {
+            String contentType = Files.probeContentType(Paths.get(filePath));
+            System.out.println(contentType);
+            if (contentType != null) {
+                headers.setContentType(MediaType.parseMediaType(contentType));
+            }
+            return ResponseEntity.ok()
                 .headers(headers)
                 .body(new InputStreamResource(fileInputStream));
+        }
+        catch (IOException e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error reading file");
+        }     
     }
     /**
      * 删除文件
