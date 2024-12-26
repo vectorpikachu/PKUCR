@@ -99,7 +99,8 @@ public class MaterialController {
         String fileUrl = "/api/resource/material/"+material.getCourseID()+"/"+material.getID().toString();
         Map<String, String> response = Map.of(
             "filename", material.getFilename(),
-            "url", fileUrl
+            "url", fileUrl,
+            "ID", material.getID().toString()
         );
 
         return ResponseEntity.ok(response);

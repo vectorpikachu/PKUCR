@@ -76,6 +76,7 @@ public class AllCourseController {
             ObjectNode courseObject = mapper.createObjectNode();
             courseObject.put("name", course.getCourseName());
             courseObject.put("category", course.getCategory());
+            courseObject.put("ID", course.getId());
             jsonObject.set(course.getCourseID(), courseObject);
         });
         return ResponseEntity.ok(jsonObject);
@@ -122,6 +123,7 @@ public class AllCourseController {
             ObjectNode materialObject = mapper.createObjectNode();
             materialObject.put("filename", material.getFilename());
             materialObject.put("url", "/api/resource/material/" + courseId + "/" + material.getFilename());
+            materialObject.put("ID", material.getID());
             materialsArray.add(materialObject);
         });
         jsonObject.set("materials", materialsArray);
