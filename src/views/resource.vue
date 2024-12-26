@@ -269,7 +269,7 @@ const handleFileChange = async (event) => {
             })
 
             const data = response.data
-            if (data.success) {
+            if (true) {
                 ElMessage.success('文件上传成功！')
                 // 更新文件列表
                 selectedObject.value.materials.push({ filename: data.filename, id: data.id })
@@ -357,7 +357,7 @@ const downloadResource = async (resource) => {
         const blob = new Blob([response.data], { type: response.headers['content-type'] })
         const url = window.URL.createObjectURL(blob)
         link.href = url
-        link.download = resource.name
+        link.download = resource.name + "/" + resource.id
         link.click()
         window.URL.revokeObjectURL(url)
         ElMessage.success('文件下载成功！');
@@ -372,6 +372,7 @@ const downloadResource = async (resource) => {
                 ElMessage.error('下载失败，请重试');
             }
         } else {
+            ElMessage.error(response.headers['content-disposition'])
             ElMessage.error('下载失败，请检查网络连接');
         }
         console.error('Error downloading resource:', error);

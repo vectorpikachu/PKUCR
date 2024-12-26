@@ -706,7 +706,7 @@ function tableDataUpdateLocal() {
 
 function courseDataUpdateLocal() {
   let data = JSON.stringify(courseData.value)
-  localStorage.setItem('course', data)
+  storage.setItem('course', data)
 }
 
 // Fetch initial data from server

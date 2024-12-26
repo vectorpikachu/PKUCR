@@ -26,7 +26,7 @@ export interface Course {
 }
 
 // variables
-const RELEASE = false
+const RELEASE = true
 
 const AXIOS_ADDRESS = {
   COURSE: '/course',
@@ -184,7 +184,7 @@ const defaultTask: Task[] = [
 
 let dataFetcher: Worker
 
-export const storage = localStorage
+export const storage = sessionStorage
 
 // functions
 function initializeStorage() {
