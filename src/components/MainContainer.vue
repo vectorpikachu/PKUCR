@@ -1,6 +1,6 @@
 <script lang="ts" setup>
-import SideBar from './SideBar.vue'
-import PageHeader from './PageHeader.vue'
+import SideBar from '@/components/SideBar.vue'
+import PageHeader from '@/components/PageHeader.vue'
 import { startDataFetcher, stopDataFetcher } from '@/store/storage'
 import { computed, onMounted, onUnmounted } from 'vue'
 import { useThemeStore } from '@/store/theme'

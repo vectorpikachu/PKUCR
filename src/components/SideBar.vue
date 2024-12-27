@@ -1,5 +1,5 @@
 <template>
-	<el-menu class="el-menu-vertical" :default-active="this.$route.path" router>
+	<el-menu class="el-menu-vertical" default-active="/" router>
 
 		<router-link to="/home">
 			<el-menu-item index="/home" class="sidebarItem">
