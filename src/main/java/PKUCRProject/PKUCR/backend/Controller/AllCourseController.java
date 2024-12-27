@@ -173,7 +173,7 @@ public class AllCourseController {
         Comment comment = new Comment();
         comment.setCourseID(courseId);
         comment.setContent(commentRequest.getComment());
-        comment.setUserID(userService.getUserID(commentRequest.getUser()));
+        comment.setUserID(userService.getUserIDByName(commentRequest.getUser()));
         
         LocalDateTime date = LocalDateTime.now();
         comment.setTime(date.toString());

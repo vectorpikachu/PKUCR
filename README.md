@@ -10,36 +10,66 @@
 
 后端的结构是这样的：
 ```
-src/main/java/PKUCRProject/PKUCR/backend
-├── Auth
-│   ├── CustomAuthenticationProvider.java
-│   └── JwtAuthenticationFilter.java
-├── Config
-│   └── SecurityConfig.java
-├── Controller
-│   ├── CorsController.java
-│   ├── CourseController.java
-│   ├── HelloController.java
-│   ├── TasksController.java
-│   └── UserController.java
-├── Dao
-│   ├── CourseMapper.java
-│   ├── TaskMapper.java
-│   └── UserMapper.java
-├── Entity
-│   ├── Course.java
-│   ├── Task.java
-│   ├── User.java
-│   ├── LoginRequest.java
-│   └── TokenResponse.java
-├── Service
-│   ├── CourseService.java
-│   ├── TaskService.java
-│   └── CustomUserDetailsService.java
-└── Utils
-    ├── Claims.java
-    ├── JwtUtils.java
-    └── DateUtils.java
+.
+├── java
+│   └── PKUCRProject
+│       └── PKUCR
+│           └── backend
+│               ├── Auth
+│               │   ├── CustomAuthenticationProvider.java
+│               │   └── JwtAuthenticationFilter.java
+│               ├── Config
+│               │   └── SecurityConfig.java
+│               ├── Controller
+│               │   ├── AllCourseController.java
+│               │   ├── CorsController.java
+│               │   ├── CourseController.java
+│               │   ├── HelloController.java
+│               │   ├── MaterialController.java
+│               │   ├── TaskController.java
+│               │   └── UserController.java
+│               ├── Dao
+│               │   ├── AllCourseTimeMapper.java
+│               │   ├── AllCoursesMapper.java
+│               │   ├── CommentMapper.java
+│               │   ├── CourseMapper.java
+│               │   ├── CourseTimeMapper.java
+│               │   ├── MaterialMapper.java
+│               │   ├── TaskMapper.java
+│               │   └── UserMapper.java
+│               ├── Entity
+│               │   ├── BasicCourse.java
+│               │   ├── BasicCourseRequest.java
+│               │   ├── Comment.java
+│               │   ├── CommentRequest.java
+│               │   ├── Course.java
+│               │   ├── CourseTime.java
+│               │   ├── LoginRequest.java
+│               │   ├── Material.java
+│               │   ├── RegisterRequest.java
+│               │   ├── Task.java
+│               │   ├── TokenResponse.java
+│               │   └── User.java
+│               ├── PKUCRApplication.java
+│               ├── Service
+│               │   ├── AllCourseService.java
+│               │   ├── CommentService.java
+│               │   ├── CourseService.java
+│               │   ├── CustomUserDetailsService.java
+│               │   ├── MaterialService.java
+│               │   └── TaskService.java
+│               ├── Servlet
+│               │   └── temp.txt
+│               └── Utils
+│                   ├── Claims.java
+│                   ├── CryptoUtils.java
+│                   ├── DateUtils.java
+│                   └── JwtUtils.java
+└── resources
+    ├── application.properties
+    ├── schema.sql
+    ├── static
+    └── templates
 ```
 
 ## 使用说明
@@ -201,7 +231,10 @@ curl -X GET "http://localhost:38083/api/resource/material/04834220/15" -H "Autho
 
 ```
 
-### 课程和时间
+## 服务器部署说明
 
-现在有个问题在于, 一个课程要面对的是一个时间的组.
-分成两个表来实现.
+请先配置HTTPS，获取SSL证书并进行安装。
+
+然后按照上面的说明配置好MySQL数据库。
+
+接着运行`java -jar backend-0.0.1-SNAPSHOT.jar`即可。
